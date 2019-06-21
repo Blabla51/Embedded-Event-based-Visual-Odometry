@@ -13,6 +13,7 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 	this->m_threshold = threshold;
 	this->m_zone_x = zone_x;
 	this->m_zone_y = zone_y;
+	this->m_tracking = false;
 	this->m_hough_map = new double*[this->m_hough_map_x];
 	for(int i = 0; i<this->m_hough_map_x; i++)
 	{
@@ -178,7 +179,6 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							}
 							else
 							{
-								//std::cout << "Emit: " << (theta_index+i)%this->m_hough_map_x << " " <<  rho_index+j << std::endl;
 								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 0.0;
 							}
 						}
