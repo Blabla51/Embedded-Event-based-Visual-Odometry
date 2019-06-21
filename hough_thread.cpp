@@ -1,6 +1,6 @@
 #include "hough_thread.h"
 
-HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, double zone_x, double zone_y, double threshold,unsigned int camera_x,unsigned int camera_y, unsigned int pc_exp_range) { // @suppress("Class members should be properly initialized")
+HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double zone_y, double threshold,int camera_x,int camera_y, int pc_exp_range) { // @suppress("Class members should be properly initialized")
 	//sharedPrint("Initialisation of Hough Thread");
 	this->m_thread = std::thread();
 
@@ -14,28 +14,28 @@ HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, doub
 	this->m_zone_x = zone_x;
 	this->m_zone_y = zone_y;
 	this->m_hough_map = new double*[this->m_hough_map_x];
-	for(unsigned int i = 0; i<this->m_hough_map_x; i++)
+	for(int i = 0; i<this->m_hough_map_x; i++)
 	{
 		this->m_hough_map[i] = new double[this->m_hough_map_y];
-		for(unsigned j = 0; j < this->m_hough_map_y; j++)
+		for(int j = 0; j < this->m_hough_map_y; j++)
 		{
 			this->m_hough_map[i][j] = 0.0;
 		}
 	}
 	this->m_hough_time_map = new double*[this->m_hough_map_x];
-	for(unsigned int i = 0; i<this->m_hough_map_x; i++)
+	for(int i = 0; i<this->m_hough_map_x; i++)
 	{
 		this->m_hough_time_map[i] = new double[this->m_hough_map_y];
-		for(unsigned j = 0; j < this->m_hough_map_y; j++)
+		for(int j = 0; j < this->m_hough_map_y; j++)
 		{
 			this->m_hough_time_map[i][j] = 0.0;
 		}
 	}
 	this->m_look_up_dist = new double**[	this->m_camera_x];
-	for(unsigned int i = 0; i<	this->m_camera_x; i++)
+	for(int i = 0; i<	this->m_camera_x; i++)
 	{
 		this->m_look_up_dist[i] = new double*[	this->m_camera_y];
-		for(unsigned int j = 0; j<	this->m_camera_y; j++)
+		for(int j = 0; j<	this->m_camera_y; j++)
 		{
 			this->m_look_up_dist[i][j] = new double[2];
 			this->m_look_up_dist[i][j][0] = 0.0; // SET CORRECT VALUE
@@ -45,15 +45,11 @@ HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, doub
 	this->m_pc_theta = new double[this->m_hough_map_x];
 	this->m_pc_cos = new double[this->m_hough_map_x];
 	this->m_pc_sin = new double[this->m_hough_map_x];
-	for(unsigned int i = 0; i < this->m_hough_map_x; i++)
+	for(int i = 0; i < this->m_hough_map_x; i++)
 	{
-		this->m_pc_theta[i] = (double)(i)*PI/((double)this->m_hough_map_x);
+		this->m_pc_theta[i] = (double)(i)*2*PI/((double)this->m_hough_map_x);
 		this->m_pc_cos[i] = cos(this->m_pc_theta[i]);
 		this->m_pc_sin[i] = sin(this->m_pc_theta[i]);
-		if(i == 1)
-		{
-			std::cout << "Cos: " << this->m_pc_cos[i] << "; Sin: " << this->m_pc_sin[i] << "; Theta:" << this->m_pc_theta[i] << std::endl;
-		}
 	}
 	this->m_rho_max = 209.3036; // Calculer le rho max
 	this->m_decay = 200*1e-6;
@@ -61,6 +57,22 @@ HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, doub
 	for(unsigned int i = 0; i < PC_EXP_RANGE; i++)
 	{
 		m_pc_exp[i] = exp(-this->m_decay*(double)(i));
+	}
+	this->m_pc_hough_coord = new int**[this->m_camera_x];
+	for(int i = 0; i < this->m_camera_x; i++)
+	{
+		this->m_pc_hough_coord[i] = new int*[this->m_camera_y];
+		for(int j = 0; j < this->m_camera_y; j++)
+		{
+			this->m_pc_hough_coord[i][j] = new int[this->m_hough_map_x];
+			for(int k = 0;k < this->m_hough_map_x; k++)
+			{
+				double rho = (double)((int)i - (int)(this->m_camera_x >> 1))*this->m_pc_cos[k]+(double)((int)j - (int)(this->m_camera_y >> 1))*this->m_pc_sin[k];
+				int rho_index = (int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y));
+				this->m_pc_hough_coord[i][j][k] = rho_index;
+				//std::cout << i << " " << j << " " << k << " " << rho_index << std::endl;
+			}
+		}
 	}
 }
 
@@ -130,14 +142,14 @@ HoughThread::~HoughThread() {
 int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int timestamp)
 {
 	int nbr_event_generated = 0;
-	for(unsigned int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
+	for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 	{
 		if(this->m_tracking)
 		{
 
 		}
-		double rho = (double)((int)x - (int)(this->m_camera_x >> 1))*this->m_pc_cos[theta_index]+(double)((int)y - (int)(this->m_camera_y >> 1))*this->m_pc_sin[theta_index];
-		unsigned int rho_index = (unsigned int)((int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y)) + (int)(this->m_hough_map_y >> 1));
+		//double rho = (double)((int)x - (int)(this->m_camera_x >> 1))*this->m_pc_cos[theta_index]+(double)((int)y - (int)(this->m_camera_y >> 1))*this->m_pc_sin[theta_index];
+		//unsigned int rho_index = (unsigned int)((int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y)) + (int)(this->m_hough_map_y >> 1));
 //		this->mutexLog.lock();
 //		if(i == 1)
 //		{
@@ -146,8 +158,11 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 //			std::cout << "test: " << rho/this->m_rho_max*(double)(this->m_hough_map_y) << std::endl;
 //		}
 //		this->mutexLog.unlock();
-		if(rho_index < this->m_hough_map_y)
+		//std::cout << x << " " << y << " " << theta_index << " " << this->m_pc_hough_coord[x][y][theta_index] << std::endl;
+		int rho_index = this->m_pc_hough_coord[x][y][theta_index];
+		if(rho_index < this->m_hough_map_y && rho_index > 0)
 		{
+			//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;
 			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 			if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 			{
@@ -157,13 +172,14 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					{
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(rho_index+j < 0)
+							if(j+rho_index < 0)
 							{
-								this->m_hough_map[(theta_index+i)%this->m_hough_map_x][-rho_index+j+1] = 0.0;
+								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][-rho_index+j+1] = 0.0;
 							}
 							else
 							{
-								this->m_hough_map[(theta_index+i)%this->m_hough_map_x][rho_index+j] = 0.0;
+								//std::cout << "Emit: " << (theta_index+i)%this->m_hough_map_x << " " <<  rho_index+j << std::endl;
+								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 0.0;
 							}
 						}
 					}
@@ -176,8 +192,8 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 //				std::cout << "Emit event" << std::endl;
 //				this->mutexLog.unlock();
 			}
+			this->m_hough_time_map[theta_index][rho_index] = timestamp;
 		}
-		this->m_hough_time_map[theta_index][rho_index] = timestamp;
 	}
 	this->m_last_input_event_timestamp = timestamp;
 	return nbr_event_generated;
@@ -186,10 +202,10 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 void HoughThread::printHoughMap()
 {
 	this->mutexLog.lock();
-	for(unsigned int i = 0; i < this->m_hough_map_y; i++)
+	for(int i = 0; i < this->m_hough_map_y; i++)
 	{
 		std::cout << i << ": " ;
-		for(unsigned int j = 0; j < this->m_hough_map_x; j++)
+		for(int j = 0; j < this->m_hough_map_x; j++)
 		{
 			std::cout << this->m_hough_map[j][i] << " ";
 		}
@@ -214,7 +230,7 @@ void HoughThread::stop()
 	BaseThread::stop();
 }
 
-double HoughThread::getPCExp(unsigned int dt)
+double HoughThread::getPCExp(int dt)
 {
 	if(dt > PC_EXP_RANGE)
 		return 0;

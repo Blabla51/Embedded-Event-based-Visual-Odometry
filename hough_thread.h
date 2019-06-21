@@ -17,11 +17,11 @@
 class HoughThread : public BaseThread
 {
 private:
-	unsigned int 	m_hough_map_x;
-	unsigned int 	m_hough_map_y;
-	unsigned int 	m_camera_x;
-	unsigned int 	m_camera_y;
-	unsigned int 	m_last_input_event_timestamp;
+	int 	m_hough_map_x;
+	int 	m_hough_map_y;
+	int 	m_camera_x;
+	int 	m_camera_y;
+	int 	m_last_input_event_timestamp;
 	double 			m_threshold;
 	double			m_decay;
 	double 			m_rho_max;
@@ -34,16 +34,17 @@ private:
 	double* 		m_pc_cos;
 	double* 		m_pc_sin;
 	double* 		m_pc_exp;
+	int*** 	m_pc_hough_coord;
 	std::atomic<bool>	m_tracking;
 	std::queue<Event>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
 	PNPThread*		m_pnpt;
 
 
-	double getPCExp(unsigned int dt);
+	double getPCExp(int dt);
 
 public:
-	HoughThread(unsigned int hough_map_x, unsigned int hough_map_y, double zone_x = 10, double zone_y = 10, double threshold = 15.0, unsigned int camera_x = 128, unsigned int camera_y = 128, unsigned int pc_exp_range = 1000000);
+	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 10, double zone_y = 10, double threshold = 15.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
     ~HoughThread();
 
     void stop();

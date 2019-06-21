@@ -70,12 +70,12 @@ void UARTThread::threadFunction() {
 	this->mutexLog.lock();
 	std::cout << "Doing my things ! UART" << std::endl;
 	this->mutexLog.unlock();
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+//	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	for(int i = 0; i < 1000000; i++)
 	{
-		this->m_ht->addEvent(134,8,true,1);
+		this->m_ht->addEvent(112,8,true,1);
 	}
-	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+//	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
 //	this->mutexLog.lock();
 //	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() <<std::endl;
 //	std::cout << "Stopped my things ! UART" << std::endl;
