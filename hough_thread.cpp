@@ -10,7 +10,6 @@ HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, doub
 	this->m_hough_map_y = hough_map_y;
 	this->m_last_input_event_timestamp = 0;
 
-	this->m_pc_exp_range = pc_exp_range;
 	this->m_threshold = threshold;
 	this->m_zone_x = zone_x;
 	this->m_zone_y = zone_y;
@@ -58,8 +57,8 @@ HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, doub
 	}
 	this->m_rho_max = 209.3036; // Calculer le rho max
 	this->m_decay = 200*1e-6;
-	this->m_pc_exp = new double[1000000]; // Déterminer le nombre max de l'exp calculé
-	for(unsigned int i = 0; i < this->m_pc_exp_range; i++)
+	this->m_pc_exp = new double[PC_EXP_RANGE]; // Déterminer le nombre max de l'exp calculé
+	for(unsigned int i = 0; i < PC_EXP_RANGE; i++)
 	{
 		m_pc_exp[i] = exp(-this->m_decay*(double)(i));
 	}
@@ -217,7 +216,7 @@ void HoughThread::stop()
 
 double HoughThread::getPCExp(unsigned int dt)
 {
-	if(dt > this->m_pc_exp_range)
+	if(dt > PC_EXP_RANGE)
 		return 0;
 	else
 		return this->m_pc_exp[dt];

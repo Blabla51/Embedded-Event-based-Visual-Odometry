@@ -16,6 +16,7 @@
 #include <mutex>
 
 #define PI 3.14159265
+#define PC_EXP_RANGE 1000000
 
 class Event {
 public:

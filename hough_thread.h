@@ -34,7 +34,6 @@ private:
 	double* 		m_pc_cos;
 	double* 		m_pc_sin;
 	double* 		m_pc_exp;
-	double 			m_pc_exp_range;
 	std::atomic<bool>	m_tracking;
 	std::queue<Event>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
