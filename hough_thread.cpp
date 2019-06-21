@@ -107,7 +107,7 @@ void HoughThread::threadFunction() {
 				 begin = std::chrono::steady_clock::now();
 			}
 			this->computeEvent(e.x,e.y,e.t);
-			if(event_counter == 1000000)
+			if(event_counter == 100000)
 			{
 				end = std::chrono::steady_clock::now();
 			}
@@ -143,24 +143,14 @@ HoughThread::~HoughThread() {
 int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int timestamp)
 {
 	int nbr_event_generated = 0;
+	int rho_index = 0;
 	for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 	{
 		if(this->m_tracking)
 		{
 
 		}
-		//double rho = (double)((int)x - (int)(this->m_camera_x >> 1))*this->m_pc_cos[theta_index]+(double)((int)y - (int)(this->m_camera_y >> 1))*this->m_pc_sin[theta_index];
-		//unsigned int rho_index = (unsigned int)((int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y)) + (int)(this->m_hough_map_y >> 1));
-//		this->mutexLog.lock();
-//		if(i == 1)
-//		{
-//			std::cout << "Computed rho: " << rho << std::endl;
-//			std::cout << "Computed rho index: " << rho_index << std::endl;
-//			std::cout << "test: " << rho/this->m_rho_max*(double)(this->m_hough_map_y) << std::endl;
-//		}
-//		this->mutexLog.unlock();
-		//std::cout << x << " " << y << " " << theta_index << " " << this->m_pc_hough_coord[x][y][theta_index] << std::endl;
-		int rho_index = this->m_pc_hough_coord[x][y][theta_index];
+		rho_index = this->m_pc_hough_coord[x][y][theta_index];
 		if(rho_index < this->m_hough_map_y && rho_index > 0)
 		{
 			//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;

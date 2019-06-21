@@ -71,7 +71,7 @@ void UARTThread::threadFunction() {
 	std::cout << "Doing my things ! UART" << std::endl;
 	this->mutexLog.unlock();
 //	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	for(int i = 0; i < 1000000; i++)
+	for(int i = 0; i < 100000; i++)
 	{
 		this->m_ht->addEvent(112,8,true,1);
 	}
