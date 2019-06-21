@@ -7,16 +7,21 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include "common.h"
+#include "base_thread.h"
+#include "libusb.h"
 
-class PNP_Thread
+class PNPThread : public BaseThread
 {
-private:
-    std::thread m_thread;
- 
+protected:
+
 public:
-    PNP_Thread();
-    void launch();
-    void stop();
+	void threadFunction();
+	PNPThread();
+    ~PNPThread();
+
+    void addEvent();
+    void computePosit();
 };
 
 #endif

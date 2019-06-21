@@ -2,45 +2,45 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
+#include <cmath>
 //#include "mingw.thread.h"
 #include <thread>
 //#include <mutex>
-//#include "uart_thread.h"
-//#include "hough_thread.h"
-//#include "pnp_thread.h"
+#include <chrono>
+#include "uart_thread.h"
+#include "hough_thread.h"
+#include "pnp_thread.h"
 //#include "user_thread.h"
 #include "common.h"
 //using namespace std;
 
-void tf_main() {
-    sharedPrint("Thread MainT ID");
-}
-
-void tf_uart() {
-    sharedPrint("Thread UART ID");
-}
-
-void tf_hough() {
-    sharedPrint("Thread Hough ID");
-}
-
-void tf_pnp() {
-    sharedPrint("Thread PNP ID");
-}
 
 int main(int argc, char *argv[])
 {
-    std::thread t_main(tf_main);
-    std::thread t_uart(tf_uart);
-    std::thread t_hough(tf_hough);
-    std::thread t_pnp(tf_pnp);
+    unsigned int n = std::thread::hardware_concurrency();
+    std::cout << n << " concurrent threads are supported.\n";
 
-    sharedPrint("Thread Main ID");
+	PNPThread *pnp_thread_object = new PNPThread();
+	HoughThread *hough_thread_object = new HoughThread(256,512);
+    UARTThread *uart_thread_object = new UARTThread();
 
-    t_pnp.join();
-    t_hough.join();
-    t_uart.join();
-    t_main.join();
+    uart_thread_object->setHoughThread(hough_thread_object);
+
+	pnp_thread_object->start();
+	hough_thread_object->start();
+	uart_thread_object->start();
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+	uart_thread_object->stop();
+	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	hough_thread_object->stop();
+	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	pnp_thread_object->stop();
+	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	delete uart_thread_object;
+	delete hough_thread_object;
+	delete pnp_thread_object;
 
     return EXIT_SUCCESS;
 }

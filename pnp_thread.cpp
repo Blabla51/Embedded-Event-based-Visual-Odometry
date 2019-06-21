@@ -1,13 +1,18 @@
 #include "pnp_thread.h"
 
-PNP_Thread::PNP_Thread() {
+PNPThread::PNPThread() {
 
 }
 
-void PNP_Thread::launch() {
-    
+PNPThread::~PNPThread() {
+
 }
 
-void PNP_Thread::stop() {
-    
+void PNPThread::threadFunction() {
+	this->mutexLog.lock();
+	std::cout << "Doing my things ! PNP" << std::endl;
+	this->mutexLog.unlock();
+	this->mutexLog.lock();
+	std::cout << "Stopped my things ! PNP" << std::endl;
+	this->mutexLog.unlock();
 }

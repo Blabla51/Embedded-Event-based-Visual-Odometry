@@ -1,29 +1,34 @@
-#ifndef UART_THREAD_H
-#define UART_THREAD_H
+/*
+ * uart_thread.h
+ *
+ *  Created on: 12 juin 2019
+ *      Author: Johan
+ */
+
+#ifndef UART_THREAD_H_
+#define UART_THREAD_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <string>
-//#include "mingw.thread.h"
 #include <thread>
 #include <mutex>
+#include "common.h"
+#include "base_thread.h"
 #include "hough_thread.h"
+#include "libusb.h"
 
-
-class UART_Thread
+class UARTThread : public BaseThread
 {
 private:
-    int m_value = 0;
- 
+	HoughThread* m_ht;
+
 public:
-    Calc(int value=0): m_value(value) {}
- 
-    Calc& add(int value) { m_value  += value;  return *this; }
-    Calc& sub(int value) { m_value -= value;  return *this; }
-    Calc& mult(int value) { m_value *= value;  return *this; }
- 
-    int getValue() { return m_value ; }
+    UARTThread();
+    ~UARTThread();
+	void threadFunction();
+    void setHoughThread(HoughThread* ht);
 };
 
-#endif
+#endif /* UART_THREAD_H_ */

@@ -15,6 +15,24 @@
 #include <thread>
 #include <mutex>
 
-void sharedPrint(std::string msg);
+#define PI 3.14159265
+
+class Event {
+public:
+	unsigned int x;
+	unsigned int y;
+	bool p;
+	unsigned int t;
+	unsigned int a;
+	Event(unsigned int x, unsigned int y,bool p, unsigned int t,unsigned int a)
+	{
+		this->x = x;
+		this->y = y;
+		this->p = p;
+		this->t = t;
+		this->a = a;
+	}
+};
+//void sharedPrint(std::string msg);
 
 #endif /* COMMON_H_ */
