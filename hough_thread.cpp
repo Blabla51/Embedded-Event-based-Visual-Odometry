@@ -58,7 +58,11 @@ HoughThread::HoughThread(unsigned int hough_map_x,unsigned int hough_map_y, doub
 	}
 	this->m_rho_max = 209.3036; // Calculer le rho max
 	this->m_decay = 200*1e-6;
-	this->m_pc_exp = new double[12]; // Déterminer le nombre max de l'exp calculé
+	this->m_pc_exp = new double[1000000]; // Déterminer le nombre max de l'exp calculé
+	for(unsigned int i = 0; i < this->m_pc_exp_range; i++)
+	{
+		m_pc_exp[i] = exp(-this->m_decay*(double)(i));
+	}
 }
 
 void HoughThread::threadFunction() {
@@ -145,7 +149,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 //		this->mutexLog.unlock();
 		if(rho_index < this->m_hough_map_y)
 		{
-			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*exp(-this->m_decay*(double)(timestamp-this->m_hough_time_map[theta_index][rho_index])) + 1.0;
+			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 			if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 			{
 				if(this->m_tracking)
@@ -195,18 +199,6 @@ void HoughThread::printHoughMap()
 	this->mutexLog.unlock();
 }
 
-double HoughThread::getPCExp(unsigned int dt)
-{
-	if(dt > this->m_pc_exp_range)
-	{
-		return this->m_pc_exp[dt];
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 void HoughThread::addEvent(unsigned int x, unsigned int y, bool p, unsigned int t)
 {
 	this->m_ev_add_mutex.lock();
@@ -221,6 +213,15 @@ void HoughThread::stop()
 	this->m_ev_queue.push(Event(0,0,0,0,2));
 	this->m_ev_add_mutex.unlock();
 	BaseThread::stop();
+}
+
+double HoughThread::getPCExp(unsigned int dt)
+{
+	if(dt > this->m_pc_exp_range)
+		return 0;
+	else
+		return this->m_pc_exp[dt];
+
 }
 
 void HoughThread::activateTracking()
