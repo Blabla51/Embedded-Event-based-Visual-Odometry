@@ -91,7 +91,7 @@ void HoughThread::threadFunction() {
 				 begin = std::chrono::steady_clock::now();
 			}
 			this->computeEvent(e.x,e.y,e.t);
-			if(event_counter == 1000)
+			if(event_counter == 1000000)
 			{
 				end = std::chrono::steady_clock::now();
 			}
