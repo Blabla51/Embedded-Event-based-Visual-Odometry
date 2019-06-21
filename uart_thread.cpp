@@ -2,7 +2,7 @@
 
 UARTThread::UARTThread() {
 	this->m_ht = 0;
-	libusb_device **devs;
+	/*libusb_device **devs;
 	int r;
 	ssize_t cnt;
 
@@ -57,54 +57,9 @@ UARTThread::UARTThread() {
 
 			libusb_exit(NULL);
 		}
+	}*/
 
-
-		/*std::cout << "GET: libusb device list" << std::endl;
-		cnt = libusb_get_device_list(NULL, &devs);
-		if (cnt < 0){
-			libusb_exit(NULL);
-			this->mutex_log.lock();
-			std::cout << "Error: libusb device list" << std::endl;
-			this->mutex_log.unlock();
-		}
-		else
-		{
-			libusb_free_device_list(devs, 1);
-			libusb_device *dev;
-			int i = 0, j = 0;
-			uint8_t path[8];
-
-			while ((dev = devs[i++]) != NULL) {
-				struct libusb_device_descriptor desc;
-				int r = libusb_get_device_descriptor(dev, &desc);
-				if (r < 0) {
-					this->mutex_log.lock();
-					std::cout << "Error: libusb device descriptor" << std::endl;
-					this->mutex_log.unlock();
-				}
-				else
-				{
-					this->mutex_log.lock();
-					std::cout << desc.idVendor << ':' << desc.idProduct << " (bus " << libusb_get_bus_number(dev) << ", device " << libusb_get_device_address(dev);
-
-
-					r = libusb_get_port_numbers(dev, path, sizeof(path));
-					if (r > 0) {
-						this->mutex_log.lock();
-						std::cout << " path: " <<  path[0];
-						this->mutex_log.unlock();
-						for (j = 1; j < r; j++)
-							printf(".%d", path[j]);
-					}
-					std::cout << std::endl;
-					this->mutex_log.unlock();
-				}
-			}
-			libusb_exit(NULL);
-		}*/
-	}
-
-	std::cout << "Init ended: libusb" << std::endl;
+	std::cout << " Init ended: libusb" << std::endl;
 }
 
 UARTThread::~UARTThread() {

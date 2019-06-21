@@ -43,7 +43,13 @@ all: EclipseTest.exe
 EclipseTest.exe: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MinGW C++ Linker'
-	g++ -L"D:\libusb\MinGW64\dll" -o "EclipseTest.exe" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -o main.cpp
+	g++ -o common.cpp
+	g++ -o uart_thread.cpp
+	g++ -o pnp_thread.cpp
+	g++ -o base_thread.cpp
+	g++ -o hough_thread.cpp
+	g++ -o "EclipseTest"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
