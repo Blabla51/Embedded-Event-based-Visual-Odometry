@@ -9,7 +9,7 @@
 #include <mutex>
 #include "common.h"
 #include "base_thread.h"
-#include "libusb.h"
+//#include "libusb.h"
 
 class PNPThread : public BaseThread
 {
