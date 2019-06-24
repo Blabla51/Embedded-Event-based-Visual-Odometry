@@ -79,7 +79,7 @@ void PNPThread::threadFunction() {
 	std::this_thread::sleep_for(std::chrono::microseconds(2500));
 	std::chrono::steady_clock::time_point end;
 	begin = std::chrono::steady_clock::now();
-	for(int i = 0; i < 1000000; i++)
+	for(int i = 0; i < 100000; i++)
 	{
 		this->computePosit(image_points);
 	}
