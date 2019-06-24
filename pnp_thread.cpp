@@ -75,7 +75,18 @@ void PNPThread::threadFunction() {
 	image_points[1][2] = 36.290369665653714;
 	image_points[0][3] = 33.078213010634570;
 	image_points[1][3] = -8.072373343202950;
-	this->computePosit(image_points);
+	std::chrono::steady_clock::time_point begin;
+	std::this_thread::sleep_for(std::chrono::microseconds(2500));
+	std::chrono::steady_clock::time_point end;
+	begin = std::chrono::steady_clock::now();
+	for(int i = 0; i < 1000000; i++)
+	{
+		this->computePosit(image_points);
+	}
+	end = std::chrono::steady_clock::now();
+	this->mutexLog.lock();
+	std::cout << "Time difference POSIT = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
+	this->mutexLog.unlock();
 	image_points[0][0] = 9.256562540937647;
 	image_points[1][0] = -19.454109269458844;
 	image_points[0][1] = -16.590459545622990;
@@ -139,10 +150,10 @@ void PNPThread::computePosit(double** image_points)
 	}
 	ones1_2[0][0] = 1.0;
 	ones1_2[1][0] = 1.0;
-	dispMat(m_epsilon,4,1);
-	dispMat(ones1_2,1,2);
+	//dispMat(m_epsilon,4,1);
+	//dispMat(ones1_2,1,2);
 	multMat(m_epsilon,ones1_2,correction,4,1,2);
-	dispMat(correction,4,2);
+	//dispMat(correction,4,2);
 	// COMPUTE NEW POINTS X and XP
 	double** x = new double*[2];
 	double** xp = new double*[2];
@@ -162,7 +173,7 @@ void PNPThread::computePosit(double** image_points)
 			xp[j][i] = x[j][i]-x[j][0];
 		}
 	}
-	dispMat(xp,4,2);
+	//dispMat(xp,4,2);
 	// COMPUTE IJ
 	double** IJt = new double*[2];
 	for(int i = 0; i < 2; i++)
@@ -175,9 +186,9 @@ void PNPThread::computePosit(double** image_points)
 		IJ[i] = new double[2];
 	}
 	multMat(this->m_object_matrix, xp, IJt, 3, 4, 2);
-	dispMat(IJt,3,2);
+	//dispMat(IJt,3,2);
 	transMat(IJt,IJ,3,2);
-	dispMat(IJ,2,3);
+	//dispMat(IJ,2,3);
 	double nI = 0.0;
 	double nJ = 0.0;
 	for(int i = 0; i < 3; i++)
@@ -192,10 +203,10 @@ void PNPThread::computePosit(double** image_points)
 		IJ[i][0] = IJ[i][0]/nI;
 		IJ[i][1] = IJ[i][1]/nJ;
 	}
-	this->mutexLog.lock();
-	std::cout << "Normes: " << nI << " " << nJ << std::endl;
-	this->mutexLog.unlock();
-	dispMat(IJ,2,3);
+	//this->mutexLog.lock();
+	//std::cout << "Normes: " << nI << " " << nJ << std::endl;
+	//this->mutexLog.unlock();
+	//dispMat(IJ,2,3);
 	// COMPUTE K
 	double** k = new double*[3];
 	for(int i = 0; i<3; i++)
@@ -204,29 +215,29 @@ void PNPThread::computePosit(double** image_points)
 		k[i][0] = IJ[(i+1)%3][0]*IJ[(i+2)%3][1]-IJ[(i+1)%3][1]*IJ[(i+2)%3][0];
 		//std::cout << IJ[(i+1)%3][0] << "*" << IJ[(i+2)%3][1] << "-" << IJ[(i+1)%3][1] <<"*" << IJ[(i+2)%3][0] << std::endl;
 	}
-	dispMat(k, 1, 3);
+	//dispMat(k, 1, 3);
 	double** kt = new double*[1];
 	kt[0] = new double[3];
 	transMat(k,kt,1,3);
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
 	double Tz = Z0;
-	std::cout << "Tz " << Tz << std::endl;
+	//std::cout << "Tz " << Tz << std::endl;
 	double Tx = image_points[0][0]*Z0/this->m_focal_length;
-	std::cout << "Tx " << Tx << std::endl;
+	//std::cout << "Tx " << Tx << std::endl;
 	double Ty = image_points[1][0]*Z0/this->m_focal_length;
-	std::cout << "Ty " << Ty << std::endl;
+	//std::cout << "Ty " << Ty << std::endl;
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
-	dispMat(this->m_object_points,4,3);
+	//dispMat(this->m_object_points,4,3);
 	multMat(this->m_object_points,kt,tmp_eps,4,3,1);
-	dispMat(tmp_eps,4,1);
+	//dispMat(tmp_eps,4,1);
 	for(int i = 0; i < 4; i++)
 	{
 		this->m_epsilon[0][i] = tmp_eps[0][i]/Z0;
 	}
-	dispMat(this->m_epsilon,4,1);
+	//dispMat(this->m_epsilon,4,1);
 }
 
 void PNPThread::addEvent(double theta, double dist, unsigned int t, int line_id)
@@ -252,9 +263,9 @@ void PNPThread::multMat(double** m1, double** m2, double** res, int ligne, int i
 			for(int k = 0; k<inter; k++)
 			{
 				res[j][i] += m1[k][i]*m2[j][k];
-				std::cout << m1[k][i] <<"*" << m2[j][k] << "+";
+				//std::cout << m1[k][i] <<"*" << m2[j][k] << "+";
 			}
-			std::cout << "=" << res[j][i] << std::endl;
+			//std::cout << "=" << res[j][i] << std::endl;
 		}
 	}
 }
