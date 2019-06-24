@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     unsigned int n = std::thread::hardware_concurrency();
     std::cout << n << " concurrent threads are supported.\n";
 
-	PNPThread *pnp_thread_object = new PNPThread();
+	PNPThread *pnp_thread_object = new PNPThread(151.0);
 	HoughThread *hough_thread_object = new HoughThread(512,256);
     UARTThread *uart_thread_object = new UARTThread();
 

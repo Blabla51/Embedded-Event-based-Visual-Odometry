@@ -1,4 +1,5 @@
 #include "hough_thread.h"
+#include "pnp_thread.h"
 
 HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double zone_y, double threshold,int camera_x,int camera_y, int pc_exp_range) { // @suppress("Class members should be properly initialized")
 	//sharedPrint("Initialisation of Hough Thread");
@@ -8,6 +9,7 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 	this->m_camera_y = camera_y;
 	this->m_hough_map_x = hough_map_x;
 	this->m_hough_map_y = hough_map_y;
+	this->m_pc_exp_range = pc_exp_range;
 	this->m_last_input_event_timestamp = 0;
 
 	this->m_threshold = threshold;
@@ -33,16 +35,49 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 		}
 	}
 	this->m_look_up_dist = new double**[	this->m_camera_x];
+	std::ifstream look_up_file("./look_up.txt");
+	if(!look_up_file.is_open())
+	{
+		this->mutexLog.lock();
+		std::cout << "Error: Look-up file not opened" << std::endl;
+		this->mutexLog.unlock();
+	}
 	for(int i = 0; i<	this->m_camera_x; i++)
 	{
 		this->m_look_up_dist[i] = new double*[	this->m_camera_y];
 		for(int j = 0; j<	this->m_camera_y; j++)
 		{
 			this->m_look_up_dist[i][j] = new double[2];
-			this->m_look_up_dist[i][j][0] = 0.0; // SET CORRECT VALUE
-			this->m_look_up_dist[i][j][1] = 0.0; // SET CORRECT VALUE
+			if(look_up_file.is_open())
+			{
+				std::string tmp_input_line;
+				do {
+					std::getline(look_up_file, tmp_input_line);
+				} while(tmp_input_line.at(0) == '#');
+				std::string::size_type sz;
+				double lu_x = std::stod(tmp_input_line, &sz);
+				double lu_y = std::stod(tmp_input_line.substr(sz));
+				this->m_look_up_dist[i][j][0] = lu_x;
+				this->m_look_up_dist[i][j][1] = lu_y;
+
+			}
+			else
+			{
+				this->m_look_up_dist[i][j][0] = (double)(i);
+				this->m_look_up_dist[i][j][1] = (double)(j);
+			}
+			if(this->m_rho_max-1 < sqrt(this->m_look_up_dist[i][j][0]*this->m_look_up_dist[i][j][0] + this->m_look_up_dist[i][j][1]*this->m_look_up_dist[i][j][1]))
+			{
+				this->m_rho_max = sqrt(this->m_look_up_dist[i][j][0]*this->m_look_up_dist[i][j][0] + this->m_look_up_dist[i][j][1]*this->m_look_up_dist[i][j][1]) + 1;
+			}
 		}
 	}
+	look_up_file.close();
+#if DEBUG == DEBUG_YES
+	this->mutexLog.lock();
+	std::cout << "Rho max: " << this->m_rho_max << std::endl;
+	this->mutexLog.unlock();
+#endif
 	this->m_pc_theta = new double[this->m_hough_map_x];
 	this->m_pc_cos = new double[this->m_hough_map_x];
 	this->m_pc_sin = new double[this->m_hough_map_x];
@@ -52,10 +87,9 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 		this->m_pc_cos[i] = cos(this->m_pc_theta[i]);
 		this->m_pc_sin[i] = sin(this->m_pc_theta[i]);
 	}
-	this->m_rho_max = 209.3036; // Calculer le rho max
 	this->m_decay = 200*1e-6;
-	this->m_pc_exp = new double[PC_EXP_RANGE]; // Déterminer le nombre max de l'exp calculé
-	for(unsigned int i = 0; i < PC_EXP_RANGE; i++)
+	this->m_pc_exp = new double[this->m_pc_exp_range]; // Déterminer le nombre max de l'exp calculé
+	for(int i = 0; i < this->m_pc_exp_range; i++)
 	{
 		m_pc_exp[i] = exp(-this->m_decay*(double)(i));
 	}
@@ -68,16 +102,16 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 			this->m_pc_hough_coord[i][j] = new int[this->m_hough_map_x];
 			for(int k = 0;k < this->m_hough_map_x; k++)
 			{
-				double rho = (double)((int)i - (int)(this->m_camera_x >> 1))*this->m_pc_cos[k]+(double)((int)j - (int)(this->m_camera_y >> 1))*this->m_pc_sin[k];
+				double rho = (double)((int)m_look_up_dist[i][j][0] - (int)(this->m_camera_x >> 1))*this->m_pc_cos[k]+(double)((int)this->m_look_up_dist[i][j][1] - (int)(this->m_camera_y >> 1))*this->m_pc_sin[k];
 				int rho_index = (int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y));
 				this->m_pc_hough_coord[i][j][k] = rho_index;
-				//std::cout << i << " " << j << " " << k << " " << rho_index << std::endl;
 			}
 		}
 	}
 }
 
 void HoughThread::threadFunction() {
+	this->m_is_launched = true;
 	this->mutexLog.lock();
 	std::cout << "Doing my things ! Hough" << std::endl;
 	this->mutexLog.unlock();
@@ -222,7 +256,7 @@ void HoughThread::stop()
 
 double HoughThread::getPCExp(int dt)
 {
-	if(dt > PC_EXP_RANGE)
+	if(dt > this->m_pc_exp_range)
 		return 0;
 	else
 		return this->m_pc_exp[dt];

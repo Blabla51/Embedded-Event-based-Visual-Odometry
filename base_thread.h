@@ -36,6 +36,7 @@ public:
     virtual ~BaseThread();
     void start();
     void stop();
+    bool isWorking();
 };
 
 

@@ -16,7 +16,13 @@
 #include <mutex>
 
 #define PI 3.14159265
-#define PC_EXP_RANGE 1000000
+
+#define DEBUG_NO
+#define DEBUG_YES 1
+#define DEBUG DEBUG_YES
+#define WINDOWS 0
+#define LINUX 1
+#define OS WINDOWS
 
 class Event {
 public:
@@ -31,6 +37,23 @@ public:
 		this->y = y;
 		this->p = p;
 		this->t = t;
+		this->a = a;
+	}
+};
+
+class HoughEvent {
+public:
+	double theta;
+	double dist;
+	unsigned int t;
+	int line_id;
+	unsigned int a;
+	HoughEvent(double theta, double dist,unsigned int t, int line_id,unsigned int a)
+	{
+		this->theta = theta;
+		this->dist = dist;
+		this->t = t;
+		this->line_id = line_id;
 		this->a = a;
 	}
 };

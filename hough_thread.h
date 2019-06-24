@@ -10,9 +10,11 @@
 #include <cmath>
 #include <queue>
 #include <atomic>
+#include <fstream>
 #include "common.h"
-#include "pnp_thread.h"
 #include "base_thread.h"
+
+class PNPThread;
 
 class HoughThread : public BaseThread
 {
@@ -22,6 +24,7 @@ private:
 	int 	m_camera_x;
 	int 	m_camera_y;
 	int 	m_last_input_event_timestamp;
+	int 	m_pc_exp_range;
 	double 			m_threshold;
 	double			m_decay;
 	double 			m_rho_max;

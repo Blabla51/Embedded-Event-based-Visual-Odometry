@@ -58,3 +58,7 @@ void BaseThread::initThread() {
 	//std::cout << std::cout << typeid(this).name() << '\n';
 	this->threadFunction();
 }
+
+bool BaseThread::isWorking() {
+	return this->m_is_launched & this->m_is_started & !this->m_stop;
+}

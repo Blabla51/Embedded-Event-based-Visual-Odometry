@@ -67,6 +67,7 @@ UARTThread::~UARTThread() {
 }
 
 void UARTThread::threadFunction() {
+	this->m_is_launched = true;
 	this->mutexLog.lock();
 	std::cout << "Doing my things ! UART" << std::endl;
 	this->mutexLog.unlock();
