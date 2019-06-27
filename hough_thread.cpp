@@ -108,6 +108,11 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 			}
 		}
 	}
+	this->m_pc_rho = new double[this->m_hough_map_y];
+	for(int i = 0; i < this->m_hough_map_y; i++)
+	{
+		this->m_pc_rho[i] = (double)(i)/(double)(this->m_hough_map_y)*m_rho_max;
+	}
 }
 
 void HoughThread::threadFunction() {
@@ -156,6 +161,7 @@ void HoughThread::threadFunction() {
 			this->mutexLog.lock();
 			std::cout << "Unknown Hough event: " << e.a << std::endl;
 			this->mutexLog.unlock();
+			break;
 		}
 	}while(!tmp_stop);
 	this->mutexLog.lock();
@@ -185,40 +191,49 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 
 		}
 		rho_index = this->m_pc_hough_coord[x][y][theta_index];
-		if(rho_index < this->m_hough_map_y && rho_index > 0)
+		if(rho_index < this->m_hough_map_y && rho_index >= 0)
 		{
 			//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;
-			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
+			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]/**this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index])*/ + 1.0;
 			if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 			{
 				if(this->m_tracking)
 				{
-					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
+					if(this->m_pnpt->getFilterValue(theta_index,rho_index) > 0)
 					{
-						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
+						for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
 						{
-							if(j+rho_index < 0)
+							for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 							{
-								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][-rho_index+j+1] = 0.0;
-							}
-							else
-							{
-								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 0.0;
+								if(j+rho_index < 0)
+								{
+									this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][-rho_index+j+1] = 0.0;
+								}
+								else
+								{
+									this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 0.0;
+								}
 							}
 						}
+						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,this->m_pnpt->getFilterValue(theta_index,rho_index));
 					}
 				}
 				else
 				{
 					this->m_hough_map[theta_index][rho_index] = 0.0;
+					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+//					this->mutexLog.lock();
+//					std::cout << "Emit event:" << this->m_pc_theta[theta_index] << " " << this->m_pc_rho[rho_index] << " with " << x << " " << y << " " << timestamp << std::endl;
+//					this->mutexLog.unlock();
 				}
-//				this->mutexLog.lock();
-//				std::cout << "Emit event" << std::endl;
-//				this->mutexLog.unlock();
 			}
 			this->m_hough_time_map[theta_index][rho_index] = timestamp;
 		}
 	}
+//	if(timestamp == 13625559)
+//	{
+//		this->printHoughMap();
+//	}
 	this->m_last_input_event_timestamp = timestamp;
 	return nbr_event_generated;
 }
@@ -266,9 +281,55 @@ double HoughThread::getPCExp(int dt)
 void HoughThread::activateTracking()
 {
 	this->m_tracking = true;
+	this->printFilteringMap();
 }
 
 void HoughThread::setPNPThread(PNPThread* pnpt)
 {
 	this->m_pnpt = pnpt;
+}
+
+int HoughThread::getMapX()
+{
+	while(this->m_hough_map_x <= 0);
+	return this->m_hough_map_x;
+}
+
+int HoughThread::getMapY()
+{
+	while(this->m_hough_map_y <= 0);
+	return this->m_hough_map_y;
+}
+
+int HoughThread::getZoneX()
+{
+	while(this->m_zone_x <= 0);
+	return this->m_zone_x;
+}
+
+int HoughThread::getZoneY()
+{
+	while(this->m_zone_y <= 0);
+	return this->m_zone_y;
+}
+
+double HoughThread::getRhoMax()
+{
+	while(this->m_rho_max < 0.001);
+	return this->m_rho_max;
+}
+
+void HoughThread::printFilteringMap()
+{
+	this->mutexLog.lock();
+	for(int i = 0; i < this->m_hough_map_y; i++)
+	{
+		std::cout << i << ": " ;
+		for(int j = 0; j < this->m_hough_map_x; j++)
+		{
+			std::cout << this->m_pnpt->getFilterValue(j,i) << " ";
+		}
+		std::cout << std::endl;
+	}
+	this->mutexLog.unlock();
 }

@@ -72,15 +72,41 @@ void UARTThread::threadFunction() {
 	std::cout << "Doing my things ! UART" << std::endl;
 	this->mutexLog.unlock();
 //	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	for(int i = 0; i < 100000; i++)
+//	for(int i = 0; i < 100000; i++)
+//	{
+//		this->m_ht->addEvent(112,8,true,1);
+//	}
+#if MODE == MODE_OFFLINE
+	std::ifstream event_file("./tetra_move_y_x_r.csv");
+	if(!event_file.is_open())
 	{
-		this->m_ht->addEvent(112,8,true,1);
+		this->mutexLog.lock();
+		std::cout << "Error: Event file not opened" << std::endl;
+		this->mutexLog.unlock();
 	}
+	else
+	{
+		std::string tmp_input_line;
+		std::string::size_type sz;
+		std::getline(event_file, tmp_input_line); //Remove header of the CSV
+		int x,y,p,t;
+		while (std::getline(event_file, tmp_input_line)) {
+			x = std::stoi(tmp_input_line, &sz);
+			tmp_input_line = tmp_input_line.substr(sz+1);
+			y = std::stoi(tmp_input_line, &sz);
+			tmp_input_line = tmp_input_line.substr(sz+1);
+			p = std::stoi(tmp_input_line, &sz);
+			tmp_input_line = tmp_input_line.substr(sz+1);
+			t = std::stoi(tmp_input_line);
+			this->m_ht->addEvent(x,y,p==1,t);
+		}
+	}
+#endif
 //	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
-//	this->mutexLog.lock();
+	this->mutexLog.lock();
 //	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() <<std::endl;
-//	std::cout << "Stopped my things ! UART" << std::endl;
-//	this->mutexLog.unlock();
+	std::cout << "Stopped my things ! UART" << std::endl;
+	this->mutexLog.unlock();
 }
 
 void UARTThread::setHoughThread(HoughThread* ht)

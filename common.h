@@ -17,12 +17,18 @@
 
 #define PI 3.14159265
 
-#define DEBUG_NO
+#define DEBUG_NO 0
 #define DEBUG_YES 1
-#define DEBUG DEBUG_YES
+
 #define WINDOWS 0
 #define LINUX 1
+
+#define MODE_ONLINE 0
+#define MODE_OFFLINE 1
+
+#define DEBUG DEBUG_YES
 #define OS WINDOWS
+#define MODE MODE_OFFLINE
 
 class Event {
 public:

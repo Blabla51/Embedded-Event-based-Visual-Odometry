@@ -8,6 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <queue>
+#include <algorithm>
 #include "common.h"
 #include "base_thread.h"
 //#include "libusb.h"
@@ -21,9 +22,19 @@ private:
 	double** 	m_epsilon;
 	double** 	m_object_points;
 	double** 	m_object_matrix;
+	int			m_nbr_lines_identified;
+	double**	m_line_parameters;
+	double**	m_line_inters;
+	int**	m_filtering_array;
+	double 		m_confidence_coef;
+	int** 		m_current_filter_centers;
+	int			m_ht_rho_max;
+	int 		m_ht_map_x;
+	int 		m_ht_map_y;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
+	std::mutex 			m_filter_mutex;
 	HoughThread*		m_ht;
 
 	void multMat(double** m1, double** m2, double** res, int ligne, int inter, int colonne);
@@ -32,15 +43,19 @@ private:
 
 public:
 	void threadFunction();
-	PNPThread(double focal_length);
+	PNPThread(double focal_length,HoughThread* ht);
     ~PNPThread();
 
     void stop();
 
     void addEvent(double theta, double dist, unsigned int t, int line_id);
     void computeEvent(double theta, double dist, unsigned int t, int line_id);
-    void computePosit(double** image_points);
-    void setHoughThread(HoughThread* ht);
+    void computeLineIntersection();
+    void computePosit();
+    void updateFilteringArray();
+    void updateLineParameters(double theta, double dist, bool rotated, int line_id);
+    int getFilterValue(int t, int d);
+    void printFilteringMap();
 };
 
 #endif

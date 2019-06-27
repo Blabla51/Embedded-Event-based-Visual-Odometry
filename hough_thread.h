@@ -37,7 +37,8 @@ private:
 	double* 		m_pc_cos;
 	double* 		m_pc_sin;
 	double* 		m_pc_exp;
-	int*** 	m_pc_hough_coord;
+	double*			m_pc_rho;
+	int*** 			m_pc_hough_coord;
 	std::atomic<bool>	m_tracking;
 	std::queue<Event>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
@@ -55,9 +56,15 @@ public:
 
 	int computeEvent(unsigned int x, unsigned int y, unsigned int timestamp);
     void printHoughMap();
+    void printFilteringMap();
     void addEvent(unsigned int x, unsigned int y, bool p, unsigned int t);
     void activateTracking();
     void setPNPThread(PNPThread* pnpt);
+    int getMapX();
+    int getMapY();
+    int getZoneX();
+    int getZoneY();
+    double getRhoMax();
 };
 
 #endif
