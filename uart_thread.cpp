@@ -69,7 +69,7 @@ UARTThread::UARTThread() {
 		}
 	}*/
 
-	std::cout << " Init ended: RS232" << std::endl;
+	std::cout << "Init ended: RS232" << std::endl;
 }
 
 UARTThread::~UARTThread() {

@@ -130,7 +130,7 @@ void HoughThread::threadFunction() {
 		while(this->m_ev_queue.empty())
 		{
 			this->mutexLog.lock();
-			std::cout << "Waiting Event " << std::endl;
+			std::cout << "Waiting Event" << std::endl;
 			this->mutexLog.unlock();
 			this->m_main_loop_cv.wait(lck);
 		}
@@ -182,23 +182,41 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 {
 	int nbr_event_generated = 0;
 	int rho_index = 0;
-	for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
+	if(!this->m_tracking)
 	{
-		rho_index = this->m_pc_hough_coord[x][y][theta_index];
-		if(rho_index < this->m_hough_map_y && rho_index >= 0)
+		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 		{
-			if(this->m_tracking)
+			rho_index = this->m_pc_hough_coord[x][y][theta_index];
+			if(rho_index < this->m_hough_map_y && rho_index >= 0)
+			{
+				//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;
+				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]/**this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index])*/ + 1.0;
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
+				{
+					this->m_hough_map[theta_index][rho_index] = 0.0;
+					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+//					this->mutexLog.lock();
+//					std::cout << "Emit event:" << this->m_pc_theta[theta_index] << " " << this->m_pc_rho[rho_index] << " with " << x << " " << y << " " << timestamp << std::endl;
+//					this->mutexLog.unlock();
+				}
+				this->m_hough_time_map[theta_index][rho_index] = timestamp;
+			}
+		}
+
+	}
+	else
+	{
+		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
+		{
+			rho_index = this->m_pc_hough_coord[x][y][theta_index];
+			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				if(this->m_pnpt->getFilterValue(theta_index,rho_index) > 0)
 				{
 					continue;
 				}
-			}
-			//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;
-			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]/**this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index])*/ + 1.0;
-			if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
-			{
-				if(this->m_tracking)
+				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]/**this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index])*/ + 1.0;
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 				{
 					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
 					{
@@ -216,16 +234,8 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					}
 					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,this->m_pnpt->getFilterValue(theta_index,rho_index));
 				}
-				else
-				{
-					this->m_hough_map[theta_index][rho_index] = 0.0;
-					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
-//					this->mutexLog.lock();
-//					std::cout << "Emit event:" << this->m_pc_theta[theta_index] << " " << this->m_pc_rho[rho_index] << " with " << x << " " << y << " " << timestamp << std::endl;
-//					this->mutexLog.unlock();
-				}
+				this->m_hough_time_map[theta_index][rho_index] = timestamp;
 			}
-			this->m_hough_time_map[theta_index][rho_index] = timestamp;
 		}
 	}
 //	if(timestamp == 13625559)
