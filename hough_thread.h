@@ -11,6 +11,7 @@
 #include <queue>
 #include <atomic>
 #include <fstream>
+#include <future>
 #include "common.h"
 #include "base_thread.h"
 

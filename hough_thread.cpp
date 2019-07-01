@@ -194,6 +194,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 				{
 					this->m_hough_map[theta_index][rho_index] = 0.0;
+//					std::future<void> f = std::async(std::launch::async,&PNPThread::addEvent, this->m_pnpt, this->m_pc_theta[theta_index], this->m_pc_rho[rho_index],timestamp,-1);
 					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 //					this->mutexLog.lock();
 //					std::cout << "Emit event:" << this->m_pc_theta[theta_index] << " " << this->m_pc_rho[rho_index] << " with " << x << " " << y << " " << timestamp << std::endl;

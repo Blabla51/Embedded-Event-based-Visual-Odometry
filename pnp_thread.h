@@ -11,6 +11,7 @@
 #include <algorithm>
 #include "common.h"
 #include "base_thread.h"
+#include <future>
 //#include "libusb.h"
 
 class HoughThread;
