@@ -232,7 +232,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			dt = std::min(std::abs(theta-this->m_line_parameters[i][0]), std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[i][0]));
 			if(dt == std::abs(theta-this->m_line_parameters[i][0]))
 			{
-				dd = abs(dist-this->m_line_parameters[i][1]);
+				dd = std::abs(dist-this->m_line_parameters[i][1]);
 				rotated = false;
 			}
 			else
