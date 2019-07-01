@@ -27,9 +27,13 @@ PNPThread::PNPThread(double fl, HoughThread* ht) {
 	}
 
 	this->m_filtering_array = new int*[this->m_ht_map_x];
-	for(int i = 0; i < ht->getMapX(); i++)
+	for(int i = 0; i < this->m_ht_map_x; i++)
 	{
 		this->m_filtering_array[i] = new int[this->m_ht_map_y];
+		for(int j = 0; j < this->m_ht_map_y; j++)
+		{
+			this->m_filtering_array[i][j] = 0;
+		}
 	}
 
 	this->m_line_inters = new double*[4];
@@ -133,17 +137,34 @@ void PNPThread::threadFunction() {
 	this->computePosit(image_points);*/
 	bool tmp_stop = false;
 	do {
+#if DEBUG == DEBUG_YES
+		this->mutexLog.lock();
+		std::cout << "Checking Hough Event" << std::endl;
+		this->mutexLog.unlock();
+#endif
 		while(this->m_ev_queue.empty())
 		{
+#if DEBUG == DEBUG_YES
 			this->mutexLog.lock();
-			std::cout << "Waiting event " << std::endl;
+			std::cout << "Waiting Hough Event" << std::endl;
 			this->mutexLog.unlock();
+#endif
 			this->m_main_loop_cv.wait(lck);
 		}
+#if DEBUG == DEBUG_YES
+		this->mutexLog.lock();
+		std::cout << "Hough Event received" << std::endl;
+		this->mutexLog.unlock();
+#endif
 		this->m_ev_add_mutex.lock();
 		HoughEvent e = this->m_ev_queue.front();
 		this->m_ev_queue.pop();
 		this->m_ev_add_mutex.unlock();
+#if DEBUG == DEBUG_YES
+		this->mutexLog.lock();
+		std::cout << "Interpreting Hough Event" << std::endl;
+		this->mutexLog.unlock();
+#endif
 		switch(e.a)
 		{
 		case 1:
@@ -168,7 +189,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 {
 	if(this->m_nbr_lines_identified == 4)
 	{
-		if(line_id >= 0)
+		if(line_id-- > 0)
 		{
 			bool rotated;
 			if(std::abs(theta-this->m_line_parameters[line_id][0]) < std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[line_id][0]))
@@ -180,15 +201,16 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				rotated = true;
 			}
 			this->updateLineParameters(theta,dist,rotated,line_id);
+			this->computeLineIntersection();
 			this->computePosit();
 			this->updateFilteringArray();
 		}
 		else
 		{
 #if DEBUG == DEBUG_YES
-		this->mutexLog.lock();
+		/*this->mutexLog.lock();
 		std::cout << "Warning: lines identified but still not line id." << std::endl;
-		this->mutexLog.unlock();
+		this->mutexLog.unlock();*/
 #endif
 		}
 	}
@@ -506,26 +528,46 @@ void PNPThread::transMat(double** matrix, double** res, int ligne, int colonne)
 
 void PNPThread::updateFilteringArray()
 {
-	int zone_x = this->m_ht->getZoneX();
-	int zone_y = this->m_ht->getZoneY();
-	printFilteringMap();
+	int zone_x = 10;//this->m_ht->getZoneX();
+	int zone_y = 10;//this->m_ht->getZoneY();
+	//printFilteringMap();
 	for(int i = 0; i < 4; i++)
 	{
+#if DEBUG >= DEBUG_HARD
+		this->mutexLog.lock();
+		std::cout << "Computing indexes" << std::endl;
+		this->mutexLog.unlock();
+#endif
 		int rho_index = (int)round(this->m_line_parameters[i][1]/this->m_ht_rho_max*(double)(this->m_ht_map_y));
 		int theta_index = (int)round(this->m_line_parameters[i][0]*this->m_ht_map_x/2.0/PI);
+#if DEBUG == DEBUG_YES
+		this->mutexLog.lock();
+		std::cout << "Filtering array: rho_i=" << rho_index << " theta_i=" << theta_index << std::endl;
+		this->mutexLog.unlock();
+#endif
 		if(this->m_current_filter_centers[i][0] != theta_index && this->m_current_filter_centers[i][1] != rho_index)
 		{
 			this->m_filter_mutex.lock();
-			for(int j = -zone_x; j < zone_x; j++)
+			for(int j = -zone_x; j <= zone_x; j++)
 			{
-				for(int k = -zone_y; k < zone_y; k++)
+				for(int k = -zone_y; k <= zone_y; k++)
 				{
 					if(this->m_current_filter_centers[i][1]+k >= 0)
 					{
+#if DEBUG >= DEBUG_HARD
+						this->mutexLog.lock();
+						std::cout << "Filtering array reset: rho_i=" << std::min(this->m_current_filter_centers[i][1]+k,this->m_ht_map_y) << " theta_i=" << (this->m_current_filter_centers[i][0]+j+this->m_ht_map_x)%this->m_ht_map_x << std::endl;
+						this->mutexLog.unlock();
+#endif
 						this->m_filtering_array[(this->m_current_filter_centers[i][0]+j+this->m_ht_map_x)%this->m_ht_map_x][std::min(this->m_current_filter_centers[i][1]+k,this->m_ht_map_y)] = 0;
 					}
 					else
 					{
+#if DEBUG >= DEBUG_HARD
+						this->mutexLog.lock();
+						std::cout << "Filtering array reset reverse: rho_i=" << (-(this->m_current_filter_centers[i][1]+k)-1) << " theta_i=" << (this->m_current_filter_centers[i][0]+j+(this->m_ht_map_x >> 1))%this->m_ht_map_x << std::endl;
+						this->mutexLog.unlock();
+#endif
 						this->m_filtering_array[(this->m_current_filter_centers[i][0]+j+(this->m_ht_map_x >> 1))%this->m_ht_map_x][(-(this->m_current_filter_centers[i][1]+k)-1)] = 0;
 					}
 				}
@@ -540,18 +582,28 @@ void PNPThread::updateFilteringArray()
 				{
 					if(this->m_current_filter_centers[i][1]+k >= 0)
 					{
-						this->m_filtering_array[(theta_index+j)%this->m_ht_map_x][std::min(theta_index+j,this->m_ht_map_y)] = i+1;
+#if DEBUG >= DEBUG_HARD
+						this->mutexLog.lock();
+						std::cout << "Filtering array set: rho_i=" << std::min(this->m_current_filter_centers[i][1]+k,this->m_ht_map_y) << " theta_i=" << (this->m_current_filter_centers[i][0]+j+this->m_ht_map_x)%this->m_ht_map_x << std::endl;
+						this->mutexLog.unlock();
+#endif
+						this->m_filtering_array[(this->m_current_filter_centers[i][0]+j+this->m_ht_map_x)%this->m_ht_map_x][std::min(this->m_current_filter_centers[i][1]+k,this->m_ht_map_y)] = i+1;
 					}
 					else
 					{
-						this->m_filtering_array[(theta_index+j+(this->m_ht_map_x >> 1))%this->m_ht_map_x][(-(theta_index+j)-1)] = i+1;
+#if DEBUG >= DEBUG_HARD
+						this->mutexLog.lock();
+						std::cout << "Filtering array set reverse: rho_i=" << (-(this->m_current_filter_centers[i][1]+k)-1) << " theta_i=" << (this->m_current_filter_centers[i][0]+j+(this->m_ht_map_x >> 1))%this->m_ht_map_x << std::endl;
+						this->mutexLog.unlock();
+#endif
+						this->m_filtering_array[(this->m_current_filter_centers[i][0]+j+(this->m_ht_map_x >> 1))%this->m_ht_map_x][(-(this->m_current_filter_centers[i][1]+k)-1)] = i+1;
 					}
 				}
 			}
 			this->m_filter_mutex.unlock();
 		}
 	}
-	printFilteringMap();
+	//printFilteringMap();
 }
 
 void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id)
@@ -599,11 +651,13 @@ void PNPThread::computeLineIntersection()
     		this->m_line_inters[i][1] = y;
 		}
 
+#if DEBUG == DEBUG_YES
 		std::cout << "Detected intersections:" << std::endl;
 		for(int i = 0; i < 4; i++)
 		{
 			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
 		}
+#endif
 	}
 }
 

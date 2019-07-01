@@ -130,7 +130,7 @@ void HoughThread::threadFunction() {
 		while(this->m_ev_queue.empty())
 		{
 			this->mutexLog.lock();
-			std::cout << "Waiting event " << std::endl;
+			std::cout << "Waiting Event " << std::endl;
 			this->mutexLog.unlock();
 			this->m_main_loop_cv.wait(lck);
 		}
@@ -146,10 +146,6 @@ void HoughThread::threadFunction() {
 				 begin = std::chrono::steady_clock::now();
 			}
 			this->computeEvent(e.x,e.y,e.t);
-			if(event_counter == 100000)
-			{
-				end = std::chrono::steady_clock::now();
-			}
 //			this->mutexLog.lock();
 //			std::cout << "Adding event " << e.x << " " << e.y << std::endl;
 //			this->mutexLog.unlock();
@@ -164,8 +160,10 @@ void HoughThread::threadFunction() {
 			break;
 		}
 	}while(!tmp_stop);
+	end = std::chrono::steady_clock::now();
 	this->mutexLog.lock();
 	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
+	std::cout << "Time for one event = " << (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())/(double)(event_counter) <<std::endl;
 	this->mutexLog.unlock();
 	//this->computeEvent(110,37,0);
 	//this->printHoughMap();
@@ -186,37 +184,37 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 	int rho_index = 0;
 	for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 	{
-		if(this->m_tracking)
-		{
-
-		}
 		rho_index = this->m_pc_hough_coord[x][y][theta_index];
 		if(rho_index < this->m_hough_map_y && rho_index >= 0)
 		{
+			if(this->m_tracking)
+			{
+				if(this->m_pnpt->getFilterValue(theta_index,rho_index) > 0)
+				{
+					continue;
+				}
+			}
 			//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;
 			this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]/**this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index])*/ + 1.0;
 			if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 			{
 				if(this->m_tracking)
 				{
-					if(this->m_pnpt->getFilterValue(theta_index,rho_index) > 0)
+					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
 					{
-						for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
+						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
+							if(j+rho_index < 0)
 							{
-								if(j+rho_index < 0)
-								{
-									this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][-rho_index+j+1] = 0.0;
-								}
-								else
-								{
-									this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 0.0;
-								}
+								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][-rho_index-j-1] = 0.0;
+							}
+							else
+							{
+								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 0.0;
 							}
 						}
-						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,this->m_pnpt->getFilterValue(theta_index,rho_index));
 					}
+					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,this->m_pnpt->getFilterValue(theta_index,rho_index));
 				}
 				else
 				{
@@ -281,7 +279,7 @@ double HoughThread::getPCExp(int dt)
 void HoughThread::activateTracking()
 {
 	this->m_tracking = true;
-	this->printFilteringMap();
+	//this->printFilteringMap();
 }
 
 void HoughThread::setPNPThread(PNPThread* pnpt)

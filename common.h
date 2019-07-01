@@ -19,6 +19,7 @@
 
 #define DEBUG_NO 0
 #define DEBUG_YES 1
+#define DEBUG_HARD 2
 
 #define WINDOWS 0
 #define LINUX 1
@@ -26,7 +27,7 @@
 #define MODE_ONLINE 0
 #define MODE_OFFLINE 1
 
-#define DEBUG DEBUG_YES
+#define DEBUG DEBUG_NO
 #define OS WINDOWS
 #define MODE MODE_OFFLINE
 

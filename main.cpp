@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	hough_thread_object->start();
 	uart_thread_object->start();
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(100000));
 
 	uart_thread_object->stop();
 	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));

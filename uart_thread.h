@@ -17,12 +17,14 @@
 #include "common.h"
 #include "base_thread.h"
 #include "hough_thread.h"
+#include "rs232.h"
 //#include "libusb.h"
 
 class UARTThread : public BaseThread
 {
 private:
 	HoughThread* m_ht;
+	int m_fd;
 
 public:
     UARTThread();
