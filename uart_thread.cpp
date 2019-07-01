@@ -2,7 +2,7 @@
 
 UARTThread::UARTThread() {
 	this->m_ht = 0;
-	this->m_fd = -2;
+	this->m_fd = -2;/*
 #if OS == WINDOWS
 	this->m_fd = RS232_OpenComport(7,12000000,"8N1",1);
 #elif OF == LINUX
@@ -11,7 +11,7 @@ UARTThread::UARTThread() {
 	this->mutexLog.lock();
 	std::cout << "File descriptor: " << this->m_fd << std::endl;
 	this->mutexLog.unlock();
-	RS232_CloseComport(this->m_fd);
+	RS232_CloseComport(this->m_fd);/*
 	/*libusb_device **devs;
 	int r;
 	ssize_t cnt;
