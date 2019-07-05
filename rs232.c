@@ -285,7 +285,7 @@ http://man7.org/linux/man-pages/man3/termios.3.html
 	  if (ioctl(Cport[comport_number], TIOCGSERIAL, &serinfo) < 0)
 		  return -1;
 	  if (serinfo.custom_divisor * baudrate != serinfo.baud_base) {
-		  warnx("actual baudrate is %d / %d = %f",
+		  perror("actual baudrate is %d / %d = %f",
 				serinfo.baud_base, serinfo.custom_divisor,
 				(float)serinfo.baud_base / serinfo.custom_divisor);
 	  }
