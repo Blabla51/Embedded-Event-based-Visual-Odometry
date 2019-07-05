@@ -33,11 +33,12 @@ int main(int argc, char *argv[])
 	hough_thread_object->start();
 	uart_thread_object->start();
 #if OS == OS_LINUX
-	const int fd = fileno(stdin);
-	const int fcflags = fcntl(fd,F_GETFL);
-	if (fcflags<0) { /* handle error */}
-	if (fcntl(fd,F_SETFL,fcflags | O_NONBLOCK) <0) { /* handle error */}
-	cout << "Char:" << stdin->getchar() << std::endl;
+//	const int fd = fileno(stdin);
+//	const int fcflags = fcntl(fd,F_GETFL);
+//	if (fcflags<0) { /* handle error */}
+//	if (fcntl(fd,F_SETFL,fcflags | O_NONBLOCK) <0) { /* handle error */}
+//	std::cout << "Char:" << stdin->getchar() << std::endl;
+	std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 #elif OS == OS_WINDOWS
 	std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 #endif
