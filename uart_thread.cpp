@@ -1,8 +1,20 @@
 #include "uart_thread.h"
 
-UARTThread::UARTThread() {
+UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	this->m_ht = 0;
 	this->m_fd = -1;
+	this->m_baf_time = 1000;
+	this->m_camera_x = camera_x;
+	this->m_camera_y = camera_y;
+	this->m_baf_time_array = new unsigned int*[this->m_camera_x];
+	for(int i = 0; i < this->m_camera_x; i++)
+	{
+		this->m_baf_time_array[i] = new unsigned int[this->m_camera_y];
+		for(int j; j < this->m_camera_y; j++)
+		{
+			this->m_baf_time_array[i][j] = 0;
+		}
+	}
 #if MODE == MODE_ONLINE
 #if OS == OS_WINDOWS
 	this->m_fd = RS232_GetPortnr("COM8");
@@ -130,9 +142,9 @@ void UARTThread::threadFunction() {
 	int byte_received = 0;
 	int event_before_begin = 0;
 	unsigned int event_received_global = 0;
+	unsigned int event_sended_global = 0;
 	unsigned int first_time = 0;
 	bool event_received = false;
-	unsigned int y, x, p, c, t;
 	unsigned int last_time = 0;
 	RS232_flushRX(this->m_fd);
 	RS232_cputs(this->m_fd, "E+\n");
@@ -151,6 +163,7 @@ void UARTThread::threadFunction() {
 			}
 			while((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
 			{
+				unsigned int t;
 				t = 0;
 				t += 16777216*event_buf[(tail+3)%SIZE_BUFFER_EVENT];
 				t += 65536*event_buf[(tail+4)%SIZE_BUFFER_EVENT];
@@ -187,6 +200,7 @@ void UARTThread::threadFunction() {
 			}
 			while((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
 			{
+				unsigned int y, x, p, c, t;
 				y = event_buf[(tail+1)%SIZE_BUFFER_EVENT] & 0x7f;
 				c = (event_buf[(tail+1)%SIZE_BUFFER_EVENT] &0x80) >> 7;
 				x = event_buf[(tail+2)%SIZE_BUFFER_EVENT] & 0x7f;
@@ -249,6 +263,7 @@ void UARTThread::threadFunction() {
 			}
 			while((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
 			{
+				unsigned int y, x, p, c, t;
 				y = event_buf[(tail+1)%SIZE_BUFFER_EVENT] & 0x7f;
 				c = (event_buf[(tail+1)%SIZE_BUFFER_EVENT] &0x80) >> 7;
 				x = event_buf[(tail+2)%SIZE_BUFFER_EVENT] & 0x7f;
@@ -282,7 +297,24 @@ void UARTThread::threadFunction() {
 				}
 				last_time = t;
 				tail = (tail+6)%SIZE_BUFFER_EVENT;
-				this->m_ht->addEvent(x,y,p==1,t);
+				unsigned char tx = x >> 1;
+				unsigned char ty = y >> 1;
+				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
+				{
+					event_sended_global++;
+					this->m_ht->addEvent(x,y,p==1,t);
+				}
+				if(tx > 0 && tx < this->m_camera_x-1 && ty > 0 && ty < this->m_camera_y-1)
+				{
+					this->m_baf_time_array[tx+1][ty+1] = t;
+					this->m_baf_time_array[tx  ][ty+1] = t;
+					this->m_baf_time_array[tx-1][ty+1] = t;
+					this->m_baf_time_array[tx+1][ty  ] = t;
+					this->m_baf_time_array[tx-1][ty  ] = t;
+					this->m_baf_time_array[tx+1][ty-1] = t;
+					this->m_baf_time_array[tx  ][ty-1] = t;
+					this->m_baf_time_array[tx-1][ty-1] = t;
+				}
 			}
 			if(event_received)
 			{
@@ -296,7 +328,7 @@ void UARTThread::threadFunction() {
 #endif
 //	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
 	this->mutexLog.lock();
-	std::cout << "Event created by UART: " << event_received_global << std::endl;
+	std::cout << "Event created by UART: " << event_received_global << " sended: " << event_sended_global << std::endl;
 	std::cout << "Times: " << last_time << "-" << first_time << "=" << last_time-first_time << std::endl;
 //	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() <<std::endl;
 	std::cout << "Stopped my things ! UART" << std::endl;

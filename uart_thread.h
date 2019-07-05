@@ -25,9 +25,13 @@ class UARTThread : public BaseThread
 private:
 	HoughThread* m_ht;
 	int m_fd;
+	unsigned int** m_baf_time_array;
+	int m_baf_time;
+	int m_camera_x;
+	int m_camera_y;
 
 public:
-    UARTThread();
+    UARTThread(unsigned int camera_x = 128, unsigned int camera_y = 128);
     ~UARTThread();
 	void threadFunction();
     void setHoughThread(HoughThread* ht);
