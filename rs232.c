@@ -58,6 +58,7 @@ int RS232_OpenComport(int comport_number, int baudrate, const char *mode, int fl
 {
   int baudr,
       status;
+  bool custom_bauds = false;
 
   if((comport_number>=RS232_PORTNR)||(comport_number<0))
   {
@@ -127,7 +128,7 @@ int RS232_OpenComport(int comport_number, int baudrate, const char *mode, int fl
                     break;
     case  4000000 : baudr = B4000000;
                     break;
-    case 12000000 : baudr = B12000000;
+    case 12000000 : custom_bauds = true;
                     break;
     default       : printf("invalid baudrate\n");
                     return(1);
@@ -264,6 +265,17 @@ http://man7.org/linux/man-pages/man3/termios.3.html
     flock(Cport[comport_number], LOCK_UN);  /* free the port so that others can use it. */
     perror("unable to set portstatus");
     return(1);
+  }
+
+  if(custom_bauds)
+  {
+	  struct termios2 options;
+	  ioctl(Cport[comport_number], TCGETS2, &options);
+	  options.c_cflag &= ~CBAUD;    //Remove current BAUD rate
+	  options.c_cflag |= BOTHER;    //Allow custom BAUD rate using int input
+	  options.c_ispeed = 307200;    //Set the input BAUD rate
+	  options.c_ospeed = 307200;    //Set the output BAUD rate
+	  ioctl(Cport[comport_number], TCSETS2, &options);
   }
 
   return(0);
