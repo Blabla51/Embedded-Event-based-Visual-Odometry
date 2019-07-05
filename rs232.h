@@ -44,7 +44,7 @@ extern "C" {
 
 #if defined(__linux__) || defined(__FreeBSD__)
 
-#include <termios.h>
+#include <asm/termios.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
