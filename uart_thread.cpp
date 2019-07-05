@@ -18,10 +18,10 @@ UARTThread::UARTThread() {
 	RS232_cputs(this->m_fd, "!U0\n");
 	RS232_cputs(this->m_fd, "!L2\n");
 	RS232_cputs(this->m_fd, "!E4\n");
-	RS232_cputs(this->m_fd, "!U=3000000\n");
-	RS232_CloseComport(this->m_fd);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
+	//RS232_cputs(this->m_fd, "!U=3000000\n");
+	//RS232_CloseComport(this->m_fd);
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	//RS232_OpenComport(this->m_fd,3000000,"8N1",1);
 #endif
 	/*libusb_device **devs;
 	int r;
