@@ -131,7 +131,7 @@ int RS232_OpenComport(int comport_number, int baudrate, const char *mode, int fl
     case  4000000 : baudr = B4000000;
                     break;
     case 12000000 : custom_bauds = true;
-    				baudr = B4000000;
+    				baudr = B38400;
                     break;
     default       : printf("invalid baudrate\n");
                     return(1);
