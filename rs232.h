@@ -47,6 +47,7 @@ extern "C" {
 //#include <asm/ioctls.h>
 //#include <asm/termbits.h>
 
+#include <linux/serial.h>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <unistd.h>

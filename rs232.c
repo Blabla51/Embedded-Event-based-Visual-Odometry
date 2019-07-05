@@ -273,18 +273,18 @@ http://man7.org/linux/man-pages/man3/termios.3.html
   if(custom_bauds)
   {
 	  serinfo.reserved_char[0] = 0;
-	  if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0)
+	  if (ioctl(Cport[comport_number], TIOCGSERIAL, &serinfo) < 0)
 		  return -1;
 	  serinfo.flags &= ~ASYNC_SPD_MASK;
 	  serinfo.flags |= ASYNC_SPD_CUST;
 	  serinfo.custom_divisor = (serinfo.baud_base + (baudrate / 2)) / baudrate;
 	  if (serinfo.custom_divisor < 1)
 		  serinfo.custom_divisor = 1;
-	  if (ioctl(fd, TIOCSSERIAL, &serinfo) < 0)
+	  if (ioctl(Cport[comport_number], TIOCSSERIAL, &serinfo) < 0)
 		  return -1;
-	  if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0)
+	  if (ioctl(Cport[comport_number], TIOCGSERIAL, &serinfo) < 0)
 		  return -1;
-	  if (serinfo.custom_divisor * rate != serinfo.baud_base) {
+	  if (serinfo.custom_divisor * baudrate != serinfo.baud_base) {
 		  warnx("actual baudrate is %d / %d = %f",
 				serinfo.baud_base, serinfo.custom_divisor,
 				(float)serinfo.baud_base / serinfo.custom_divisor);
