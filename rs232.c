@@ -273,8 +273,8 @@ http://man7.org/linux/man-pages/man3/termios.3.html
 	  ioctl(Cport[comport_number], TCGETS2, &options);
 	  options.c_cflag &= ~CBAUD;    //Remove current BAUD rate
 	  options.c_cflag |= BOTHER;    //Allow custom BAUD rate using int input
-	  options.c_ispeed = 307200;    //Set the input BAUD rate
-	  options.c_ospeed = 307200;    //Set the output BAUD rate
+	  options.c_ispeed = baudrate;    //Set the input BAUD rate
+	  options.c_ospeed = baudrate;    //Set the output BAUD rate
 	  ioctl(Cport[comport_number], TCSETS2, &options);
   }
 
