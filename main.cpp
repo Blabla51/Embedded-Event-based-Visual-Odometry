@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	const int fcflags = fcntl(fd,F_GETFL);
 	if (fcflags<0) { /* handle error */}
 	if (fcntl(fd,F_SETFL,fcflags | O_NONBLOCK) <0) { /* handle error */}
-	cout << "Char:" << stdin.getchar() << std::endl;
+	cout << "Char:" << stdin->getchar() << std::endl;
 #elif OS == OS_WINDOWS
 	std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 #endif
