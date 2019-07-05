@@ -25,13 +25,13 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 			this->m_hough_map[i][j] = 0.0;
 		}
 	}
-	this->m_hough_time_map = new double*[this->m_hough_map_x];
+	this->m_hough_time_map = new unsigned int*[this->m_hough_map_x];
 	for(int i = 0; i<this->m_hough_map_x; i++)
 	{
-		this->m_hough_time_map[i] = new double[this->m_hough_map_y];
+		this->m_hough_time_map[i] = new unsigned int[this->m_hough_map_y];
 		for(int j = 0; j < this->m_hough_map_y; j++)
 		{
-			this->m_hough_time_map[i][j] = 0.0;
+			this->m_hough_time_map[i][j] = 0;
 		}
 	}
 	this->m_look_up_dist = new double**[	this->m_camera_x];
@@ -189,8 +189,10 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 			rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
-				//std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index] << std::endl;
-				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]/**this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index])*/ + 1.0;
+				/*this->mutexLog.lock();
+				std::cout << "Time: " <<  timestamp-this->m_hough_time_map[theta_index][rho_index]  <<  timestamp << std::endl;
+				this->mutexLog.unlock();*/
+				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 				{
 					this->m_hough_map[theta_index][rho_index] = 0.0;
@@ -262,12 +264,24 @@ void HoughThread::printHoughMap()
 	this->mutexLog.unlock();
 }
 
-void HoughThread::addEvent(unsigned int x, unsigned int y, bool p, unsigned int t)
+void HoughThread::lockAddEvent()
 {
 	this->m_ev_add_mutex.lock();
-	this->m_ev_queue.push(Event(x,y,p,t,1));
+}
+
+void HoughThread::unlockAddEvent()
+{
 	this->m_ev_add_mutex.unlock();
+}
+
+void HoughThread::sendNotifAddEvent()
+{
 	this->m_main_loop_cv.notify_all();
+}
+
+void HoughThread::addEvent(unsigned int x, unsigned int y, bool p, unsigned int t)
+{
+	this->m_ev_queue.push(Event(x,y,p,t,1));
 }
 
 void HoughThread::stop()
@@ -278,7 +292,7 @@ void HoughThread::stop()
 	BaseThread::stop();
 }
 
-double HoughThread::getPCExp(int dt)
+double HoughThread::getPCExp(unsigned int dt)
 {
 	if(dt > this->m_pc_exp_range)
 		return 0;

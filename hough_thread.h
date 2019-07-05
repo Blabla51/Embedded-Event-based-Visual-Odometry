@@ -32,7 +32,7 @@ private:
 	double 			m_zone_x;
 	double 			m_zone_y;
 	double** 		m_hough_map;
-	double** 		m_hough_time_map;
+	unsigned int** 		m_hough_time_map;
 	double*** 		m_look_up_dist;
 	double* 		m_pc_theta;
 	double* 		m_pc_cos;
@@ -46,7 +46,7 @@ private:
 	PNPThread*		m_pnpt;
 
 
-	double getPCExp(int dt);
+	double getPCExp(unsigned int dt);
 
 public:
 	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 10, double zone_y = 10, double threshold = 15.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
@@ -58,6 +58,9 @@ public:
 	int computeEvent(unsigned int x, unsigned int y, unsigned int timestamp);
     void printHoughMap();
     void printFilteringMap();
+    void lockAddEvent();
+    void unlockAddEvent();
+    void sendNotifAddEvent();
     void addEvent(unsigned int x, unsigned int y, bool p, unsigned int t);
     void activateTracking();
     void setPNPThread(PNPThread* pnpt);

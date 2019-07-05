@@ -17,19 +17,21 @@
 
 #define PI 3.14159265
 
+#define SIZE_BUFFER_EVENT 8192
+
 #define DEBUG_NO 0
 #define DEBUG_YES 1
 #define DEBUG_HARD 2
 
-#define WINDOWS 0
-#define LINUX 1
+#define OS_WINDOWS 0
+#define OS_LINUX 1
 
 #define MODE_ONLINE 0
 #define MODE_OFFLINE 1
 
 #define DEBUG DEBUG_NO
-#define OS WINDOWS
-#define MODE MODE_OFFLINE
+#define OS OS_WINDOWS
+#define MODE MODE_ONFLINE
 
 class Event {
 public:

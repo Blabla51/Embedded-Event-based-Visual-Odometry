@@ -2,16 +2,27 @@
 
 UARTThread::UARTThread() {
 	this->m_ht = 0;
-	this->m_fd = -2;/*
-#if OS == WINDOWS
-	this->m_fd = RS232_OpenComport(7,12000000,"8N1",1);
-#elif OF == LINUX
-	this->m_fd = RS232_OpenComport(16,12000000,"8N1",1);
+	this->m_fd = -1;
+#if MODE == MODE_ONLINE
+#if OS == OS_WINDOWS
+	this->m_fd = RS232_GetPortnr("COM8");
+#elif OS == OS_LINUX
+	this->m_fd = RS232_GetPortnr("ttyUSB0");
 #endif
+	RS232_OpenComport(this->m_fd,12000000,"8N1",1);
 	this->mutexLog.lock();
 	std::cout << "File descriptor: " << this->m_fd << std::endl;
 	this->mutexLog.unlock();
-	RS232_CloseComport(this->m_fd);/*
+	RS232_cputs(this->m_fd, "E-\n");
+	//RS232_cputs(this->m_fd, "??\n");
+	RS232_cputs(this->m_fd, "!U0\n");
+	RS232_cputs(this->m_fd, "!L2\n");
+	RS232_cputs(this->m_fd, "!E4\n");
+	RS232_cputs(this->m_fd, "!U=3000000\n");
+	RS232_CloseComport(this->m_fd);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
+#endif
 	/*libusb_device **devs;
 	int r;
 	ssize_t cnt;
@@ -111,9 +122,182 @@ void UARTThread::threadFunction() {
 			this->m_ht->addEvent(x,y,p==1,t);
 		}
 	}
+#else
+	unsigned char buf[4096];
+	unsigned char event_buf[SIZE_BUFFER_EVENT];
+	int head = 0;
+	int tail = 0;
+	int byte_received = 0;
+	int event_before_begin = 0;
+	unsigned int event_received_global = 0;
+	unsigned int first_time = 0;
+	bool event_received = false;
+	unsigned int y, x, p, c, t;
+	unsigned int last_time = 0;
+	RS232_flushRX(this->m_fd);
+	RS232_cputs(this->m_fd, "E+\n");
+	while(!this->m_stop && event_before_begin < 1000)
+	{
+		while(byte_received < 1 && !this->m_stop && event_before_begin < 1000)
+		{
+			byte_received = RS232_PollComport(this->m_fd, buf, 4095);
+		}
+		if(byte_received > 0)
+		{
+			for(int i = 0; i < byte_received; i++)
+			{
+				head = (head+1)%SIZE_BUFFER_EVENT;
+				event_buf[head] = buf[i];
+			}
+			while((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
+			{
+				t = 0;
+				t += 16777216*event_buf[(tail+3)%SIZE_BUFFER_EVENT];
+				t += 65536*event_buf[(tail+4)%SIZE_BUFFER_EVENT];
+				t += 256*event_buf[(tail+5)%SIZE_BUFFER_EVENT];
+				t += 1*event_buf[(tail+6)%SIZE_BUFFER_EVENT];
+				last_time = t;
+				if(event_before_begin == 0)
+					first_time = t;
+				event_before_begin++;
+				tail = (tail+6)%SIZE_BUFFER_EVENT;
+				//std::cout << event_before_begin << std::endl;
+			}
+			byte_received = 0;
+		}
+	}
+	while(!this->m_stop)
+	{
+ 		//std::cout << "Waiting data ..." << std::endl;
+		while(byte_received < 1 && !this->m_stop)
+		{
+			byte_received = RS232_PollComport(this->m_fd, buf, 4095);
+		}
+		if(byte_received > 0)
+		{
+			for(int i = 0; i < byte_received; i++)
+			{
+				head = (head+1)%SIZE_BUFFER_EVENT;
+				event_buf[head] = buf[i];
+			}
+			if((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
+			{
+				event_received = true;
+				this->m_ht->lockAddEvent();
+			}
+			while((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
+			{
+				y = event_buf[(tail+1)%SIZE_BUFFER_EVENT] & 0x7f;
+				c = (event_buf[(tail+1)%SIZE_BUFFER_EVENT] &0x80) >> 7;
+				x = event_buf[(tail+2)%SIZE_BUFFER_EVENT] & 0x7f;
+				p = (event_buf[(tail+2)%SIZE_BUFFER_EVENT] &0x80) >> 7;
+				t = 0;
+				t += 16777216*event_buf[(tail+3)%SIZE_BUFFER_EVENT];
+				t += 65536*event_buf[(tail+4)%SIZE_BUFFER_EVENT];
+				t += 256*event_buf[(tail+5)%SIZE_BUFFER_EVENT];
+				t += 1*event_buf[(tail+6)%SIZE_BUFFER_EVENT];
+				event_received_global++;
+				/*this->mutexLog.lock();
+				std::cout << "Received: " << byte_received  << " bytes; Event " << event_received_global << ": " << x << " " << y << " " << p << " " << t << " " << c << std::endl;
+				for(int i = 0; i < 6; i++)
+				{
+					std::cout << (int)(event_buf[(tail+1+i)%SIZE_BUFFER_EVENT]) << " ";
+				}
+				std::cout << std::endl;
+				this->mutexLog.unlock();*/
+				if(t < last_time)
+				{
+				    this->mutexLog.lock();
+					std::cout << "Received: " << byte_received  << " bytes; Event " << event_received_global << ": " << x << " " << y << " " << p << " " << t << " " << c << std::endl << "Head: "<< head << " Tail: "<< tail << std::endl;
+				    if(c == 1)
+				    {
+						std::cout << "Error Timestamp " << t << " " << last_time << std::endl;
+				    }
+				    else
+				    {
+						std::cout << "Error Timestamp and Control" << std::endl;
+				    }
+					this->mutexLog.unlock();
+				}
+				last_time = t;
+				tail = (tail+6)%SIZE_BUFFER_EVENT;
+				this->m_ht->addEvent(x,y,p==1,t);
+			}
+			if(event_received)
+			{
+				this->m_ht->unlockAddEvent();
+				this->m_ht->sendNotifAddEvent();
+			}
+			byte_received = 0;
+		}
+	}
+	RS232_cputs(this->m_fd, "E-\n");
+	do
+	{
+		byte_received = RS232_PollComport(this->m_fd, buf, 4095);
+		if(byte_received > 0)
+		{
+			for(int i = 0; i < byte_received; i++)
+			{
+				head = (head+1)%SIZE_BUFFER_EVENT;
+				event_buf[head] = buf[i];
+			}
+			if((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
+			{
+				event_received = true;
+				this->m_ht->lockAddEvent();
+			}
+			while((head >= tail && head-tail > 6) || (head < tail && SIZE_BUFFER_EVENT + head - tail > 6))
+			{
+				y = event_buf[(tail+1)%SIZE_BUFFER_EVENT] & 0x7f;
+				c = (event_buf[(tail+1)%SIZE_BUFFER_EVENT] &0x80) >> 7;
+				x = event_buf[(tail+2)%SIZE_BUFFER_EVENT] & 0x7f;
+				p = (event_buf[(tail+2)%SIZE_BUFFER_EVENT] &0x80) >> 7;
+				t = 0;
+				t += 16777216*event_buf[(tail+3)%SIZE_BUFFER_EVENT];
+				t += 65536*event_buf[(tail+4)%SIZE_BUFFER_EVENT];
+				t += 256*event_buf[(tail+5)%SIZE_BUFFER_EVENT];
+				t += 1*event_buf[(tail+6)%SIZE_BUFFER_EVENT];
+				event_received_global++;
+				/*this->mutexLog.lock();
+				std::cout << "AS: Received: " << byte_received  << " bytes; Event " << event_received_global << ": " << x << " " << y << " " << p << " " << t << " " << c << std::endl;
+				for(int i = 0; i < 6; i++)
+				{
+					std::cout << (int)(event_buf[(tail+1+i)%SIZE_BUFFER_EVENT]) << " ";
+				}
+				std::cout << std::endl;
+				this->mutexLog.unlock();*/
+				if(t < last_time)
+				{
+				    this->mutexLog.lock();
+				    if(c == 1)
+				    {
+						std::cout << "Error Timestamp" << t << " " << last_time << std::endl;
+				    }
+				    else
+				    {
+						std::cout << "Error Timestamp and Control" << std::endl;
+				    }
+					this->mutexLog.unlock();
+				}
+				last_time = t;
+				tail = (tail+6)%SIZE_BUFFER_EVENT;
+				this->m_ht->addEvent(x,y,p==1,t);
+			}
+			if(event_received)
+			{
+				this->m_ht->unlockAddEvent();
+				this->m_ht->sendNotifAddEvent();
+			}
+		}
+	}while(byte_received > 0);
+	RS232_cputs(this->m_fd, "!U=12000000\n");
+	RS232_CloseComport(this->m_fd);
 #endif
 //	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
 	this->mutexLog.lock();
+	std::cout << "Event created by UART: " << event_received_global << std::endl;
+	std::cout << "Times: " << last_time << "-" << first_time << "=" << last_time-first_time << std::endl;
 //	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() <<std::endl;
 	std::cout << "Stopped my things ! UART" << std::endl;
 	this->mutexLog.unlock();
