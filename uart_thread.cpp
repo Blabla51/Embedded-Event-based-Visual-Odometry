@@ -9,7 +9,7 @@ UARTThread::UARTThread() {
 #elif OS == OS_LINUX
 	this->m_fd = RS232_GetPortnr("ttyUSB0");
 #endif
-	RS232_OpenComport(this->m_fd,12000000,"8N1",1);
+	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
 	this->mutexLog.lock();
 	std::cout << "File descriptor: " << this->m_fd << std::endl;
 	this->mutexLog.unlock();
