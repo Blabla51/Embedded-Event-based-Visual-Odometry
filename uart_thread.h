@@ -24,7 +24,8 @@ class UARTThread : public BaseThread
 {
 private:
 	HoughThread* m_ht;
-	int m_fd;
+	int m_fd_rec;
+	int m_fd_command;
 	unsigned int** m_baf_time_array;
 	int m_baf_time;
 	int m_camera_x;

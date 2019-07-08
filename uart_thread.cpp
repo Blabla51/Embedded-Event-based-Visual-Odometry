@@ -2,7 +2,8 @@
 
 UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	this->m_ht = 0;
-	this->m_fd = -1;
+	this->m_fd_rec = -1;
+	this->m_fd_command = -1;
 	this->m_baf_time = 1000;
 	this->m_camera_x = camera_x;
 	this->m_camera_y = camera_y;
@@ -17,36 +18,38 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	}
 #if MODE == MODE_ONLINE
 #if OS == OS_WINDOWS
-	this->m_fd = RS232_GetPortnr("COM8");
-	RS232_OpenComport(this->m_fd,12000000,"8N1",1);
+	this->m_fd_rec = RS232_GetPortnr("COM8");
+	this->m_fd_command = this->m_fd_rec;
+	RS232_OpenComport(this->m_fd_command,12000000,"8N1",1);
 	this->mutexLog.lock();
-	std::cout << "File descriptor: " << this->m_fd << std::endl;
+	std::cout << "File descriptor: " << this->m_fd_usb << std::endl;
 	this->mutexLog.unlock();
-	RS232_cputs(this->m_fd, "E-\n");
+	RS232_cputs(this->m_fd_command, "E-\n");
 	//RS232_cputs(this->m_fd, "??\n");
-	RS232_cputs(this->m_fd, "!U0\n");
-	RS232_cputs(this->m_fd, "!L2\n");
-	RS232_cputs(this->m_fd, "!E4\n");
-	RS232_cputs(this->m_fd, "!U=3000000\n");
-	RS232_CloseComport(this->m_fd);
+	RS232_cputs(this->m_fd_command, "!U0\n");
+	RS232_cputs(this->m_fd_command, "!L2\n");
+	RS232_cputs(this->m_fd_command, "!E4\n");
+	RS232_cputs(this->m_fd_command, "!U=3000000\n");
+	RS232_CloseComport(this->m_fd_command);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
+	RS232_OpenComport(this->m_fd_command,3000000,"8N1",1);
 #elif OS == OS_LINUX
-	this->m_fd = RS232_GetPortnr("ttyUSB0");
-	RS232_OpenComport(this->m_fd,12000000,"8N1",1);
+	this->m_fd_command = RS232_GetPortnr("ttyUSB0");
+	RS232_OpenComport(this->m_fd_command,12000000,"8N1",1);
 	this->mutexLog.lock();
-	std::cout << "File descriptor: " << this->m_fd << std::endl;
+	std::cout << "File descriptor: " << this->m_fd_command << std::endl;
 	this->mutexLog.unlock();
-	RS232_cputs(this->m_fd, "E-\n");
+	RS232_cputs(this->m_fd_command, "E-\n");
 	//RS232_cputs(this->m_fd, "??\n");
-	RS232_cputs(this->m_fd, "!U0\n");
-	RS232_cputs(this->m_fd, "!L2\n");
-	RS232_cputs(this->m_fd, "!E4\n");
-	RS232_cputs(this->m_fd, "!U=3000000\n");
-	RS232_CloseComport(this->m_fd);
+	RS232_cputs(this->m_fd_command, "!U0\n");
+	RS232_cputs(this->m_fd_command, "!L2\n");
+	RS232_cputs(this->m_fd_command, "!E4\n");
+	RS232_cputs(this->m_fd_command, "!U=3000000\n");
+	RS232_CloseComport(this->m_fd_command);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	this->m_fd = RS232_GetPortnr("ttyAMA0");
-	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
+	this->m_fd_rec = RS232_GetPortnr("ttyAMA0");
+	RS232_OpenComport(this->m_fd_rec,3000000,"8N1",1);
+	RS232_OpenComport(this->m_fd_command,3000000,"8N1",1);
 #endif
 #endif
 	/*libusb_device **devs;
@@ -160,14 +163,15 @@ void UARTThread::threadFunction() {
 	unsigned int first_time = 0;
 	bool event_received = false;
 	unsigned int last_time = 0;
-	RS232_flushRX(this->m_fd);
-	RS232_cputs(this->m_fd, "E+\n");
+	RS232_flushRX(this->m_fd_rec);
+	RS232_flushRX(this->m_fd_command);
+	RS232_cputs(this->m_fd_command, "E+\n");
 	// First 1k events are removed
 	while(!this->m_stop && event_before_begin < 1000)
 	{
 		while(byte_received < 1 && !this->m_stop && event_before_begin < 1000)
 		{
-			byte_received = RS232_PollComport(this->m_fd, buf, 4095);
+			byte_received = RS232_PollComport(this->m_fd_rec, buf, 4095);
 		}
 		if(byte_received > 0)
 		{
@@ -200,7 +204,7 @@ void UARTThread::threadFunction() {
  		//std::cout << "Waiting data ..." << std::endl;
 		while(byte_received < 1 && !this->m_stop)
 		{
-			byte_received = RS232_PollComport(this->m_fd, buf, 4095);
+			byte_received = RS232_PollComport(this->m_fd_rec, buf, 4095);
 		}
 		if(byte_received > 0)
 		{
@@ -279,10 +283,10 @@ void UARTThread::threadFunction() {
 		}
 	}
 	// Flushing the data left
-	RS232_cputs(this->m_fd, "E-\n");
+	RS232_cputs(this->m_fd_command, "E-\n");
 	do
 	{
-		byte_received = RS232_PollComport(this->m_fd, buf, 4095);
+		byte_received = RS232_PollComport(this->m_fd_rec, buf, 4095);
 		if(byte_received > 0)
 		{
 			for(int i = 0; i < byte_received; i++)
@@ -357,8 +361,12 @@ void UARTThread::threadFunction() {
 			}
 		}
 	}while(byte_received > 0);
-	RS232_cputs(this->m_fd, "!U=12000000\n");
-	RS232_CloseComport(this->m_fd);
+	RS232_cputs(this->m_fd_command, "!U=12000000\n");
+	RS232_CloseComport(this->m_fd_command);
+	if(this->m_fd_command != this->m_fd_rec)
+	{
+		RS232_CloseComport(this->m_fd_rec);
+	}
 #endif
 //	std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
 	this->mutexLog.lock();
