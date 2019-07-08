@@ -20,7 +20,7 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 #if OS == OS_WINDOWS
 	this->m_fd_rec = RS232_GetPortnr("COM8");
 	this->m_fd_command = this->m_fd_rec;
-	RS232_OpenComport(this->m_fd_command,12000000,"8N1",1);
+	RS232_OpenComport(this->m_fd_command,12000000,"8N1",0);
 	this->mutexLog.lock();
 	std::cout << "File descriptor: " << this->m_fd_usb << std::endl;
 	this->mutexLog.unlock();
@@ -32,10 +32,10 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	RS232_cputs(this->m_fd_command, "!U=3000000\n");
 	RS232_CloseComport(this->m_fd_command);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	RS232_OpenComport(this->m_fd_command,3000000,"8N1",1);
+	RS232_OpenComport(this->m_fd_command,3000000,"8N1",0);
 #elif OS == OS_LINUX
 	this->m_fd_command = RS232_GetPortnr("ttyUSB0");
-	RS232_OpenComport(this->m_fd_command,12000000,"8N1",1);
+	RS232_OpenComport(this->m_fd_command,12000000,"8N1",0);
 	this->mutexLog.lock();
 	std::cout << "File descriptor: " << this->m_fd_command << std::endl;
 	this->mutexLog.unlock();
@@ -48,8 +48,8 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	RS232_CloseComport(this->m_fd_command);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	this->m_fd_rec = RS232_GetPortnr("ttyAMA0");
-	RS232_OpenComport(this->m_fd_rec,3000000,"8N1",1);
-	RS232_OpenComport(this->m_fd_command,3000000,"8N1",1);
+	RS232_OpenComport(this->m_fd_rec,3000000,"8N1",0);
+	RS232_OpenComport(this->m_fd_command,3000000,"8N1",0);
 #endif
 #endif
 	/*libusb_device **devs;
