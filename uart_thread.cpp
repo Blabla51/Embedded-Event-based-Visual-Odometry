@@ -18,9 +18,6 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 #if MODE == MODE_ONLINE
 #if OS == OS_WINDOWS
 	this->m_fd = RS232_GetPortnr("COM8");
-#elif OS == OS_LINUX
-	this->m_fd = RS232_GetPortnr("ttyUSB0");
-#endif
 	RS232_OpenComport(this->m_fd,12000000,"8N1",1);
 	this->mutexLog.lock();
 	std::cout << "File descriptor: " << this->m_fd << std::endl;
@@ -34,6 +31,23 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	RS232_CloseComport(this->m_fd);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
+#elif OS == OS_LINUX
+	this->m_fd = RS232_GetPortnr("ttyUSB0");
+	RS232_OpenComport(this->m_fd,12000000,"8N1",1);
+	this->mutexLog.lock();
+	std::cout << "File descriptor: " << this->m_fd << std::endl;
+	this->mutexLog.unlock();
+	RS232_cputs(this->m_fd, "E-\n");
+	//RS232_cputs(this->m_fd, "??\n");
+	RS232_cputs(this->m_fd, "!U0\n");
+	RS232_cputs(this->m_fd, "!L2\n");
+	RS232_cputs(this->m_fd, "!E4\n");
+	RS232_cputs(this->m_fd, "!U=3000000\n");
+	RS232_CloseComport(this->m_fd);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	this->m_fd = RS232_GetPortnr("ttyAMA0");
+	RS232_OpenComport(this->m_fd,3000000,"8N1",1);
+#endif
 #endif
 	/*libusb_device **devs;
 	int r;
@@ -148,6 +162,7 @@ void UARTThread::threadFunction() {
 	unsigned int last_time = 0;
 	RS232_flushRX(this->m_fd);
 	RS232_cputs(this->m_fd, "E+\n");
+	// First 1k events are removed
 	while(!this->m_stop && event_before_begin < 1000)
 	{
 		while(byte_received < 1 && !this->m_stop && event_before_begin < 1000)
@@ -179,6 +194,7 @@ void UARTThread::threadFunction() {
 			byte_received = 0;
 		}
 	}
+	// Begin of the received and transmitting phase
 	while(!this->m_stop)
 	{
  		//std::cout << "Waiting data ..." << std::endl;
@@ -262,6 +278,7 @@ void UARTThread::threadFunction() {
 			byte_received = 0;
 		}
 	}
+	// Flushing the data left
 	RS232_cputs(this->m_fd, "E-\n");
 	do
 	{
