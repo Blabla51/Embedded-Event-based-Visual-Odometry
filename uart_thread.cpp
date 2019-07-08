@@ -22,7 +22,7 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	this->m_fd_rec = this->m_fd_command;
 #elif OS == OS_LINUX
 	this->m_fd_command = RS232_GetPortnr("ttyUSB0");
-	this->m_fd_rec = RS232_GetPortnr("ttyUSB0"); //ttyAMA0
+	this->m_fd_rec = RS232_GetPortnr("ttyAMA0"); //ttyAMA0
 #endif
 	RS232_OpenComport(this->m_fd_command,12000000,"8N1",0);
 	this->mutexLog.lock();
