@@ -48,7 +48,7 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	RS232_CloseComport(this->m_fd_command);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	this->m_fd_rec = RS232_GetPortnr("ttyAMA0");
-	RS232_OpenComport(this->m_fd_rec,3000000,"8N1",0);
+	RS232_OpenComport(this->m_fd_rec,3000000,"8N1",1);
 	RS232_OpenComport(this->m_fd_command,3000000,"8N1",0);
 #endif
 #endif
