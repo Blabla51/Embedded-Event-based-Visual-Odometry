@@ -53,13 +53,13 @@ int main(int argc, char *argv[])
 
 	if(!curl)
 	{
-		BaseThread::mutexLog.lock();
+		//BaseThread::mutexLog.lock();
 		std::cout << "CURL init failed" << std::endl;
-		BaseThread::mutexLog.unlock();
+		//BaseThread::mutexLog.unlock();
 	}
 	else
 	{
-		curl_easy_setopt(curl, CURLOPT_URL, "https://127.0.0.1/PFE/");
+		curl_easy_setopt(curl, CURLOPT_URL, "https://10.0.1.56/PFE/");
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postthis);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -78,9 +78,9 @@ int main(int argc, char *argv[])
 		readBuffer.clear();
 		res = curl_easy_perform(curl);
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		BaseThread::mutexLog.lock();
+		//BaseThread::mutexLog.lock();
 		std::cout << readBuffer << std::endl;
-		BaseThread::mutexLog.unlock();
+		//BaseThread::mutexLog.unlock();
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	#endif
