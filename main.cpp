@@ -71,7 +71,6 @@ int main(int argc, char *argv[])
 
 		curl = curl_easy_init();
 		std::string data = pnp_thread_object->generateWebServerData();
-		std::cout << "Send: " << data.c_str() << std::endl;
 		readBuffer.clear();
 		std::string tmp_m = "Data";
 		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
@@ -83,6 +82,7 @@ int main(int argc, char *argv[])
 	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 	    curl_easy_setopt(curl, CURLOPT_POST, 1);
 		res = curl_easy_perform(curl);
+		std::cout << "Send: " << data.c_str() << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		//BaseThread::mutexLog.lock();
 		std::cout << readBuffer << std::endl;
