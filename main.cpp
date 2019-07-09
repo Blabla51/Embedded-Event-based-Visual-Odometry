@@ -75,9 +75,10 @@ int main(int argc, char *argv[])
 		readBuffer.clear();
 		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-		//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+	    curl_easy_setopt(curl, CURLOPT_POST, 1);
 		res = curl_easy_perform(curl);
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		//BaseThread::mutexLog.lock();
