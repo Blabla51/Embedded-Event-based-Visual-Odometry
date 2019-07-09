@@ -22,7 +22,7 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	this->m_fd_rec = this->m_fd_command;
 #elif OS == OS_LINUX
 	this->m_fd_command = RS232_GetPortnr("ttyUSB0");
-	this->m_fd_rec = RS232_GetPortnr("ttyAMA0"); //ttyAMA0
+	this->m_fd_rec = RS232_GetPortnr("ttyUSB0"); //ttyAMA0
 #endif
 	RS232_OpenComport(this->m_fd_command,12000000,"8N1",0);
 	this->mutexLog.lock();
@@ -33,14 +33,14 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	RS232_cputs(this->m_fd_command, "!U0\n");
 	RS232_cputs(this->m_fd_command, "!L2\n");
 	RS232_cputs(this->m_fd_command, "!E4\n");
-	RS232_cputs(this->m_fd_command, "!U=3000000\n");
-	RS232_CloseComport(this->m_fd_command);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	RS232_OpenComport(this->m_fd_command,3000000,"8N1",0);
-	if(this->m_fd_command != this->m_fd_rec)
-	{
-		RS232_OpenComport(this->m_fd_rec,3000000,"8N1",1);
-	}
+	//RS232_cputs(this->m_fd_command, "!U=3000000\n");
+	//RS232_CloseComport(this->m_fd_command);
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	//RS232_OpenComport(this->m_fd_command,3000000,"8N1",0);
+	//if(this->m_fd_command != this->m_fd_rec)
+	//{
+	//	RS232_OpenComport(this->m_fd_rec,3000000,"8N1",1);
+	//}
 #endif
 	/*libusb_device **devs;
 	int r;
@@ -351,7 +351,7 @@ void UARTThread::threadFunction() {
 			}
 		}
 	}while(byte_received > 0);
-	RS232_cputs(this->m_fd_command, "!U=12000000\n");
+	//RS232_cputs(this->m_fd_command, "!U=12000000\n");
 	RS232_CloseComport(this->m_fd_command);
 	if(this->m_fd_command != this->m_fd_rec)
 	{

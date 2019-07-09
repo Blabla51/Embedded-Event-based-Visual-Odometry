@@ -144,11 +144,9 @@ void PNPThread::threadFunction() {
 #endif
 		while(this->m_ev_queue.empty())
 		{
-#if DEBUG == DEBUG_YES
 			this->mutexLog.lock();
 			std::cout << "Waiting Hough Event" << std::endl;
 			this->mutexLog.unlock();
-#endif
 			this->m_main_loop_cv.wait(lck);
 		}
 #if DEBUG == DEBUG_YES
