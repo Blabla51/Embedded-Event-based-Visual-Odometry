@@ -12,6 +12,7 @@
 #include "common.h"
 #include "base_thread.h"
 #include <future>
+#include <sstream>
 //#include "libusb.h"
 
 class HoughThread;
@@ -32,10 +33,12 @@ private:
 	int			m_ht_rho_max;
 	int 		m_ht_map_x;
 	int 		m_ht_map_y;
+	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
 	std::mutex 			m_filter_mutex;
+	std::mutex 			m_web_mutex;
 	HoughThread*		m_ht;
 
 	void multMat(double** m1, double** m2, double** res, int ligne, int inter, int colonne);

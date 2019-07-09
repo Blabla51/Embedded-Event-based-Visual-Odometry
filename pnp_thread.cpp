@@ -7,6 +7,8 @@ PNPThread::PNPThread(double fl, HoughThread* ht) {
 	this->m_nbr_lines_identified = 0;
 	this->m_confidence_coef = 0.15;
 	this->m_current_filter_centers = new int*[4];
+	this->m_web_string_stream = std::stringstream(std::ios_base::ate);
+	this->m_web_string_stream << "{";
 
 	this->m_ht_rho_max = ht->getRhoMax();
 	this->m_ht_map_x = ht->getMapX();
@@ -648,14 +650,18 @@ void PNPThread::computeLineIntersection()
     		this->m_line_inters[i][0] = x;
     		this->m_line_inters[i][1] = y;
 		}
-
 #if DEBUG == DEBUG_YES
 		std::cout << "Detected intersections:" << std::endl;
+#endif
+		this->m_web_mutex.lock();
 		for(int i = 0; i < 4; i++)
 		{
+#if DEBUG == DEBUG_YES
 			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
-		}
 #endif
+			this->m_web_string_stream << "{\"intersection\": {\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
+		}
+		this->m_web_mutex.unlock();
 	}
 }
 
@@ -684,5 +690,10 @@ void PNPThread::printFilteringMap()
 
 std::string PNPThread::generateWebServerData()
 {
-	return "test";
+	this->m_web_mutex.lock();
+	this->m_web_string_stream << "}";
+	std::string tmp = this->m_web_string_stream.str();
+	this->m_web_string_stream << "{";
+	this->m_web_mutex.unlock();
+	return tmp;
 }
