@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
 		//curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
 		//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, tmp_m);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, tmp_m.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, tmp_m.length());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
