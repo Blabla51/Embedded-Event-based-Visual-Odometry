@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 
 		curl = curl_easy_init();
 		std::string data = pnp_thread_object->generateWebServerData();
-		std::cout << "Send: " << data << std::endl;
+		std::cout << "Send: " << data.c_str() << std::endl;
 		readBuffer.clear();
 		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
