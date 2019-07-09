@@ -8,7 +8,7 @@ PNPThread::PNPThread(double fl, HoughThread* ht) {
 	this->m_confidence_coef = 0.15;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream = std::stringstream(std::ios_base::in | std::ios_base::out | std::ios_base::ate);
-	this->m_web_string_stream << "{";
+	this->m_web_string_stream << "[";
 
 	this->m_ht_rho_max = ht->getRhoMax();
 	this->m_ht_map_x = ht->getMapX();
@@ -691,10 +691,11 @@ void PNPThread::printFilteringMap()
 std::string PNPThread::generateWebServerData()
 {
 	this->m_web_mutex.lock();
-	this->m_web_string_stream << "}";
+	this->m_web_string_stream << "]";
 	std::string tmp = this->m_web_string_stream.str();
+	this->m_web_string_stream.str("");
 	std::cout << "Data generated: " << tmp << std::endl;
-	this->m_web_string_stream << "{";
+	this->m_web_string_stream << "[";
 	this->m_web_mutex.unlock();
 	return tmp;
 }
