@@ -70,9 +70,11 @@ int main(int argc, char *argv[])
 
 
 		curl = curl_easy_init();
+		std::string data = pnp_thread_object->generateWebServerData();
+		std::cout << "Send: " << data << std::endl;
 		readBuffer.clear();
 		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, pnp_thread_object->generateWebServerData());
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
 		//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
