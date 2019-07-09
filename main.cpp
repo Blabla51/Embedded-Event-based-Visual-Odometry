@@ -49,8 +49,6 @@ int main(int argc, char *argv[])
 	static const char *postthis = "moo mooo moo moo";
 	std::string readBuffer;
 
-	curl = curl_easy_init();
-
 	if(!curl)
 	{
 		//BaseThread::mutexLog.lock();
@@ -59,11 +57,6 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		curl_easy_setopt(curl, CURLOPT_URL, "https://10.0.1.56/PFE/");
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postthis);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 	}
 #endif
 	while(stop == false)
@@ -75,7 +68,14 @@ int main(int argc, char *argv[])
 	//	if (fcntl(fd,F_SETFL,fcflags | O_NONBLOCK) <0) { /* handle error */}
 	//	std::cout << "Char:" << stdin->getchar() << std::endl;
 
+
+		curl = curl_easy_init();
 		readBuffer.clear();
+		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/");
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postthis);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 		res = curl_easy_perform(curl);
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		//BaseThread::mutexLog.lock();
