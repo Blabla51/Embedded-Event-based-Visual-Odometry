@@ -681,3 +681,8 @@ void PNPThread::printFilteringMap()
 	}
 	this->mutexLog.unlock();
 }
+
+std::string PNPThread::generateWebServerData()
+{
+	return "test";
+}

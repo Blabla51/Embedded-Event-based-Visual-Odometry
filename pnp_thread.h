@@ -57,6 +57,7 @@ public:
     void updateLineParameters(double theta, double dist, bool rotated, int line_id);
     int getFilterValue(int t, int d);
     void printFilteringMap();
+    std::string generateWebServerData();
 };
 
 #endif

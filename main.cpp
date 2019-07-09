@@ -80,6 +80,11 @@ int main(int argc, char *argv[])
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		//BaseThread::mutexLog.lock();
 		std::cout << readBuffer << std::endl;
+
+		if(readBuffer == std::string("stop"))
+		{
+			stop = true;
+		}
 		//BaseThread::mutexLog.unlock();
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
