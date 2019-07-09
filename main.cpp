@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 	    curl_easy_setopt(curl, CURLOPT_POST, 1);
 		res = curl_easy_perform(curl);
-		std::cout << "Send: " << post_data1 << std::endl;
+		std::cout << "Send: " << post_data1 << " " << res << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		//BaseThread::mutexLog.lock();
 		std::cout << readBuffer << std::endl;
