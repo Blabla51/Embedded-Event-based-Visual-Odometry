@@ -12,7 +12,7 @@
 #include "common.h"
 #include "base_thread.h"
 #include <future>
-#include <sstream>
+//#include <sstream>
 //#include "libusb.h"
 
 class HoughThread;
