@@ -27,7 +27,7 @@ private:
 	int m_fd_rec;
 	int m_fd_command;
 	unsigned int** m_baf_time_array;
-	int m_baf_time;
+	unsigned int m_baf_time;
 	int m_camera_x;
 	int m_camera_y;
 

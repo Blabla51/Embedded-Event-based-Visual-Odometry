@@ -691,12 +691,13 @@ void PNPThread::printFilteringMap()
 
 std::string PNPThread::generateWebServerData()
 {
-	this->m_web_mutex.lock();
+	/*this->m_web_mutex.lock();
 	this->m_web_string_stream << "{\"End\"}]";
 	std::string tmp = this->m_web_string_stream.str();
 	this->m_web_string_stream.str("");
 	std::cout << "Data generated: " << tmp << std::endl;
 	this->m_web_string_stream << "[";
 	this->m_web_mutex.unlock();
-	return tmp;
+	return tmp;*/
+	return "Test";
 }
