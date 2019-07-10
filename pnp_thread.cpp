@@ -102,11 +102,11 @@ void PNPThread::threadFunction() {
 	std::cout << "Doing my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
 	std::unique_lock<std::mutex> lck(this->m_main_loop_mutex);
-	/*double** image_points = new double*[2];
+	double** image_points = new double*[2];
 	for(int i = 0; i < 4; i++)
 	{
 		image_points[i] = new double[4];
-	}*/
+	}
 	/*image_points[0][0] = 9.256562540937647;
 	image_points[1][0] = -19.454109269458844;
 	image_points[0][1] = -16.590459545622990;
