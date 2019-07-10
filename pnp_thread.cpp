@@ -167,7 +167,7 @@ void PNPThread::threadFunction() {
 		switch(e.a)
 		{
 		case 1:
-			//this->computeEvent(e.theta,e.dist,e.t, e.line_id);
+			this->computeEvent(e.theta,e.dist,e.t, e.line_id);
 			break;
 		case 2:
 			tmp_stop = true;
