@@ -136,7 +136,7 @@ void PNPThread::threadFunction() {
 	image_points[0][3] = 33.242078313261715;
 	image_points[1][3] = -7.994080212156028;
 	this->computePosit(image_points);*/
-	bool tmp_stop = true;
+	bool tmp_stop = false;
 	do {
 #if DEBUG == DEBUG_YES
 		this->mutexLog.lock();
