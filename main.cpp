@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 	//	std::cout << "Char:" << stdin->getchar() << std::endl;
 
 
-		curl = curl_easy_init();
+		/*curl = curl_easy_init();
 		std::string data = "Data";
 		data.append(pnp_thread_object->generateWebServerData());
 		readBuffer.clear();
@@ -91,8 +91,10 @@ int main(int argc, char *argv[])
 		if(readBuffer == std::string("stop"))
 		{
 			stop = true;
-		}
+		}*/
 		//BaseThread::mutexLog.unlock();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		break;
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		break;
