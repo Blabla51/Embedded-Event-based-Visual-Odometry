@@ -182,6 +182,10 @@ void PNPThread::threadFunction() {
 	this->mutexLog.lock();
 	std::cout << "Stopped my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
+	for(int i = 0; i < 4; i++)
+	{
+		delete image_points[i];
+	}
 	delete image_points;
 }
 
