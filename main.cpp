@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
 #endif
 	std::cout << "Stopped objects " << std::endl;
 	uart_thread_object->stop();
-	std::this_thread::sleep_for(std::chrono::milliseconds(20000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	std::cout << "Stopped objects " << std::endl;
 	hough_thread_object->stop();
-	std::this_thread::sleep_for(std::chrono::milliseconds(20000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	std::cout << "Stopped objects " << std::endl;
-	//pnp_thread_object->stop();
-	std::this_thread::sleep_for(std::chrono::milliseconds(20000));
+	pnp_thread_object->stop();
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	std::cout << "Stopped objects " << std::endl;
 	delete uart_thread_object;
 	delete hough_thread_object;
