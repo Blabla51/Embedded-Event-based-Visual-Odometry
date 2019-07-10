@@ -8,7 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <queue>
-#include <algorithm>
+//#include <algorithm>
 #include "common.h"
 #include "base_thread.h"
 #include <future>
