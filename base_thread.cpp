@@ -33,8 +33,17 @@ void BaseThread::stop() {
 	this->mutexLog.unlock();
 	this->m_stop = true;
 	this->m_main_loop_cv.notify_all();
+	this->mutexLog.lock();
+	std::cout << "Call the stop Base Thread function1" << std::endl;
+	this->mutexLog.unlock();
 	while(!m_thread.joinable());
+	this->mutexLog.lock();
+	std::cout << "Call the stop Base Thread function2" << std::endl;
+	this->mutexLog.unlock();
 	this->m_thread.join();
+	this->mutexLog.lock();
+	std::cout << "Call the stop Base Thread function3" << std::endl;
+	this->mutexLog.unlock();
 	this->m_is_launched = false;
 	this->m_is_started = false;
 }
