@@ -1,13 +1,14 @@
 #include "pnp_thread.h"
 #include "hough_thread.h"
 
-PNPThread::PNPThread(double fl, HoughThread* ht)/*: m_web_string_stream(std::ios_base::in | std::ios_base::out | std::ios_base::ate)*/ {
+PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_base::in | std::ios_base::out | std::ios_base::ate)
+{
 	this->m_ht = ht;
 	this->m_focal_length = fl;
 	this->m_nbr_lines_identified = 0;
 	this->m_confidence_coef = 0.15;
 	this->m_current_filter_centers = new int*[4];
-	//this->m_web_string_stream << "[";
+	this->m_web_string_stream << "[";
 
 	this->m_ht_rho_max = ht->getRhoMax();
 	this->m_ht_map_x = ht->getMapX();
@@ -102,12 +103,12 @@ void PNPThread::threadFunction() {
 	std::cout << "Doing my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
 	std::unique_lock<std::mutex> lck(this->m_main_loop_mutex);
-	double** image_points = new double*[2];
+	/*double** image_points = new double*[2];
 	for(int i = 0; i < 2; i++)
 	{
 		image_points[i] = new double[4];
 	}
-	/*image_points[0][0] = 9.256562540937647;
+	image_points[0][0] = 9.256562540937647;
 	image_points[1][0] = -19.454109269458844;
 	image_points[0][1] = -16.590459545622990;
 	image_points[1][1] = -7.996912353622662;
@@ -182,11 +183,6 @@ void PNPThread::threadFunction() {
 	this->mutexLog.lock();
 	std::cout << "Stopped my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
-	for(int i = 0; i < 2; i++)
-	{
-		delete image_points[i];
-	}
-	delete image_points;
 }
 
 void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line_id)
@@ -664,7 +660,7 @@ void PNPThread::computeLineIntersection()
 #if DEBUG == DEBUG_YES
 			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
 #endif
-//			this->m_web_string_stream << "{\"intersection\": {\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
+			this->m_web_string_stream << "{\"intersection\": {\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 		}
 		this->m_web_mutex.unlock();
 	}
@@ -695,13 +691,13 @@ void PNPThread::printFilteringMap()
 
 std::string PNPThread::generateWebServerData()
 {
-	/*this->m_web_mutex.lock();
+	this->m_web_mutex.lock();
 	this->m_web_string_stream << "{\"End\"}]";
 	std::string tmp = this->m_web_string_stream.str();
 	this->m_web_string_stream.str("");
 	std::cout << "Data generated: " << tmp << std::endl;
 	this->m_web_string_stream << "[";
-this->m_web_mutex.unlock();
-	return tmp;*/
-	return "Test";
+	this->m_web_mutex.unlock();
+	return tmp;
+	//return "Test";
 }

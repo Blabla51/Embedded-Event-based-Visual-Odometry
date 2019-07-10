@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #if OS == OS_LINUX
-//#include <curl/curl.h>
+#include <curl/curl.h>
 #endif
 #include "uart_thread.h"
 #include "hough_thread.h"
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 
 	bool stop = false;
 #if OS == OS_LINUX
-	//CURL *curl;
-	//CURLcode res;
+	CURL *curl;
+	CURLcode res;
 
 	//static const char *postthis = "moo mooo moo moo";
 	std::string readBuffer;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 	//	std::cout << "Char:" << stdin->getchar() << std::endl;
 
 
-		/*curl = curl_easy_init();
+		curl = curl_easy_init();
 		std::string data = "Data";
 		data.append(pnp_thread_object->generateWebServerData());
 		readBuffer.clear();
@@ -91,9 +91,9 @@ int main(int argc, char *argv[])
 		if(readBuffer == std::string("stop"))
 		{
 			stop = true;
-		}*/
+		}
 		//BaseThread::mutexLog.unlock();
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		break;
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	#endif
 	}
 #if OS == OS_LINUX
-	//curl_easy_cleanup(curl);
+	curl_easy_cleanup(curl);
 #endif
 	std::cout << "Stopped objects " << std::endl;
 	uart_thread_object->stop();

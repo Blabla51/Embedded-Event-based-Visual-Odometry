@@ -12,7 +12,7 @@
 #include "common.h"
 #include "base_thread.h"
 #include <future>
-//#include <sstream>
+#include <sstream>
 //#include "libusb.h"
 
 class HoughThread;
@@ -33,7 +33,7 @@ private:
 	int			m_ht_rho_max;
 	int 		m_ht_map_x;
 	int 		m_ht_map_y;
-	//std::stringstream m_web_string_stream;
+	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
