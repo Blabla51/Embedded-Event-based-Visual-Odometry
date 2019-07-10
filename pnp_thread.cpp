@@ -1,13 +1,12 @@
 #include "pnp_thread.h"
 #include "hough_thread.h"
 
-PNPThread::PNPThread(double fl, HoughThread* ht) {
+PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_base::in | std::ios_base::out | std::ios_base::ate) {
 	this->m_ht = ht;
 	this->m_focal_length = fl;
 	this->m_nbr_lines_identified = 0;
 	this->m_confidence_coef = 0.15;
 	this->m_current_filter_centers = new int*[4];
-	this->m_web_string_stream = std::stringstream(std::ios_base::in | std::ios_base::out | std::ios_base::ate);
 	this->m_web_string_stream << "[";
 
 	this->m_ht_rho_max = ht->getRhoMax();

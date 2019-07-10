@@ -46,10 +46,10 @@ int main(int argc, char *argv[])
 	CURL *curl;
 	CURLcode res;
 
-	static const char *postthis = "moo mooo moo moo";
+	//static const char *postthis = "moo mooo moo moo";
 	std::string readBuffer;
 
-	if(!curl)
+	/*if(!curl)
 	{
 		//BaseThread::mutexLog.lock();
 		std::cout << "CURL init failed" << std::endl;
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-	}
+	}*/
 #endif
 	while(stop == false)
 	{
@@ -94,9 +94,13 @@ int main(int argc, char *argv[])
 		}
 		//BaseThread::mutexLog.unlock();
 	#elif OS == OS_WINDOWS
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		break;
 	#endif
 	}
+#if OS == OS_LINUX
+	curl_easy_cleanup(curl);
+#endif
 	uart_thread_object->stop();
 	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	hough_thread_object->stop();

@@ -25,7 +25,7 @@ private:
 	int 	m_camera_x;
 	int 	m_camera_y;
 	int 	m_last_input_event_timestamp;
-	int 	m_pc_exp_range;
+	unsigned int 	m_pc_exp_range;
 	double 			m_threshold;
 	double			m_decay;
 	double 			m_rho_max;
