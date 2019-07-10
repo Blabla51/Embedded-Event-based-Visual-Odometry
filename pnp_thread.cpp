@@ -655,13 +655,15 @@ void PNPThread::computeLineIntersection()
 		std::cout << "Detected intersections:" << std::endl;
 #endif
 		this->m_web_mutex.lock();
+		this->m_web_string_stream << "{\"intersection\": [";
 		for(int i = 0; i < 4; i++)
 		{
 #if DEBUG == DEBUG_YES
 			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
 #endif
-			this->m_web_string_stream << "{\"intersection\": {\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
+			this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 		}
+		this->m_web_string_stream << "{}]},";
 		this->m_web_mutex.unlock();
 	}
 }
