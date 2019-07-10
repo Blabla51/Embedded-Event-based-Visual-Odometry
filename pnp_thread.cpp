@@ -660,7 +660,7 @@ void PNPThread::computeLineIntersection()
 #if DEBUG == DEBUG_YES
 			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
 #endif
-			this->m_web_string_stream << "{\"intersection\": {\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
+//			this->m_web_string_stream << "{\"intersection\": {\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 		}
 		this->m_web_mutex.unlock();
 	}
@@ -697,7 +697,7 @@ std::string PNPThread::generateWebServerData()
 	this->m_web_string_stream.str("");
 	std::cout << "Data generated: " << tmp << std::endl;
 	this->m_web_string_stream << "[";
-	this->m_web_mutex.unlock();
+this->m_web_mutex.unlock();
 	return tmp;*/
 	return "Test";
 }
