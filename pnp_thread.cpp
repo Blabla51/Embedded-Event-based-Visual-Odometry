@@ -164,10 +164,10 @@ void PNPThread::threadFunction() {
 		std::cout << "Interpreting Hough Event" << std::endl;
 		this->mutexLog.unlock();
 #endif
-		/*switch(e.a)
+		switch(e.a)
 		{
 		case 1:
-			this->computeEvent(e.theta,e.dist,e.t, e.line_id);
+			//this->computeEvent(e.theta,e.dist,e.t, e.line_id);
 			break;
 		case 2:
 			tmp_stop = true;
@@ -177,7 +177,7 @@ void PNPThread::threadFunction() {
 			std::cout << "Unknown Hough event: " << e.a << std::endl;
 			this->mutexLog.unlock();
 			break;
-		}*/
+		}
 	}while(!tmp_stop);
 	this->mutexLog.lock();
 	std::cout << "Stopped my things ! PNP" << std::endl;
