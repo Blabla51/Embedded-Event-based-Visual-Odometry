@@ -136,7 +136,7 @@ void PNPThread::threadFunction() {
 	image_points[0][3] = 33.242078313261715;
 	image_points[1][3] = -7.994080212156028;
 	this->computePosit(image_points);*/
-	/*bool tmp_stop = false;
+	bool tmp_stop = true;
 	do {
 #if DEBUG == DEBUG_YES
 		this->mutexLog.lock();
@@ -164,7 +164,7 @@ void PNPThread::threadFunction() {
 		std::cout << "Interpreting Hough Event" << std::endl;
 		this->mutexLog.unlock();
 #endif
-		switch(e.a)
+		/*switch(e.a)
 		{
 		case 1:
 			this->computeEvent(e.theta,e.dist,e.t, e.line_id);
@@ -177,8 +177,8 @@ void PNPThread::threadFunction() {
 			std::cout << "Unknown Hough event: " << e.a << std::endl;
 			this->mutexLog.unlock();
 			break;
-		}
-	}while(!tmp_stop);*/
+		}*/
+	}while(!tmp_stop);
 	this->mutexLog.lock();
 	std::cout << "Stopped my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
