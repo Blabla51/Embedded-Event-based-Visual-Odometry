@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	pnp_thread_object->stop();
 	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::cout << "Stopped objects" << std::endl;
+	std::cout << "Stopped objects " << std::endl;
 	delete uart_thread_object;
 	delete hough_thread_object;
 	delete pnp_thread_object;
