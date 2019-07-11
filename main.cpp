@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 		std::cout << "Send: " << data << " " << res << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		//BaseThread::mutexLog.lock();
-		std::cout << readBuffer << std::endl;
+		//std::cout << readBuffer << std::endl;
 
 		if(readBuffer == std::string("stop"))
 		{

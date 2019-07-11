@@ -91,6 +91,18 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	m_object_matrix[1][2] = -8.12371725123699;
 	m_object_matrix[2][2] = -8.12378795804464;
 	m_object_matrix[3][2] = -8.12371725123699;
+
+	// FORCE BEGIN
+
+	/*this->m_nbr_lines_identified = 4;
+	this->m_current_filter_centers[0][0] = 210;
+	this->m_current_filter_centers[0][1] = 64;
+	this->m_current_filter_centers[1][0] = ;
+	this->m_current_filter_centers[1][1] = ;
+	this->m_current_filter_centers[2][0] = ;
+	this->m_current_filter_centers[2][1] = ;
+	this->m_current_filter_centers[3][0] = ;
+	this->m_current_filter_centers[3][1] = ;*/
 }
 
 PNPThread::~PNPThread() {
@@ -146,9 +158,9 @@ void PNPThread::threadFunction() {
 #endif
 		while(this->m_ev_queue.empty())
 		{
-			this->mutexLog.lock();
-			std::cout << "Waiting Hough Event" << std::endl;
-			this->mutexLog.unlock();
+			//this->mutexLog.lock();
+			//std::cout << "Waiting Hough Event" << std::endl;
+			//this->mutexLog.unlock();
 			this->m_main_loop_cv.wait(lck);
 		}
 #if DEBUG == DEBUG_YES
