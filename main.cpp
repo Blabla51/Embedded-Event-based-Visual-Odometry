@@ -70,8 +70,7 @@ int main(int argc, char *argv[])
 
 
 		curl = curl_easy_init();
-		std::string data = "Data";
-		data.append(pnp_thread_object->generateWebServerData());
+		std::string data = pnp_thread_object->generateWebServerData();
 		readBuffer.clear();
 		//static const char* post_data1 = data.c_str();
 		curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
