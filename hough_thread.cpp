@@ -214,7 +214,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 			rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
-				if(this->m_pnpt->getFilterValue(theta_index,rho_index) > 0)
+				if(this->m_pnpt->getFilterValue(theta_index,rho_index) <= 0)
 				{
 					continue;
 				}
