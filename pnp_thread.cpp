@@ -244,7 +244,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				dd = 2*std::min(dist-this->m_line_parameters[i][1],dist) + std::max(dist-this->m_line_parameters[i][1],dd);
 				rotated = true;
 			}
-			if(dt < PI/5 && dd < 6 && sqrt(140.0*dt*dt+dd*dd) < 140)
+			if(dt < PI/6 && sqrt(140.0*dt*dt+dd*dd) < 140)
 			{
 				if(sqrt(140.0*dt*dt+dd*dd) < best_dist)
 				{
@@ -262,7 +262,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		}
 		if(candidate_line >= 0)
 		{
-			this->updateLineParameters(theta,dist,rotated,candidate_line);
+			this->updateLineParameters(theta,dist,best_rotated,candidate_line);
 		}
 		else if(candidate_line == -1 && can_be_a_new_line == this->m_nbr_lines_identified)
 		{
