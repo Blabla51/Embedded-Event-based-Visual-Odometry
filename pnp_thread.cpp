@@ -189,9 +189,10 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 {
 	if(this->m_nbr_lines_identified == 4)
 	{
-		if(line_id-- > 0)
+		if(line_id > 0)
 		{
 			bool rotated;
+			line_id--;
 			if(std::abs(theta-this->m_line_parameters[line_id][0]) < std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[line_id][0]))
 			{
 				rotated = false;
