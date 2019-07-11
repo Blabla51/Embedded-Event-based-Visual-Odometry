@@ -116,9 +116,11 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	//this->m_current_filter_centers[3][0] = 45;
 	//this->m_current_filter_centers[3][1] = 19;
 
-	this->m_ht->activateTracking();
-
 	this->computeLineIntersection();
+	this->computePosit();
+	this->updateFilteringArray();
+	this->m_web_string_stream << "{\"tracking\": true},";
+	this->m_ht->activateTracking();
 }
 
 PNPThread::~PNPThread() {
