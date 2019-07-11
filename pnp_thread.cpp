@@ -207,6 +207,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		}
 		else
 		{
+			this->mutexLog.lock();
+			std::cout << "Warning: lines identified but still not line id." << std::endl;
+			this->mutexLog.unlock();
 #if DEBUG == DEBUG_YES
 		/*this->mutexLog.lock();
 		std::cout << "Warning: lines identified but still not line id." << std::endl;
