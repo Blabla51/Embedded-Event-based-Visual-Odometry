@@ -11,7 +11,7 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	for(int i = 0; i < this->m_camera_x; i++)
 	{
 		this->m_baf_time_array[i] = new unsigned int[this->m_camera_y];
-		for(int j; j < this->m_camera_y; j++)
+		for(int j = 0; j < this->m_camera_y; j++)
 		{
 			this->m_baf_time_array[i][j] = 0;
 		}

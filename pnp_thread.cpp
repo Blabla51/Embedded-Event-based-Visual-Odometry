@@ -644,7 +644,7 @@ void PNPThread::updateFilteringArray()
 
 void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id)
 {
-	this->mutexLog->lock();
+	this->mutexLog.lock();
 	std::cout << "Line " << line_id << " from " << this->m_line_parameters[line_id][0] << ";" << this->m_line_parameters[line_id][1] << " with " << theta << ";" << dist << " to ";
 	if(rotated)
 	{
@@ -665,6 +665,7 @@ void PNPThread::updateLineParameters(double theta, double dist, bool rotated, in
 		this->m_line_parameters[line_id][1] = dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
 	}
 	std::cout << this->m_line_parameters[line_id][0] << ";" << this->m_line_parameters[line_id][1] << std::endl;
+	this->mutexLog.unlock();
 }
 
 void PNPThread::computeLineIntersection()

@@ -89,7 +89,7 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 	}
 	this->m_decay = 300*1e-6;
 	this->m_pc_exp = new double[this->m_pc_exp_range]; // Déterminer le nombre max de l'exp calculé
-	for(int i = 0; i < this->m_pc_exp_range; i++)
+	for(unsigned int i = 0; i < this->m_pc_exp_range; i++)
 	{
 		m_pc_exp[i] = exp(-this->m_decay*(double)(i));
 	}
