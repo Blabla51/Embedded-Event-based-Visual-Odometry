@@ -564,8 +564,8 @@ void PNPThread::transMat(double** matrix, double** res, int ligne, int colonne)
 
 void PNPThread::updateFilteringArray()
 {
-	int zone_x = 10;//this->m_ht->getZoneX();
-	int zone_y = 10;//this->m_ht->getZoneY();
+	int zone_x = 5;//this->m_ht->getZoneX();
+	int zone_y = 5;//this->m_ht->getZoneY();
 	//printFilteringMap();
 	for(int i = 0; i < 4; i++)
 	{
@@ -644,6 +644,8 @@ void PNPThread::updateFilteringArray()
 
 void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id)
 {
+	this->mutexLog->lock();
+	std::cout << "Line " << line_id << " from " << this->m_line_parameters[line_id][0] << ";" << this->m_line_parameters[line_id][1] << " with " << theta << ";" << dist << " to ";
 	if(rotated)
 	{
 		this->m_line_parameters[line_id][1] = -dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
@@ -662,6 +664,7 @@ void PNPThread::updateLineParameters(double theta, double dist, bool rotated, in
 		this->m_line_parameters[line_id][0] = theta*this->m_confidence_coef+this->m_line_parameters[line_id][0]*(1.0-this->m_confidence_coef);
 		this->m_line_parameters[line_id][1] = dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
 	}
+	std::cout << this->m_line_parameters[line_id][0] << ";" << this->m_line_parameters[line_id][1] << std::endl;
 }
 
 void PNPThread::computeLineIntersection()
