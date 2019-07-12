@@ -616,6 +616,9 @@ void PNPThread::updateFilteringArray()
 			this->m_filter_mutex.unlock();
 			this->m_current_filter_centers[i][0] = theta_index;
 			this->m_current_filter_centers[i][1] = rho_index;
+			this->mutexLog.lock();
+			std::cout << "filter center " << i << ": " << theta_index << ";" << rho_index;
+			this->mutexLog.unlock();
 			this->m_filter_mutex.lock();
 			for(int j = -zone_x; j < zone_x; j++)
 			{
