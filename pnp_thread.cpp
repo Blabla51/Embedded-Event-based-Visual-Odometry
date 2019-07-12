@@ -7,6 +7,9 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_focal_length = fl;
 	this->m_nbr_lines_identified = 0;
 	this->m_confidence_coef = 0.03;
+	this->m_posit_z = 0.0;
+	this->m_posit_y = 0.0;
+	this->m_posit_x = 0.0;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream << "[";
 
@@ -485,12 +488,12 @@ void PNPThread::computePosit()
 	transMat(k,kt,1,3);
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
-	double Tz = Z0;
-	//std::cout << "Tz " << Tz << std::endl;
-	double Tx = image_points[0][0]*Z0/this->m_focal_length;
-	//std::cout << "Tx " << Tx << std::endl;
-	double Ty = image_points[1][0]*Z0/this->m_focal_length;
-	//std::cout << "Ty " << Ty << std::endl;
+
+	this->m_web_mutex.lock();
+	this->m_posit_z = Z0;
+	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
+	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
+	this->m_web_mutex.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
@@ -743,6 +746,7 @@ std::string PNPThread::generateWebServerData()
 		this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 	}
 	this->m_web_string_stream << "{}]},";
+	this->m_web_string_stream << "{\"coordinates\": {\"x\":" << this->m_posit_x << ",\"y\":" << this->m_posit_y << ",\"z\":" << this->m_posit_z << "}}";
 	this->m_web_string_stream << "{\"end\":1}]";
 	std::string tmp = this->m_web_string_stream.str();
 	this->m_web_string_stream.str("");

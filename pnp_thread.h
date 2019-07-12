@@ -33,6 +33,9 @@ private:
 	int			m_ht_rho_max;
 	int 		m_ht_map_x;
 	int 		m_ht_map_y;
+	double 		m_posit_z;
+	double 		m_posit_y;
+	double		m_posit_x;
 	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
