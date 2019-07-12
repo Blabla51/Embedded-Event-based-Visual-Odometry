@@ -116,6 +116,10 @@ void UARTThread::threadFunction() {
 //	{
 //		this->m_ht->addEvent(112,8,true,1);
 //	}
+	unsigned int last_time = 0;
+	unsigned int first_time = 0;
+	unsigned int event_received_global = 0;
+	unsigned int event_sended_global = 0;
 #if MODE == MODE_OFFLINE
 	std::ifstream event_file("./tetra_move_y_x_r.csv");
 	if(!event_file.is_open())
@@ -168,11 +172,7 @@ void UARTThread::threadFunction() {
 	int tail = 0;
 	int byte_received = 0;
 	int event_before_begin = 0;
-	unsigned int event_received_global = 0;
-	unsigned int event_sended_global = 0;
-	unsigned int first_time = 0;
 	bool event_received = false;
-	unsigned int last_time = 0;
 	RS232_flushRX(this->m_fd_rec);
 	RS232_flushRX(this->m_fd_command);
 	RS232_cputs(this->m_fd_command, "E+\n");
