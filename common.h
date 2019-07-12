@@ -31,7 +31,7 @@
 
 #define DEBUG DEBUG_NO
 #define OS OS_LINUX
-#define MODE MODE_OFFLINE
+#define MODE MODE_ONLINE
 
 class Event {
 public:

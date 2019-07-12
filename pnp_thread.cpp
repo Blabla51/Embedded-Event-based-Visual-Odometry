@@ -222,9 +222,9 @@ void PNPThread::threadFunction() {
 
 void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line_id)
 {
-	this->mutexLog.lock();
-	std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
-	this->mutexLog.unlock();
+	//this->mutexLog.lock();
+	//std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+	//this->mutexLog.unlock();
 	if(this->m_nbr_lines_identified == 4)
 	{
 		if(line_id > 0)
@@ -619,9 +619,9 @@ void PNPThread::updateFilteringArray()
 			this->m_filter_mutex.unlock();
 			this->m_current_filter_centers[i][0] = theta_index;
 			this->m_current_filter_centers[i][1] = rho_index;
-			this->mutexLog.lock();
-			std::cout << "filter_center " << i << " " << theta_index << " " << rho_index << std::endl;
-			this->mutexLog.unlock();
+			//this->mutexLog.lock();
+			//std::cout << "filter_center " << i << " " << theta_index << " " << rho_index << std::endl;
+			//this->mutexLog.unlock();
 			this->m_filter_mutex.lock();
 			for(int j = -zone_x; j < zone_x; j++)
 			{
@@ -702,6 +702,12 @@ void PNPThread::computeLineIntersection()
     		this->m_line_inters[i][0] = x;
     		this->m_line_inters[i][1] = y;
 		}
+		x = this->m_line_inters[1][0];
+		this->m_line_inters[1][0] = this->m_line_inters[3][0];
+		this->m_line_inters[3][0] = x;
+		y = this->m_line_inters[1][1];
+		this->m_line_inters[1][1] = this->m_line_inters[3][1];
+		this->m_line_inters[3][1] = y;
 		this->m_web_mutex.unlock();
 #if DEBUG == DEBUG_YES
 		std::cout << "Detected intersections:" << std::endl;
