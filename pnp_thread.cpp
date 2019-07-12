@@ -64,9 +64,11 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	m_object_points[0][1] = -0.057447;
 	m_object_points[1][1] = -0.0995;
 	m_object_points[2][1] = -0.041032;
+
 	m_object_points[0][2] =  0.114893;
 	m_object_points[1][2] = -0.0;
 	m_object_points[2][2] = -0.041032;
+
 	m_object_points[0][3] = -0.057447;
 	m_object_points[1][3] =  0.0995;
 	m_object_points[2][3] = -0.041032;
@@ -96,23 +98,23 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 
 	this->m_nbr_lines_identified = 4;
 	//4.22, 16
-	this->m_line_parameters[0][0] = 4.22;
-	this->m_line_parameters[0][1] = 16;
+	this->m_line_parameters[3][0] = 4.22;
+	this->m_line_parameters[3][1] = 16;
 	//this->m_current_filter_centers[0][0] = 344;
 	//this->m_current_filter_centers[0][1] = 20;
 	//5.20326, 9.82994
-	this->m_line_parameters[1][0] = 5.20;
-	this->m_line_parameters[1][1] = 9.83;
+	this->m_line_parameters[2][0] = 5.20;
+	this->m_line_parameters[2][1] = 9.83;
 	//this->m_current_filter_centers[1][0] = 424;
 	//this->m_current_filter_centers[1][1] = 12;
 	//2.66299, 35.539
-	this->m_line_parameters[2][0] = 2.663;
-	this->m_line_parameters[2][1] = 35.54;
+	this->m_line_parameters[1][0] = 2.663;
+	this->m_line_parameters[1][1] = 35.54;
 	//this->m_current_filter_centers[2][0] = 217;
 	//this->m_current_filter_centers[2][1] = 45;
 	//0.55, 15
-	this->m_line_parameters[3][0] = 0.55;
-	this->m_line_parameters[3][1] = 15;
+	this->m_line_parameters[0][0] = 0.55;
+	this->m_line_parameters[0][1] = 15;
 	//this->m_current_filter_centers[3][0] = 45;
 	//this->m_current_filter_centers[3][1] = 19;
 
