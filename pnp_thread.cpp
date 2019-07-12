@@ -746,7 +746,7 @@ std::string PNPThread::generateWebServerData()
 		this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 	}
 	this->m_web_string_stream << "{}]},";
-	this->m_web_string_stream << "{\"coordinates\": {\"x\":" << this->m_posit_x << ",\"y\":" << this->m_posit_y << ",\"z\":" << this->m_posit_z << "}}";
+	this->m_web_string_stream << "{\"coordinates\": {\"x\":" << this->m_posit_x << ",\"y\":" << this->m_posit_y << ",\"z\":" << this->m_posit_z << "}},";
 	this->m_web_string_stream << "{\"end\":1}]";
 	std::string tmp = this->m_web_string_stream.str();
 	this->m_web_string_stream.str("");
