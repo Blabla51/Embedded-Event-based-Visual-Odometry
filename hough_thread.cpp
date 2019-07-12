@@ -73,11 +73,9 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 		}
 	}
 	look_up_file.close();
-#if DEBUG == DEBUG_YES
 	this->mutexLog.lock();
 	std::cout << "Rho max: " << this->m_rho_max << std::endl;
 	this->mutexLog.unlock();
-#endif
 	this->m_pc_theta = new double[this->m_hough_map_x];
 	this->m_pc_cos = new double[this->m_hough_map_x];
 	this->m_pc_sin = new double[this->m_hough_map_x];
@@ -87,7 +85,7 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 		this->m_pc_cos[i] = cos(this->m_pc_theta[i]);
 		this->m_pc_sin[i] = sin(this->m_pc_theta[i]);
 	}
-	this->m_decay = 300*1e-6;
+	this->m_decay = 200*1e-6;
 	this->m_pc_exp = new double[this->m_pc_exp_range]; // Déterminer le nombre max de l'exp calculé
 	for(unsigned int i = 0; i < this->m_pc_exp_range; i++)
 	{

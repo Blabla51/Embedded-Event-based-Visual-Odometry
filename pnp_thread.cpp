@@ -96,7 +96,7 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	m_object_matrix[1][2] = -8.12371725123699;
 	m_object_matrix[2][2] = -8.12378795804464;
 	m_object_matrix[3][2] = -8.12371725123699;
-
+/*
 	// FORCE BEGIN
 
 	this->m_nbr_lines_identified = 4;
@@ -125,7 +125,7 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->computePosit();
 	this->updateFilteringArray();
 	this->m_web_string_stream << "{\"tracking\": true},";
-	this->m_ht->activateTracking();
+	this->m_ht->activateTracking();*/
 }
 
 PNPThread::~PNPThread() {
@@ -569,8 +569,8 @@ void PNPThread::transMat(double** matrix, double** res, int ligne, int colonne)
 
 void PNPThread::updateFilteringArray()
 {
-	int zone_x = 5;//this->m_ht->getZoneX();
-	int zone_y = 5;//this->m_ht->getZoneY();
+	int zone_x = this->m_ht->getZoneX();
+	int zone_y = this->m_ht->getZoneY();
 	//printFilteringMap();
 	for(int i = 0; i < 4; i++)
 	{
