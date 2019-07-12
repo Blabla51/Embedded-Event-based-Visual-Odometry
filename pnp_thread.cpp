@@ -224,6 +224,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 {
 	this->mutexLog.lock();
 	std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+	this->mutexLog.unlock();
 	if(this->m_nbr_lines_identified == 4)
 	{
 		if(line_id > 0)
