@@ -138,7 +138,27 @@ void UARTThread::threadFunction() {
 			p = std::stoi(tmp_input_line, &sz);
 			tmp_input_line = tmp_input_line.substr(sz+1);
 			t = std::stoi(tmp_input_line);
-			this->m_ht->addEvent(x,y,p==1,t);
+			unsigned char tx = x >> 1;
+			unsigned char ty = y >> 1;
+			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
+			{
+				event_sended_global++;
+				this->m_ht->lockAddEvent();
+				this->m_ht->addEvent(x,y,p==1,t);
+				this->m_ht->unlockAddEvent();
+				this->m_ht->sendNotifAddEvent();
+			}
+			if(tx > 0 && tx < this->m_camera_x-1 && ty > 0 && ty < this->m_camera_y-1)
+			{
+				this->m_baf_time_array[tx+1][ty+1] = t;
+				this->m_baf_time_array[tx  ][ty+1] = t;
+				this->m_baf_time_array[tx-1][ty+1] = t;
+				this->m_baf_time_array[tx+1][ty  ] = t;
+				this->m_baf_time_array[tx-1][ty  ] = t;
+				this->m_baf_time_array[tx+1][ty-1] = t;
+				this->m_baf_time_array[tx  ][ty-1] = t;
+				this->m_baf_time_array[tx-1][ty-1] = t;
+			}
 		}
 	}
 #else
