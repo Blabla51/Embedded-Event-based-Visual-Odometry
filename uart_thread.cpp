@@ -134,6 +134,7 @@ void UARTThread::threadFunction() {
 		std::string::size_type sz;
 		std::getline(event_file, tmp_input_line); //Remove header of the CSV
 		int x,y,p,t;
+		int last_t = 0;
 		while (std::getline(event_file, tmp_input_line)) {
 			x = std::stoi(tmp_input_line, &sz);
 			tmp_input_line = tmp_input_line.substr(sz+1);
@@ -142,6 +143,11 @@ void UARTThread::threadFunction() {
 			p = std::stoi(tmp_input_line, &sz);
 			tmp_input_line = tmp_input_line.substr(sz+1);
 			t = std::stoi(tmp_input_line);
+			if(t - last_t > 10000)
+			{
+				last_t = last_t + 10000;
+				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+			}
 			unsigned char tx = x >> 1;
 			unsigned char ty = y >> 1;
 			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
