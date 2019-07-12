@@ -143,6 +143,10 @@ void UARTThread::threadFunction() {
 			p = std::stoi(tmp_input_line, &sz);
 			tmp_input_line = tmp_input_line.substr(sz+1);
 			t = std::stoi(tmp_input_line);
+			if(last_t == 0)
+			{
+				last_t = t;
+			}
 			if(t - last_t > 10000)
 			{
 				last_t = last_t + 10000;
