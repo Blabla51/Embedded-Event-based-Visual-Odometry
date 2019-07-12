@@ -6,7 +6,7 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_ht = ht;
 	this->m_focal_length = fl;
 	this->m_nbr_lines_identified = 0;
-	this->m_confidence_coef = 0.03;
+	this->m_confidence_coef = 0.15;
 	this->m_posit_z = 0.0;
 	this->m_posit_y = 0.0;
 	this->m_posit_x = 0.0;
@@ -222,6 +222,8 @@ void PNPThread::threadFunction() {
 
 void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line_id)
 {
+	this->mutexLog.lock();
+	std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
 	if(this->m_nbr_lines_identified == 4)
 	{
 		if(line_id > 0)
@@ -244,7 +246,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		else
 		{
 			this->mutexLog.lock();
-			std::cout << "Warning: lines identified but still not line id:" << line_id << std::endl;
+			//std::cout << "Warning: lines identified but still not line id:" << line_id << std::endl;
 			this->mutexLog.unlock();
 #if DEBUG == DEBUG_YES
 		/*this->mutexLog.lock();
@@ -617,7 +619,7 @@ void PNPThread::updateFilteringArray()
 			this->m_current_filter_centers[i][0] = theta_index;
 			this->m_current_filter_centers[i][1] = rho_index;
 			this->mutexLog.lock();
-			std::cout << "filter center " << i << ": " << theta_index << ";" << rho_index;
+			std::cout << "filter_center " << i << " " << theta_index << " " << rho_index << std::endl;
 			this->mutexLog.unlock();
 			this->m_filter_mutex.lock();
 			for(int j = -zone_x; j < zone_x; j++)
@@ -653,7 +655,7 @@ void PNPThread::updateFilteringArray()
 void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id)
 {
 	this->mutexLog.lock();
-	std::cout << "Line " << line_id << " from " << this->m_line_parameters[line_id][0] << ";" << this->m_line_parameters[line_id][1] << " with " << theta << ";" << dist << " to ";
+	std::cout << "line " << line_id << " " << this->m_line_parameters[line_id][0] << " " << this->m_line_parameters[line_id][1] << " " << theta << " " << dist << " ";
 	if(rotated)
 	{
 		this->m_line_parameters[line_id][1] = -dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
@@ -672,7 +674,7 @@ void PNPThread::updateLineParameters(double theta, double dist, bool rotated, in
 		this->m_line_parameters[line_id][0] = theta*this->m_confidence_coef+this->m_line_parameters[line_id][0]*(1.0-this->m_confidence_coef);
 		this->m_line_parameters[line_id][1] = dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
 	}
-	std::cout << this->m_line_parameters[line_id][0] << ";" << this->m_line_parameters[line_id][1] << std::endl;
+	std::cout << this->m_line_parameters[line_id][0] << " " << this->m_line_parameters[line_id][1] << std::endl;
 	this->mutexLog.unlock();
 }
 
