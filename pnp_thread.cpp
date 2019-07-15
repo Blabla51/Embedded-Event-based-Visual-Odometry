@@ -282,11 +282,11 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				dd = 2*std::min(dist-this->m_line_parameters[i][1],dist) + std::max(dist-this->m_line_parameters[i][1],dd);
 				rotated = true;
 			}
-			if(dt < PI/6 && sqrt(140.0*dt*dt+dd*dd) < 140)
+			if(dt < PI/6 && dd < 6)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
 				if(sqrt(140.0*dt*dt+dd*dd) < best_dist)
 				{
-					best_dist = sqrt(140.0*dt*dt+dd*dd);
+					best_dist = sqrt(30.0*dt*dt+dd*dd);
 					candidate_line = i;
 					best_dt = dt;
 					best_dd = dd;
