@@ -121,7 +121,7 @@ void HoughThread::threadFunction() {
 	std::unique_lock<std::mutex> lck(this->m_main_loop_mutex);
 	bool tmp_stop = false;
 	std::chrono::steady_clock::time_point begin;
-	std::this_thread::sleep_for(std::chrono::microseconds(2500));
+	//std::this_thread::sleep_for(std::chrono::microseconds(2500));
 	std::chrono::steady_clock::time_point end;
 	unsigned int event_counter = 0;
 	do {

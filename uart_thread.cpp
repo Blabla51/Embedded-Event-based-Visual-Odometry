@@ -121,7 +121,7 @@ void UARTThread::threadFunction() {
 	unsigned int event_received_global = 0;
 	unsigned int event_sended_global = 0;
 #if MODE == MODE_OFFLINE
-	std::ifstream event_file("./tetra_move_y_x_r.csv");
+	std::ifstream event_file("./down_58mm.csv");
 	if(!event_file.is_open())
 	{
 		this->mutexLog.lock();
@@ -150,7 +150,7 @@ void UARTThread::threadFunction() {
 			if(t - last_t > 10000)
 			{
 				last_t = last_t + 10000;
-				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 			unsigned char tx = x >> 1;
 			unsigned char ty = y >> 1;
