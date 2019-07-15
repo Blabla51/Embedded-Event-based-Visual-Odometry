@@ -155,7 +155,7 @@ void UARTThread::threadFunction() {
 			int tx = x >> 1;
 			int ty = y >> 1;
 
-			std::cout << "Event: " << x << ";" << y << std::endl;
+			//std::cout << "Event: " << x << ";" << y << std::endl;
 			event_received_global++;
 			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
 			{
