@@ -152,8 +152,10 @@ void UARTThread::threadFunction() {
 				last_t = last_t + 10000;
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
-			unsigned int tx = x >> 1;
-			unsigned int ty = y >> 1;
+			int tx = x >> 1;
+			int ty = y >> 1;
+
+			std::cout << "Event: " << x << ";" << y << std::endl;
 			event_received_global++;
 			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
 			{
@@ -163,7 +165,7 @@ void UARTThread::threadFunction() {
 				this->m_ht->unlockAddEvent();
 				this->m_ht->sendNotifAddEvent();
 			}
-			if(tx > 0 && tx < this->m_camera_x>>1-1 && ty > 0 && ty < this->m_camera_y>>1-1)
+			if(tx > 0 && tx < (this->m_camera_x>>1)-1 && ty > 0 && ty < (this->m_camera_y>>1)-1)
 			{
 				this->m_baf_time_array[tx+1][ty+1] = t;
 				this->m_baf_time_array[tx  ][ty+1] = t;
