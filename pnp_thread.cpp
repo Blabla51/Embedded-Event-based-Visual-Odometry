@@ -275,7 +275,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			double theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
 			double theta_max = std::fmod(std::max(theta,this->m_line_parameters[i][0]), PI);
 			dt = std::min(theta_max-theta_min, theta_min+PI-theta_max);
-			if(dt == theta_max-theta_min && theta+this->m_line_parameters[i][0] > 2*PI)
+			if(dt == theta_max-theta_min && theta+this->m_line_parameters[i][0] > 2*PI && theta < PI/2)
 			{
 				dd = std::abs(dist-this->m_line_parameters[i][1]);
 				rotated = false;
