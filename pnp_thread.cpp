@@ -282,6 +282,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				dd = 2*std::min(dist-this->m_line_parameters[i][1],dist) + std::max(dist-this->m_line_parameters[i][1],dd);
 				rotated = true;
 			}
+			this->mutexLog.lock();
+			std::cout << "Detected line: " << theta << ";" << dist << " " << dt << ";" << dd << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
+			this->mutexLog.unlock();
 			if(dt < PI/6 && dd < 6)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
 				if(sqrt(30.0*dt*dt+dd*dd) < best_dist)
@@ -306,6 +309,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		{
 			this->m_line_parameters[this->m_nbr_lines_identified][0] = theta;
 			this->m_line_parameters[this->m_nbr_lines_identified][1] = dist;
+			this->mutexLog.lock();
+			std::cout << "New line: " << theta << ";" << dist << std::endl;
+			this->mutexLog.unlock();
 			this->m_nbr_lines_identified++;
 			if(this->m_nbr_lines_identified == 4)
 			{
