@@ -274,8 +274,8 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			//dt = std::min(std::abs(theta-this->m_line_parameters[i][0]), std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[i][0]));
 			double theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
 			double theta_max = std::fmod(std::max(theta,this->m_line_parameters[i][0]), PI);
-			dt = std::min(theta_max-theta_min, theta_min+PI-theta_max);
-			if(dt == theta_max-theta_min && theta+this->m_line_parameters[i][0] > 2*PI && theta < PI/2)
+			dt = std::min(std::abs(theta_max-theta_min), std::abs(theta_min+PI-theta_max));
+			if(dt == std::abs(theta_max-theta_min) && theta+this->m_line_parameters[i][0] > 2*PI && theta < PI/2)
 			{
 				dd = std::abs(dist-this->m_line_parameters[i][1]);
 				rotated = false;
@@ -286,7 +286,8 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				rotated = true;
 			}
 			this->mutexLog.lock();
-			std::cout << "Detected line: " << theta << ";" << dist << " " << dt << ";" << dd << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
+			std::cout << "Detected line : " << theta << ";" << dist << " " << dt << ";" << dd << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
+			std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
 			this->mutexLog.unlock();
 			if(dt < PI/6 && dd < 6)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
@@ -313,7 +314,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			this->m_line_parameters[this->m_nbr_lines_identified][0] = theta;
 			this->m_line_parameters[this->m_nbr_lines_identified][1] = dist;
 			this->mutexLog.lock();
-			std::cout << "New line: " << theta << ";" << dist << std::endl;
+			std::cout << "New line saved: " << theta << ";" << dist << std::endl;
 			this->mutexLog.unlock();
 			this->m_nbr_lines_identified++;
 			if(this->m_nbr_lines_identified == 4)
