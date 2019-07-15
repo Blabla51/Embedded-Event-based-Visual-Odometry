@@ -284,7 +284,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			}
 			if(dt < PI/6 && dd < 6)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
-				if(sqrt(140.0*dt*dt+dd*dd) < best_dist)
+				if(sqrt(30.0*dt*dt+dd*dd) < best_dist)
 				{
 					best_dist = sqrt(30.0*dt*dt+dd*dd);
 					candidate_line = i;
