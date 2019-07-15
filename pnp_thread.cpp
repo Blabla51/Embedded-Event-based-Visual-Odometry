@@ -271,8 +271,11 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		best_dist = 1e300;
 		for(int i = 0; i < this->m_nbr_lines_identified; i++)
 		{
-			dt = std::min(std::abs(theta-this->m_line_parameters[i][0]), std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[i][0]));
-			if(dt == std::abs(theta-this->m_line_parameters[i][0]))
+			//dt = std::min(std::abs(theta-this->m_line_parameters[i][0]), std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[i][0]));
+			double theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
+			double theta_max = std::fmod(std::max(theta,this->m_line_parameters[i][0]), PI);
+			dt = std::min(theta_max-theta_min, theta_min+PI-theta_max)
+			if(dt == theta_max-theta_min && theta+this->m_line_parameters[i][0] > 2*PI)
 			{
 				dd = std::abs(dist-this->m_line_parameters[i][1]);
 				rotated = false;
