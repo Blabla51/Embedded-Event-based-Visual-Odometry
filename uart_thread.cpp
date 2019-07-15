@@ -154,6 +154,7 @@ void UARTThread::threadFunction() {
 			}
 			unsigned char tx = x >> 1;
 			unsigned char ty = y >> 1;
+			event_received_global++;
 			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
 			{
 				event_sended_global++;
