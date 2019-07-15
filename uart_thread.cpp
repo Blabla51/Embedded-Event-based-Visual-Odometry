@@ -4,14 +4,14 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	this->m_ht = 0;
 	this->m_fd_rec = -1;
 	this->m_fd_command = -1;
-	this->m_baf_time = 1000;
+	this->m_baf_time = 3000;
 	this->m_camera_x = camera_x;
 	this->m_camera_y = camera_y;
-	this->m_baf_time_array = new unsigned int*[this->m_camera_x];
-	for(int i = 0; i < this->m_camera_x; i++)
+	this->m_baf_time_array = new unsigned int*[this->m_camera_x>>1];
+	for(int i = 0; i < this->m_camera_x>>1; i++)
 	{
-		this->m_baf_time_array[i] = new unsigned int[this->m_camera_y];
-		for(int j = 0; j < this->m_camera_y; j++)
+		this->m_baf_time_array[i] = new unsigned int[this->m_camera_y>>1];
+		for(int j = 0; j < this->m_camera_y>>1; j++)
 		{
 			this->m_baf_time_array[i][j] = 0;
 		}
@@ -152,8 +152,8 @@ void UARTThread::threadFunction() {
 				last_t = last_t + 10000;
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
-			unsigned char tx = x >> 1;
-			unsigned char ty = y >> 1;
+			unsigned int tx = x >> 1;
+			unsigned int ty = y >> 1;
 			event_received_global++;
 			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
 			{
@@ -163,7 +163,7 @@ void UARTThread::threadFunction() {
 				this->m_ht->unlockAddEvent();
 				this->m_ht->sendNotifAddEvent();
 			}
-			if(tx > 0 && tx < this->m_camera_x-1 && ty > 0 && ty < this->m_camera_y-1)
+			if(tx > 0 && tx < this->m_camera_x>>1-1 && ty > 0 && ty < this->m_camera_y>>1-1)
 			{
 				this->m_baf_time_array[tx+1][ty+1] = t;
 				this->m_baf_time_array[tx  ][ty+1] = t;
