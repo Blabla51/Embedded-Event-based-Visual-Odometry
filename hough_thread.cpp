@@ -302,7 +302,7 @@ double HoughThread::getPCExp(unsigned int dt)
 void HoughThread::activateTracking()
 {
 	this->m_tracking = true;
-	this->m_threshold = 10.0;
+	this->m_threshold = 8.0;
 	//this->printFilteringMap();
 }
 
