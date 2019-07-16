@@ -779,7 +779,7 @@ void PNPThread::computeLineIntersection()
 			d1 = this->m_line_parameters[(i+0)%4][1];
 			d2 = this->m_line_parameters[(i+1)%4][1];
 			y = (d1*cos(t2)-d2*cos(t1))/(sin(t1)*cos(t2)-sin(t2)*cos(t1));
-            x = (d1*sin(t2)-d2*sin(t1))/(cos(t1)*sin(t2)-cos(t2)*sin(t1));
+            x = (-d1*sin(t2)+d2*sin(t1))/(cos(t1)*sin(t2)-cos(t2)*sin(t1)); // Sign correction, check this later
     		this->m_line_inters[i][0] = x;
     		this->m_line_inters[i][1] = y;
 		}
