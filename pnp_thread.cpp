@@ -64,7 +64,10 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 			m_object_points[i][j] = 0.0;
 		}
 	}
-	m_object_points[0][1] = -0.057447;
+
+
+	// PYRAMIDE
+	/*m_object_points[0][1] = -0.057447;
 	m_object_points[1][1] = -0.0995;
 	m_object_points[2][1] = -0.041032;
 
@@ -74,7 +77,19 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 
 	m_object_points[0][3] = -0.057447;
 	m_object_points[1][3] =  0.0995;
-	m_object_points[2][3] = -0.041032;
+	m_object_points[2][3] = -0.041032;*/
+	// CARRE
+	m_object_points[0][1] = -0.1;
+	m_object_points[1][1] =  0.0;
+	m_object_points[2][1] =  0.0;
+
+	m_object_points[0][2] = -0.1;
+	m_object_points[1][2] = -0.1;
+	m_object_points[2][2] =  0.0;
+
+	m_object_points[0][3] =  0.0;
+	m_object_points[1][3] = -0.1;
+	m_object_points[2][3] =  0.0;
 	this->m_object_matrix = new double*[4];
 	for(int i = 0; i < 4; i++)
 	{
@@ -84,7 +99,10 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 			m_object_matrix[i][j] = 0.0;
 		}
 	}
-	m_object_matrix[0][0] = -2.42789526240074e-21;
+
+
+	// PYRAMIDE
+	/*m_object_matrix[0][0] = -2.42789526240074e-21;
 	m_object_matrix[1][0] = -2.90124173146107;
 	m_object_matrix[2][0] =  5.80248346292213;
 	m_object_matrix[3][0] = -2.90124173146107;
@@ -95,7 +113,21 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	m_object_matrix[0][2] =  1.17162378533812e-15;
 	m_object_matrix[1][2] = -8.12371725123699;
 	m_object_matrix[2][2] = -8.12378795804464;
-	m_object_matrix[3][2] = -8.12371725123699;
+	m_object_matrix[3][2] = -8.12371725123699;*/
+
+	// CARRE
+	m_object_matrix[0][0] =  0.0;
+	m_object_matrix[1][0] = -2.0/3.0;
+	m_object_matrix[2][0] = -1.0/3.0;
+	m_object_matrix[3][0] =  1.0/3.0;
+	m_object_matrix[0][1] =  0.0;
+	m_object_matrix[1][1] =  1.0/3.0;
+	m_object_matrix[2][1] = -1.0/3.0;
+	m_object_matrix[3][1] = -2.0/3.0;
+	m_object_matrix[0][2] =  0.0;
+	m_object_matrix[1][2] =  0.0;
+	m_object_matrix[2][2] =  0.0;
+	m_object_matrix[3][2] =  0.0;
 /*
 	// FORCE BEGIN
 
@@ -297,7 +329,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			std::cout << "Detected line : " << theta << ";" << dist << " " << dt << ";" << distance << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
 			//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
 			this->mutexLog.unlock();
-			if(dt < PI/6 && distance < 40)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
+			if(dt < PI/6 && distance < 60)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
 				if(distance < best_dist)
 				{
@@ -327,7 +359,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			this->m_nbr_lines_identified++;
 			if(this->m_nbr_lines_identified == 4)
 			{
-				double xmax, ymin;
+				/*double xmax, ymin;
 				int line_0, line_1, line_2, line_3;
 				xmax = -99999;
 				ymin = 99999;
@@ -378,27 +410,54 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					tmp_params[i] = new double[2];
 					tmp_params[i][0] = this->m_line_parameters[i][0];
 					tmp_params[i][1] = this->m_line_parameters[i][1];
+				}*/
+				double xmax, ymin;
+				int line_0, line_1, line_2, line_3;
+				xmax = -99999;
+				ymin = 99999;
+				line_0 = -1;
+				line_1 = -1;
+				line_2 = -1;
+				line_3 = -1;
+				for(int i = 0; i < this->m_nbr_lines_identified; i++)
+				{
+					double theta = this->m_line_parameters[i][0];
+					double dist = this->m_line_parameters[i][1];
+					if(std::min(std::fmod(theta-PI/2,2*PI), std::fmod(PI/2-theta,2*PI)) < PI/3)
+					{
+						line_0 = i;
+					}
+					else if(std::min(std::fmod(theta-3*PI/2,2*PI), std::fmod(3*PI/2-theta,2*PI)) < PI/3)
+					{
+						line_1 = i;
+					}
+					else if(std::min(std::fmod(theta-5*PI/2,2*PI), std::fmod(5*PI/2-theta,2*PI)) < PI/3)
+					{
+						line_2 = i;
+					}
+					else if(std::min(std::fmod(theta-7*PI/2,2*PI), std::fmod(7*PI/2-theta,2*PI)) < PI/3)
+					{
+						line_3 = i;
+					}
 				}
 				//line_0 = -1;
 				if(line_0 == -1 || line_1 == -1 || line_2 == -1 || line_3 == -1 )
 				{
 					this->m_nbr_lines_identified = 0;
-#if DEBUG == DEBUG_YES
 					this->mutexLog.lock();
 					std::cout << "Warning: Reseting the lines because it could not detected it" << std::endl;
 					this->mutexLog.unlock();
-#endif
 				}
 				else
 				{
-					this->m_line_parameters[0][0] = tmp_params[line_0][0];
+					/*this->m_line_parameters[0][0] = tmp_params[line_0][0];
 					this->m_line_parameters[0][1] = tmp_params[line_0][1];
 					this->m_line_parameters[1][0] = tmp_params[line_1][0];
 					this->m_line_parameters[1][1] = tmp_params[line_1][1];
 					this->m_line_parameters[2][0] = tmp_params[line_2][0];
 					this->m_line_parameters[2][1] = tmp_params[line_2][1];
 					this->m_line_parameters[3][0] = tmp_params[line_3][0];
-					this->m_line_parameters[3][1] = tmp_params[line_3][1];
+					this->m_line_parameters[3][1] = tmp_params[line_3][1];*/
 					this->mutexLog.lock();
 					std::cout << "Detected lines at " << t <<  " :" << std::endl;
 					for(int i = 0; i < 4; i++)
