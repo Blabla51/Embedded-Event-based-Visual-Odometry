@@ -272,7 +272,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		for(int i = 0; i < this->m_nbr_lines_identified; i++)
 		{
 			//dt = std::min(std::abs(theta-this->m_line_parameters[i][0]), std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[i][0]));
-			double theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
+			/*double theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
 			double theta_max = std::fmod(std::max(theta,this->m_line_parameters[i][0]), PI);
 			dt = std::min(std::abs(theta_max-theta_min), std::abs(theta_min+PI-theta_max));
 			if(dt == std::abs(theta_max-theta_min) && theta+this->m_line_parameters[i][0] > 2*PI && theta < PI/2)
@@ -284,16 +284,24 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			{
 				dd = 2*std::min(dist-this->m_line_parameters[i][1],dist) + std::max(dist-this->m_line_parameters[i][1],dd);
 				rotated = true;
-			}
+			}*/
+			double const d_max = 193.574;
+			double phi = asin((d_max-dist)/d_max);
+			double phi_line = asin((d_max-this->m_line_parameters[i][1])/d_max);
+			//double d_lambda = std::abs(std::fmod(theta,PI)-std::fmod(line_p1,PI));
+			double d_lambda = std::abs(theta-this->m_line_parameters[i][0]);
+			double d_rho = acos(sin(phi)*sin(phi_line)+cos(phi_line)*cos(phi)*cos(d_lambda));
+			double distance = d_max/2.0*d_rho;
+			dt = acos(cos(theta-this->m_line_parameters[i][0]));
 			this->mutexLog.lock();
-			std::cout << "Detected line : " << theta << ";" << dist << " " << dt << ";" << dd << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
-			std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
+			std::cout << "Detected line : " << theta << ";" << dist << " " << dt << ";" << distance << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
+			//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
 			this->mutexLog.unlock();
-			if(dt < PI/6 && dd < 12)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
+			if(dt < PI/6 && distance < 15)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
-				if(sqrt(30.0*dt*dt+dd*dd) < best_dist)
+				if(distance < best_dist)
 				{
-					best_dist = sqrt(30.0*dt*dt+dd*dd);
+					best_dist = distance;
 					candidate_line = i;
 					best_dt = dt;
 					best_dd = dd;

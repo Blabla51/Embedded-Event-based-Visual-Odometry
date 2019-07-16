@@ -9,6 +9,7 @@
 #include <mutex>
 #include <queue>
 #include <algorithm>
+#include <cmath>
 #include "common.h"
 #include "base_thread.h"
 #include <future>
