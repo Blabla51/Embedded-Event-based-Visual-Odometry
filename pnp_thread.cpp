@@ -774,10 +774,10 @@ void PNPThread::computeLineIntersection()
 		this->m_web_mutex.lock();
 		for(int i = 0; i < 4; i++)
 		{
-			t1 = this->m_line_parameters[(i+1)%4][0];
-			t2 = this->m_line_parameters[(i+2)%4][0];
-			d1 = this->m_line_parameters[(i+1)%4][1];
-			d2 = this->m_line_parameters[(i+2)%4][1];
+			t1 = this->m_line_parameters[(i+0)%4][0];
+			t2 = this->m_line_parameters[(i+1)%4][0];
+			d1 = this->m_line_parameters[(i+0)%4][1];
+			d2 = this->m_line_parameters[(i+1)%4][1];
 			y = (d1*cos(t2)-d2*cos(t1))/(sin(t1)*cos(t2)-sin(t2)*cos(t1));
             x = (d1*sin(t2)-d2*sin(t1))/(cos(t1)*sin(t2)-cos(t2)*sin(t1));
     		this->m_line_inters[i][0] = x;
