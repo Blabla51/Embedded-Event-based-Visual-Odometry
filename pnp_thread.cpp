@@ -403,13 +403,6 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 							line_2 = i;
 						}
 					}
-				}
-				double** tmp_params = new double*[this->m_nbr_lines_identified];
-				for(int i = 0; i < this->m_nbr_lines_identified; i++)
-				{
-					tmp_params[i] = new double[2];
-					tmp_params[i][0] = this->m_line_parameters[i][0];
-					tmp_params[i][1] = this->m_line_parameters[i][1];
 				}*/
 				double xmax, ymin;
 				int line_0, line_1, line_2, line_3;
@@ -456,6 +449,13 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				}
 				else
 				{
+					double** tmp_params = new double*[this->m_nbr_lines_identified];
+					for(int i = 0; i < this->m_nbr_lines_identified; i++)
+					{
+						tmp_params[i] = new double[2];
+						tmp_params[i][0] = this->m_line_parameters[i][0];
+						tmp_params[i][1] = this->m_line_parameters[i][1];
+					}
 					this->m_line_parameters[0][0] = tmp_params[line_0][0];
 					this->m_line_parameters[0][1] = tmp_params[line_0][1];
 					this->m_line_parameters[1][0] = tmp_params[line_1][0];
