@@ -456,14 +456,14 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				}
 				else
 				{
-					/*this->m_line_parameters[0][0] = tmp_params[line_0][0];
+					this->m_line_parameters[0][0] = tmp_params[line_0][0];
 					this->m_line_parameters[0][1] = tmp_params[line_0][1];
 					this->m_line_parameters[1][0] = tmp_params[line_1][0];
 					this->m_line_parameters[1][1] = tmp_params[line_1][1];
 					this->m_line_parameters[2][0] = tmp_params[line_2][0];
 					this->m_line_parameters[2][1] = tmp_params[line_2][1];
 					this->m_line_parameters[3][0] = tmp_params[line_3][0];
-					this->m_line_parameters[3][1] = tmp_params[line_3][1];*/
+					this->m_line_parameters[3][1] = tmp_params[line_3][1];
 					this->mutexLog.lock();
 					std::cout << "Detected lines at " << t <<  " :" << std::endl;
 					for(int i = 0; i < 4; i++)
