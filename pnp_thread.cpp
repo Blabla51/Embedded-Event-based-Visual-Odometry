@@ -329,7 +329,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			std::cout << "Detected line : " << theta << ";" << dist << " " << dt << ";" << distance << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
 			//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
 			this->mutexLog.unlock();
-			if(dt < PI/6 && distance < 60)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
+			if(dt < PI/6 || (dt < PI/4 && distance < 60))/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
 				if(distance < best_dist)
 				{
@@ -445,7 +445,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				{
 					this->m_nbr_lines_identified = 0;
 					this->mutexLog.lock();
-					std::cout << "Warning: Reseting the lines because it could not detected it" << std::endl;
+					std::cout << "Warning: Reseting the lines because it could not detected it " << line_0 << " " << line_1 << " " << line_2 << " " << line_3 << " " << std::endl;
 					this->mutexLog.unlock();
 				}
 				else
