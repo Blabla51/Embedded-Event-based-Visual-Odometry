@@ -424,21 +424,21 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					double theta = this->m_line_parameters[i][0];
 					double dist = this->m_line_parameters[i][1];
 					this->mutexLog.lock();
-					std::cout << "Dist cycl: " << std::min(std::fmod(theta-PI/2,2*PI), std::fmod(PI/2-theta,2*PI)) << " PI/2 " << theta << std::endl;
+					std::cout << "Dist cycl: " << std::min(std::fmod(theta-PI/2+2*PI,2*PI), std::fmod(PI/2-theta+2*PI,2*PI)) << " PI/2 " << theta << std::endl;
 					this->mutexLog.unlock();
-					if(std::min(std::fmod(theta-PI/2,2*PI), std::fmod(PI/2-theta,2*PI)) < PI/4)
+					if(std::min(std::fmod(theta-PI/2+2*PI,2*PI), std::fmod(PI/2-theta+2*PI,2*PI)) < PI/4)
 					{
 						line_0 = i;
 					}
-					else if(std::min(std::fmod(theta-3*PI/2,2*PI), std::fmod(3*PI/2-theta,2*PI)) < PI/4)
+					else if(std::min(std::fmod(theta-3*PI/2+2*PI,2*PI), std::fmod(3*PI/2-theta+2*PI,2*PI)) < PI/4)
 					{
 						line_1 = i;
 					}
-					else if(std::min(std::fmod(theta-5*PI/2,2*PI), std::fmod(5*PI/2-theta,2*PI)) < PI/4)
+					else if(std::min(std::fmod(theta-5*PI/2+2*PI,2*PI), std::fmod(5*PI/2-theta+2*PI,2*PI)) < PI/4)
 					{
 						line_2 = i;
 					}
-					else if(std::min(std::fmod(theta-7*PI/2,2*PI), std::fmod(7*PI/2-theta,2*PI)) < PI/4)
+					else if(std::min(std::fmod(theta-7*PI/2+2*PI,2*PI), std::fmod(7*PI/2-theta+2*PI,2*PI)) < PI/4)
 					{
 						line_3 = i;
 					}
