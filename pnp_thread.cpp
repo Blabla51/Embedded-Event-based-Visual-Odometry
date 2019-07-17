@@ -278,14 +278,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		}
 		else
 		{
-			this->mutexLog.lock();
+			//this->mutexLog.lock();
 			//std::cout << "Warning: lines identified but still not line id:" << line_id << std::endl;
-			this->mutexLog.unlock();
-#if DEBUG == DEBUG_YES
-		/*this->mutexLog.lock();
-		std::cout << "Warning: lines identified but still not line id." << std::endl;
-		this->mutexLog.unlock();*/
-#endif
+			//this->mutexLog.unlock();
 		}
 	}
 	else if(this->m_nbr_lines_identified > 4)
@@ -475,7 +470,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->computePosit();
 					this->updateFilteringArray();
 					this->m_web_string_stream << "{\"tracking\": true},";
-					this->m_ht->activateTracking();
+					//this->m_ht->activateTracking();
 				}
 			}
 		}
