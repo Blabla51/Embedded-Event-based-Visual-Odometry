@@ -254,9 +254,9 @@ void PNPThread::threadFunction() {
 
 void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line_id)
 {
-	//this->mutexLog.lock();
-	//std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
-	//this->mutexLog.unlock();
+	this->mutexLog.lock();
+	std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+	this->mutexLog.unlock();
 	if(this->m_nbr_lines_identified == 4)
 	{
 		if(line_id > 0)
@@ -325,10 +325,10 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			double d_rho = acos(sin(phi)*sin(phi_line)+cos(phi_line)*cos(phi)*cos(d_lambda));
 			double distance = d_max/2.0*d_rho;
 			dt = acos(cos(theta-this->m_line_parameters[i][0]));
-			this->mutexLog.lock();
-			std::cout << "detected_line " << theta << " " << dist << " " << dt << " " << distance << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
+			//this->mutexLog.lock();
+			//std::cout << "detected_line " << theta << " " << dist << " " << dt << " " << distance << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
 			//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
-			this->mutexLog.unlock();
+			//this->mutexLog.unlock();
 			if(dt < PI/6 || (dt < PI/4 && distance < 60))/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
 			{
 				if(distance < best_dist)
@@ -354,7 +354,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			this->m_line_parameters[this->m_nbr_lines_identified][0] = theta;
 			this->m_line_parameters[this->m_nbr_lines_identified][1] = dist;
 			this->mutexLog.lock();
-			std::cout << "New line saved: " << theta << ";" << dist << std::endl;
+			std::cout << "saved_line " << theta << " " << dist << std::endl;
 			this->mutexLog.unlock();
 			this->m_nbr_lines_identified++;
 			if(this->m_nbr_lines_identified == 4)
@@ -444,7 +444,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				{
 					this->m_nbr_lines_identified = 0;
 					this->mutexLog.lock();
-					std::cout << "Warning: Reseting the lines because it could not detected it " << line_0 << " " << line_1 << " " << line_2 << " " << line_3 << " " << std::endl;
+					std::cout << "warning reset_lines_because_not_detected" << line_0 << " " << line_1 << " " << line_2 << " " << line_3 << " " << std::endl;
 					this->mutexLog.unlock();
 				}
 				else
@@ -465,10 +465,10 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->m_line_parameters[3][0] = tmp_params[line_3][0];
 					this->m_line_parameters[3][1] = tmp_params[line_3][1];
 					this->mutexLog.lock();
-					std::cout << "Detected lines at " << t <<  " :" << std::endl;
+					std::cout << "line_detected_at" << t << std::endl;
 					for(int i = 0; i < 4; i++)
 					{
-						std::cout << "Line " << i << ": Theta=" << this->m_line_parameters[i][0] << " Dist=" << this->m_line_parameters[i][1] << std::endl;
+						std::cout << "line_detected_are" << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
 					}
 					this->mutexLog.unlock();
 					this->computeLineIntersection();
