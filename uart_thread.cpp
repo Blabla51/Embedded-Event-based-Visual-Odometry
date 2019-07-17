@@ -278,24 +278,7 @@ void UARTThread::threadFunction() {
 				}
 				last_time = t;
 				tail = (tail+6)%SIZE_BUFFER_EVENT;
-				unsigned char tx = x >> 1;
-				unsigned char ty = y >> 1;
-				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time && t-this->m_baf_time_array[tx][ty] > 10)
-				{
-					event_sended_global++;
-					this->m_ht->addEvent(x,y,p==1,t);
-				}
-				if(tx > 0 && tx < (this->m_camera_x>>1)-1 && ty > 0 && ty < (this->m_camera_y>>1)-1)
-				{
-					this->m_baf_time_array[tx+1][ty+1] = t;
-					this->m_baf_time_array[tx  ][ty+1] = t;
-					this->m_baf_time_array[tx-1][ty+1] = t;
-					this->m_baf_time_array[tx+1][ty  ] = t;
-					this->m_baf_time_array[tx-1][ty  ] = t;
-					this->m_baf_time_array[tx+1][ty-1] = t;
-					this->m_baf_time_array[tx  ][ty-1] = t;
-					this->m_baf_time_array[tx-1][ty-1] = t;
-				}
+				this->BAF(x,y,t);
 			}
 			if(event_received)
 			{
@@ -358,24 +341,6 @@ void UARTThread::threadFunction() {
 				}
 				last_time = t;
 				tail = (tail+6)%SIZE_BUFFER_EVENT;
-				unsigned char tx = x >> 1;
-				unsigned char ty = y >> 1;
-				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time && t-this->m_baf_time_array[tx][ty] > 10)
-				{
-					event_sended_global++;
-					this->m_ht->addEvent(x,y,p==1,t);
-				}
-				if(tx > 0 && tx < (this->m_camera_x>>1)-1 && ty > 0 && ty < (this->m_camera_y>>1)-1)
-				{
-					this->m_baf_time_array[tx+1][ty+1] = t;
-					this->m_baf_time_array[tx  ][ty+1] = t;
-					this->m_baf_time_array[tx-1][ty+1] = t;
-					this->m_baf_time_array[tx+1][ty  ] = t;
-					this->m_baf_time_array[tx-1][ty  ] = t;
-					this->m_baf_time_array[tx+1][ty-1] = t;
-					this->m_baf_time_array[tx  ][ty-1] = t;
-					this->m_baf_time_array[tx-1][ty-1] = t;
-				}
 			}
 			if(event_received)
 			{
@@ -403,4 +368,28 @@ void UARTThread::threadFunction() {
 void UARTThread::setHoughThread(HoughThread* ht)
 {
 	this->m_ht = ht;
+}
+
+void UARTThread::BAF(int x, int y, unsigned int t)
+{
+	unsigned char tx = x >> 1;
+	unsigned char ty = y >> 1;
+	if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time && t-this->m_baf_time_array[tx][ty] > 40)
+	{
+		this->m_ht->lockAddEvent();
+		this->m_ht->addEvent(x,y,1,t);
+		this->m_ht->unlockAddEvent();
+		this->m_ht->sendNotifAddEvent();
+	}
+	if(tx > 0 && tx < (this->m_camera_x>>1)-1 && ty > 0 && ty < (this->m_camera_y>>1)-1 && t-this->m_baf_time_array[tx][ty] > 40)
+	{
+		this->m_baf_time_array[tx+1][ty+1] = t;
+		this->m_baf_time_array[tx  ][ty+1] = t;
+		this->m_baf_time_array[tx-1][ty+1] = t;
+		this->m_baf_time_array[tx+1][ty  ] = t;
+		this->m_baf_time_array[tx-1][ty  ] = t;
+		this->m_baf_time_array[tx+1][ty-1] = t;
+		this->m_baf_time_array[tx  ][ty-1] = t;
+		this->m_baf_time_array[tx-1][ty-1] = t;
+	}
 }

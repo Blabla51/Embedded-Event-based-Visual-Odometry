@@ -31,6 +31,8 @@ private:
 	int m_camera_x;
 	int m_camera_y;
 
+	void BAF(int x, int y, unsigned int t);
+
 public:
     UARTThread(unsigned int camera_x = 128, unsigned int camera_y = 128);
     ~UARTThread();
