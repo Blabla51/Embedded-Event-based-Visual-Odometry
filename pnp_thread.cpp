@@ -326,7 +326,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			double distance = d_max/2.0*d_rho;
 			dt = acos(cos(theta-this->m_line_parameters[i][0]));
 			this->mutexLog.lock();
-			std::cout << "Detected line : " << theta << ";" << dist << " " << dt << ";" << distance << " with " << this->m_line_parameters[i][0] << ";" << this->m_line_parameters[i][1] << std::endl;
+			std::cout << "detected_line " << theta << " " << dist << " " << dt << " " << distance << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
 			//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
 			this->mutexLog.unlock();
 			if(dt < PI/6 || (dt < PI/4 && distance < 60))/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
@@ -416,12 +416,12 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				{
 					double theta = this->m_line_parameters[i][0];
 					double dist = this->m_line_parameters[i][1];
-					this->mutexLog.lock();
-					std::cout << "Dist cycl: " << std::min(std::fmod(theta-1*PI/2+2*PI,2*PI), std::fmod(1*PI/2-theta+2*PI,2*PI)) << "   PI/2 " << theta << std::endl;
-					std::cout << "Dist cycl: " << std::min(std::fmod(theta-2*PI/2+2*PI,2*PI), std::fmod(2*PI/2-theta+2*PI,2*PI)) << " 1*PI/2 " << theta << std::endl;
-					std::cout << "Dist cycl: " << std::min(std::fmod(theta-3*PI/2+2*PI,2*PI), std::fmod(3*PI/2-theta+2*PI,2*PI)) << " 2*PI/2 " << theta << std::endl;
-					std::cout << "Dist cycl: " << std::min(std::fmod(theta+2*PI,2*PI), std::fmod(-theta+2*PI,2*PI)) << " 0*PI/2 " << theta << std::endl;
-					this->mutexLog.unlock();
+					//this->mutexLog.lock();
+					//std::cout << "Dist cycl: " << std::min(std::fmod(theta-1*PI/2+2*PI,2*PI), std::fmod(1*PI/2-theta+2*PI,2*PI)) << "   PI/2 " << theta << std::endl;
+					//std::cout << "Dist cycl: " << std::min(std::fmod(theta-2*PI/2+2*PI,2*PI), std::fmod(2*PI/2-theta+2*PI,2*PI)) << " 1*PI/2 " << theta << std::endl;
+					//std::cout << "Dist cycl: " << std::min(std::fmod(theta-3*PI/2+2*PI,2*PI), std::fmod(3*PI/2-theta+2*PI,2*PI)) << " 2*PI/2 " << theta << std::endl;
+					//std::cout << "Dist cycl: " << std::min(std::fmod(theta+2*PI,2*PI), std::fmod(-theta+2*PI,2*PI)) << " 0*PI/2 " << theta << std::endl;
+					//this->mutexLog.unlock();
 					if(std::min(std::fmod(theta-1*PI/2+2*PI,2*PI), std::fmod(1*PI/2-theta+2*PI,2*PI)) < PI/4)
 					{
 						line_0 = i;
