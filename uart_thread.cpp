@@ -376,10 +376,7 @@ void UARTThread::BAF(int x, int y, unsigned int t)
 	unsigned char ty = y >> 1;
 	if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time && t-this->m_baf_time_array[tx][ty] > 40)
 	{
-		this->m_ht->lockAddEvent();
 		this->m_ht->addEvent(x,y,1,t);
-		this->m_ht->unlockAddEvent();
-		this->m_ht->sendNotifAddEvent();
 	}
 	if(tx > 0 && tx < (this->m_camera_x>>1)-1 && ty > 0 && ty < (this->m_camera_y>>1)-1 && t-this->m_baf_time_array[tx][ty] > 40)
 	{
