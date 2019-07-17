@@ -193,13 +193,13 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 				{
-					for(int i = 0; i<this->m_hough_map_x; i++)
+					/*for(int i = 0; i<this->m_hough_map_x; i++)
 						{
 							for(int j = 0; j < this->m_hough_map_y; j++)
 							{
 								this->m_hough_map[i][j] = 0.0;
 							}
-						}
+						}*/
 					/*for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
 					{
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
