@@ -193,7 +193,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
 				{
-					/*for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
+					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
 					{
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
@@ -201,16 +201,16 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							{
 								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
 								unsigned int index_1 = -rho_index-j-1;
-								this->m_hough_map[index_0][index_1] *= exp(-1/(j+i)/(j+i));
+								this->m_hough_map[index_0][index_1] = 0.0;
 							}
 							else
 							{
 								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
 								unsigned int index_1 = rho_index+j;
-								this->m_hough_map[index_0][index_1] *= exp(-1/(j+i)/(j+i));
+								this->m_hough_map[index_0][index_1] = 0.0;
 							}
 						}
-					}*/
+					}
 					this->m_hough_map[theta_index][rho_index] = 0.0;
 //					std::future<void> f = std::async(std::launch::async,&PNPThread::addEvent, this->m_pnpt, this->m_pc_theta[theta_index], this->m_pc_rho[rho_index],timestamp,-1);
 					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
