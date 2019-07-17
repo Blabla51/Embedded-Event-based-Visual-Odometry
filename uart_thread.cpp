@@ -280,7 +280,7 @@ void UARTThread::threadFunction() {
 				tail = (tail+6)%SIZE_BUFFER_EVENT;
 				unsigned char tx = x >> 1;
 				unsigned char ty = y >> 1;
-				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
+				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time && t-this->m_baf_time_array[tx][ty] > 10)
 				{
 					event_sended_global++;
 					this->m_ht->addEvent(x,y,p==1,t);
@@ -360,7 +360,7 @@ void UARTThread::threadFunction() {
 				tail = (tail+6)%SIZE_BUFFER_EVENT;
 				unsigned char tx = x >> 1;
 				unsigned char ty = y >> 1;
-				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
+				if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time && t-this->m_baf_time_array[tx][ty] > 10)
 				{
 					event_sended_global++;
 					this->m_ht->addEvent(x,y,p==1,t);
