@@ -199,11 +199,15 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						{
 							if(j+rho_index < 0)
 							{
-								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][-rho_index-j-1] = 3/(i+j+1);
+								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
+								unsigned int index_1 = -rho_index-j-1;
+								this->m_hough_map[index_0][index_1] *= exp(-1/(j+i)/(j+i));
 							}
 							else
 							{
-								this->m_hough_map[(unsigned int)((theta_index+i))%this->m_hough_map_x][rho_index+j] = 3/(i+j+1);
+								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
+								unsigned int index_1 = rho_index+j;
+								this->m_hough_map[index_0][index_1] *= exp(-1/(j+i)/(j+i));
 							}
 						}
 					}
