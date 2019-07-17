@@ -49,7 +49,7 @@ private:
 	double getPCExp(unsigned int dt);
 
 public:
-	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 5, double zone_y = 5, double threshold = 15.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
+	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 3, double zone_y = 3, double threshold = 15.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
     ~HoughThread();
 
     void stop();
