@@ -460,7 +460,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->m_line_parameters[3][0] = tmp_params[line_3][0];
 					this->m_line_parameters[3][1] = tmp_params[line_3][1];
 					this->mutexLog.lock();
-					std::cout << "line_detected_at" << t << std::endl;
+					std::cout << "line_detected_at " << t << std::endl;
 					for(int i = 0; i < 4; i++)
 					{
 						std::cout << "line_detected_are" << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
@@ -470,7 +470,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->computePosit();
 					this->updateFilteringArray();
 					this->m_web_string_stream << "{\"tracking\": true},";
-					//this->m_ht->activateTracking();
+					this->m_ht->activateTracking();
 				}
 			}
 		}
