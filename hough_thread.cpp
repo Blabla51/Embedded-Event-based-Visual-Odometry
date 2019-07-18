@@ -127,9 +127,9 @@ void HoughThread::threadFunction() {
 	do {
 		while(this->m_ev_queue.empty())
 		{
-			//this->mutexLog.lock();
-			//std::cout << "Waiting Event" << std::endl;
-			//this->mutexLog.unlock();
+			this->mutexLog.lock();
+			std::cout << "Waiting Event" << std::endl;
+			this->mutexLog.unlock();
 			this->m_main_loop_cv.wait(lck);
 		}
 		this->m_ev_add_mutex.lock();
