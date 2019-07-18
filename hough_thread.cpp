@@ -234,7 +234,9 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					//this->m_hough_map[theta_index][rho_index] = 0.0;
 //					std::future<void> f = std::async(std::launch::async,&PNPThread::addEvent, this->m_pnpt, this->m_pc_theta[theta_index], this->m_pc_rho[rho_index],timestamp,-1);
 					if(is_peak)
+					{
 						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+					}
 //					this->mutexLog.lock();
 //					std::cout << "Emit event:" << this->m_pc_theta[theta_index] << " " << this->m_pc_rho[rho_index] << " with " << x << " " << y << " " << timestamp << std::endl;
 //					this->mutexLog.unlock();
@@ -295,7 +297,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				this->m_hough_map[theta_index][rho_index]++;
-				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold)
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && timestamp - this->m_hough_time_map[theta_index][rho_index] > 100)
 				{
 					bool is_peak = true;
 					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
@@ -315,21 +317,23 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								unsigned int index_0 = (unsigned int)((theta_index+i+(this->m_hough_map_x>>1)))%this->m_hough_map_x;
 								unsigned int index_1 = -rho_index-j-1;
 								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
-									is_peak = true;
+									is_peak = false;
 							}
 							else
 							{
 								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
 								unsigned int index_1 = rho_index+j;
 								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
-									is_peak = true;
+									is_peak = false;
 							}
 						}
 					}
 					if(is_peak)
+					{
 						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+						this->m_hough_time_map[theta_index][rho_index] = timestamp;
+					}
 				}
-				this->m_hough_time_map[theta_index][rho_index] = timestamp;
 			}
 		}
 	}
