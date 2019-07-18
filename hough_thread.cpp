@@ -283,13 +283,13 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 #else
 	if(!this->m_tracking)
 	{
-		//double decay_value = this->getPCExp(timestamp-this->m_last_input_event_timestamp);
 		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 		{
 			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
+				this->m_hough_time_map[theta_index][rho_index] = timestamp;
 				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold /*&& timestamp - this->m_hough_time_map[theta_index][rho_index] > 1000*/)
 				{
 					bool is_peak = true;
@@ -330,7 +330,63 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 					}
 				}
+			}
+		}
+	}
+	else
+	{
+		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
+		{
+			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
+			if(rho_index < this->m_hough_map_y && rho_index >= 0)
+			{
+				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				this->m_hough_time_map[theta_index][rho_index] = timestamp;
+				int line_id = this->m_pnpt->getFilterValue(theta_index,rho_index);
+				if(line_id <= 0)
+				{
+					continue;
+				}
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold /*&& timestamp - this->m_hough_time_map[theta_index][rho_index] > 1000*/)
+				{
+					bool is_peak = true;
+					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
+					{
+						if(!is_peak)
+						{
+							continue;
+						}
+						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
+						{
+							if(!is_peak)
+							{
+								continue;
+							}
+							if(j+rho_index < 0)
+							{
+								unsigned int index_0 = (unsigned int)((theta_index+i+(this->m_hough_map_x>>1)))%this->m_hough_map_x;
+								unsigned int index_1 = -rho_index-j-1;
+								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
+								this->m_hough_time_map[index_0][index_1] = timestamp;
+								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
+									is_peak = false;
+							}
+							else
+							{
+								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
+								unsigned int index_1 = rho_index+j;
+								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
+								this->m_hough_time_map[index_0][index_1] = timestamp;
+								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
+									is_peak = false;
+							}
+						}
+					}
+					if(is_peak)
+					{
+						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+					}
+				}
 			}
 		}
 	}
