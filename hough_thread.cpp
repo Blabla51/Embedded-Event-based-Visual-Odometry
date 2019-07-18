@@ -325,7 +325,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							}
 						}
 					}
-					if(is_peak)
+					if(is_peak &&  false)
 					{
 						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 					}
