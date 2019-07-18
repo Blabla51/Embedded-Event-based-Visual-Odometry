@@ -297,7 +297,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				this->m_hough_map[theta_index][rho_index]++;
-				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && timestamp - this->m_hough_time_map[theta_index][rho_index] > 100)
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && timestamp - this->m_hough_time_map[theta_index][rho_index] > 1000)
 				{
 					bool is_peak = true;
 					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
