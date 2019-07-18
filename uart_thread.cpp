@@ -18,7 +18,7 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	}
 #if MODE == MODE_ONLINE
 #if OS == OS_WINDOWS
-	this->m_fd_command = RS232_GetPortnr("COM8");
+	this->m_fd_command = RS232_GetPortnr("COM12");
 	this->m_fd_rec = this->m_fd_command;
 #elif OS == OS_LINUX
 	this->m_fd_command = RS232_GetPortnr("ttyUSB0");

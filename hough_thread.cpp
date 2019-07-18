@@ -286,7 +286,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 		//double decay_value = this->getPCExp(timestamp-this->m_last_input_event_timestamp);
 		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 		{
-			unsigned int rho_index = this->m_pc_hough_coord[x][y][theta_index];
+			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
@@ -307,22 +307,19 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							}
 							if(j+rho_index < 0)
 							{
-								/*unsigned int index_0 = (unsigned int)((theta_index+i+(this->m_hough_map_x>>1)))%this->m_hough_map_x;
+								unsigned int index_0 = (unsigned int)((theta_index+i+(this->m_hough_map_x>>1)))%this->m_hough_map_x;
 								unsigned int index_1 = -rho_index-j-1;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
 								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
-									is_peak = false;*/
+									is_peak = false;
 							}
 							else
 							{
 								unsigned int index_0 = (unsigned int)((theta_index+i))%this->m_hough_map_x;
 								unsigned int index_1 = rho_index+j;
-								std::cout << "1 " <<  index_0 << " " << index_1 << std::endl;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-								std::cout << "2" << std::endl;
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								std::cout << "3" << std::endl;
 								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
 									is_peak = false;
 							}
