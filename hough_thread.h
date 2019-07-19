@@ -32,6 +32,7 @@ private:
 	double 			m_zone_x;
 	double 			m_zone_y;
 	double** 		m_hough_map;
+	unsigned int** 		m_hough_map_baf;
 	unsigned int** 		m_hough_time_map;
 	double*** 		m_look_up_dist;
 	double* 		m_pc_theta;
@@ -47,6 +48,7 @@ private:
 
 
 	double getPCExp(unsigned int dt);
+	bool BAF(int x, int y, unsigned int t);
 
 public:
 	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 5, double zone_y = 5, double threshold = 30.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);

@@ -25,6 +25,15 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 			this->m_hough_map[i][j] = 0.0;
 		}
 	}
+	this->m_hough_map_baf = new unsigned int*[this->m_hough_map_x>>1];
+	for(int i = 0; i<this->m_hough_map_x>>1; i++)
+	{
+		this->m_hough_map_baf[i] = new unsigned int[this->m_hough_map_y>>1];
+		for(int j = 0; j < this->m_hough_map_y>>1; j++)
+		{
+			this->m_hough_map_baf[i][j] = 0.0;
+		}
+	}
 	this->m_hough_time_map = new unsigned int*[this->m_hough_map_x];
 	for(int i = 0; i<this->m_hough_map_x; i++)
 	{
@@ -330,7 +339,10 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					}
 					if(is_peak)
 					{
-						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+						if(this->BAF(theta_index, rho_index, timestamp))
+						{
+							this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+						}
 					}
 				}
 			}
@@ -387,7 +399,10 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					}
 					if(is_peak)
 					{
-						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+						if(this->BAF(theta_index, rho_index, timestamp))
+						{
+							this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+						}
 					}
 				}
 			}
@@ -509,4 +524,27 @@ void HoughThread::printFilteringMap()
 		std::cout << std::endl;
 	}
 	this->mutexLog.unlock();
+}
+
+bool HoughThread::BAF(int x, int y, unsigned int t)
+{
+	unsigned char tx = x >> 1;
+	unsigned char ty = y >> 1;
+	bool to_return = false;
+	if(t-this->m_hough_map_baf[tx][ty] < 10000 && t-this->m_hough_map_baf[tx][ty] > 100)
+	{
+		to_return = true;
+	}
+	if(tx > 0 && tx < (this->m_hough_map_x>>1)-1 && ty > 0 && ty < (this->m_hough_map_y>>1)-1 && t-this->m_hough_map_baf[tx][ty] > 100)
+	{
+		this->m_hough_map_baf[tx+1][ty+1] = t;
+		this->m_hough_map_baf[tx  ][ty+1] = t;
+		this->m_hough_map_baf[tx-1][ty+1] = t;
+		this->m_hough_map_baf[tx+1][ty  ] = t;
+		this->m_hough_map_baf[tx-1][ty  ] = t;
+		this->m_hough_map_baf[tx+1][ty-1] = t;
+		this->m_hough_map_baf[tx  ][ty-1] = t;
+		this->m_hough_map_baf[tx-1][ty-1] = t;
+	}
+	return to_return;
 }
