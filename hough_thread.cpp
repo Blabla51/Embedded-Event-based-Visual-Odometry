@@ -311,7 +311,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								unsigned int index_1 = -rho_index-j-1;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								if(this->m_hough_map[index_0][index_1]+1.0 > this->m_hough_map[theta_index][rho_index])
+								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
 								{
 									is_peak = false;
 								}
@@ -322,7 +322,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								unsigned int index_1 = rho_index+j;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								if(this->m_hough_map[index_0][index_1]+1.0 > this->m_hough_map[theta_index][rho_index])
+								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
 								{
 									is_peak = false;
 								}
