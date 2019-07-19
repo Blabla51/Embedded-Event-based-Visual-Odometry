@@ -540,7 +540,7 @@ bool HoughThread::BAF(int x, int y, unsigned int t)
 	unsigned char ty = y >> 2;
 	bool to_return = false;
 	unsigned int dt = t-this->m_hough_map_baf[tx][ty];
-	if(dt < 10000 && dt > 500)
+	if(dt > 500)
 	{
 		to_return = true;
 	}

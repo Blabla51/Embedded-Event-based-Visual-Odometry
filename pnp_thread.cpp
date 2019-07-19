@@ -470,7 +470,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->computePosit();
 					this->updateFilteringArray();
 					this->m_web_string_stream << "{\"tracking\": true},";
-					//this->m_ht->activateTracking();
+					this->m_ht->activateTracking();
 				}
 			}
 		}
@@ -648,8 +648,8 @@ void PNPThread::transMat(double** matrix, double** res, int ligne, int colonne)
 
 void PNPThread::updateFilteringArray()
 {
-	int zone_x = this->m_ht->getZoneX();
-	int zone_y = this->m_ht->getZoneY();
+	int zone_x = 10;
+	int zone_y = 10;
 	//printFilteringMap();
 	for(int i = 0; i < 4; i++)
 	{
