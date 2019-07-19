@@ -305,11 +305,11 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					{
 						if(!is_peak)
 						{
-							continue;
+							break;
 						}
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(!is_peak || (j == 0 && i == 0))
+							if(j == 0 && i == 0)
 							{
 								continue;
 							}
@@ -322,6 +322,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								if(this->m_hough_map[index_0][index_1]+1.0 > this->m_hough_map[theta_index][rho_index])
 								{
 									is_peak = false;
+									break;
 								}
 							}
 							else
@@ -333,6 +334,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								if(this->m_hough_map[index_0][index_1]+1.0  > this->m_hough_map[theta_index][rho_index])
 								{
 									is_peak = false;
+									break;
 								}
 							}
 						}
@@ -531,11 +533,12 @@ bool HoughThread::BAF(int x, int y, unsigned int t)
 	unsigned char tx = x >> 1;
 	unsigned char ty = y >> 1;
 	bool to_return = false;
-	if(t-this->m_hough_map_baf[tx][ty] < 10000 && t-this->m_hough_map_baf[tx][ty] > 100)
+	unsigned int dt = t-this->m_hough_map_baf[tx][ty];
+	if(dt < 10000 && dt > 100)
 	{
 		to_return = true;
 	}
-	if(tx > 0 && tx < (this->m_hough_map_x>>1)-1 && ty > 0 && ty < (this->m_hough_map_y>>1)-1 && t-this->m_hough_map_baf[tx][ty] > 100)
+	if(tx > 0 && tx < (this->m_hough_map_x>>1)-1 && ty > 0 && ty < (this->m_hough_map_y>>1)-1 && dt > 100)
 	{
 		this->m_hough_map_baf[tx+1][ty+1] = t;
 		this->m_hough_map_baf[tx  ][ty+1] = t;
