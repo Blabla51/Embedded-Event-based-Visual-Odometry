@@ -544,6 +544,7 @@ bool HoughThread::BAF(int x, int y, unsigned int t)
 		this->m_hough_map_baf[tx  ][ty+1] = t;
 		this->m_hough_map_baf[tx-1][ty+1] = t;
 		this->m_hough_map_baf[tx+1][ty  ] = t;
+		this->m_hough_map_baf[tx  ][ty  ] = t;
 		this->m_hough_map_baf[tx-1][ty  ] = t;
 		this->m_hough_map_baf[tx+1][ty-1] = t;
 		this->m_hough_map_baf[tx  ][ty-1] = t;
