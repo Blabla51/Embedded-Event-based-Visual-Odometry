@@ -301,6 +301,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && timestamp-this->m_hough_map_baf[x][y] > 500)
 				{
 					bool is_peak = true;
+					double count = 0;
 					for(int i = -this->m_zone_x; i <= this->m_zone_x; i++)
 					{
 						if(!is_peak)
@@ -309,21 +310,18 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						}
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(j == 0 && i == 0)
-							{
-								continue;
-							}
 							if(j+rho_index < 0)
 							{
 								unsigned int index_0 = (unsigned int)((theta_index+i+(this->m_hough_map_x>>1)))%this->m_hough_map_x;
 								unsigned int index_1 = -rho_index-j-1;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								if(this->m_hough_map[index_0][index_1]+1.0 > this->m_hough_map[theta_index][rho_index])
+								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
 								{
 									is_peak = false;
 									break;
 								}
+								count += this->m_hough_map[index_0][index_1];
 							}
 							else
 							{
@@ -331,17 +329,18 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								unsigned int index_1 = rho_index+j;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								if(this->m_hough_map[index_0][index_1]+1.0  > this->m_hough_map[theta_index][rho_index])
+								if(this->m_hough_map[index_0][index_1]  > this->m_hough_map[theta_index][rho_index])
 								{
 									is_peak = false;
 									break;
 								}
+								count += this->m_hough_map[index_0][index_1];
 							}
 						}
 					}
 					if(is_peak)
 					{
-						if(this->BAF(theta_index, rho_index, timestamp))
+						if(count < this->m_zone_y*this->m_zone_x*0.7*this->m_hough_map[theta_index][rho_index])
 						{
 							this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 						}
