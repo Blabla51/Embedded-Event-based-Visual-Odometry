@@ -150,7 +150,7 @@ void UARTThread::threadFunction() {
 			while(t - last_t > 10000)
 			{
 				last_t = last_t + 10000;
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 			int tx = x >> 1;
 			int ty = y >> 1;
