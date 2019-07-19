@@ -536,15 +536,15 @@ void HoughThread::printFilteringMap()
 
 bool HoughThread::BAF(int x, int y, unsigned int t)
 {
-	unsigned char tx = x >> 1;
-	unsigned char ty = y >> 1;
+	unsigned char tx = x >> 2;
+	unsigned char ty = y >> 2;
 	bool to_return = false;
 	unsigned int dt = t-this->m_hough_map_baf[tx][ty];
 	if(dt < 10000 && dt > 500)
 	{
 		to_return = true;
 	}
-	if(tx > 0 && tx < (this->m_hough_map_x>>1)-1 && ty > 0 && ty < (this->m_hough_map_y>>1)-1 && dt > 500)
+	if(tx > 0 && tx < (this->m_hough_map_x>>2)-1 && ty > 0 && ty < (this->m_hough_map_y>>2)-1 && dt > 500)
 	{
 		this->m_hough_map_baf[tx+1][ty+1] = t;
 		this->m_hough_map_baf[tx  ][ty+1] = t;
