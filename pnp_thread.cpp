@@ -20,8 +20,8 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	for(int i = 0; i < 4; i++)
 	{
 		this->m_current_filter_centers[i] = new int[2];
-		this->m_current_filter_centers[i][0] = 0;
-		this->m_current_filter_centers[i][1] = 0;
+		this->m_current_filter_centers[i][0] = -1;
+		this->m_current_filter_centers[i][1] = -1;
 	}
 	this->m_line_parameters = new double*[4];
 	for(int i = 0; i < 4; i++)
@@ -665,7 +665,7 @@ void PNPThread::updateFilteringArray()
 		std::cout << "Filtering array: rho_i=" << rho_index << " theta_i=" << theta_index << std::endl;
 		this->mutexLog.unlock();
 #endif
-		if(this->m_current_filter_centers[i][0] != theta_index && this->m_current_filter_centers[i][1] != rho_index)
+		if(this->m_current_filter_centers[i][0] != theta_index || this->m_current_filter_centers[i][1] != rho_index)
 		{
 			this->m_filter_mutex.lock();
 			for(int j = -zone_x; j <= zone_x; j++)
