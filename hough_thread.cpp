@@ -371,11 +371,11 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					{
 						if(!is_peak)
 						{
-							continue;
+							break;
 						}
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(!is_peak || (j == 0 && i == 0))
+							if(j == 0 && i == 0)
 							{
 								continue;
 							}
@@ -385,8 +385,11 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								unsigned int index_1 = -rho_index-j-1;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
+								if(this->m_hough_map[index_0][index_1]+1.0 > this->m_hough_map[theta_index][rho_index])
+								{
 									is_peak = false;
+									break;
+								}
 							}
 							else
 							{
@@ -394,8 +397,11 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 								unsigned int index_1 = rho_index+j;
 								this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
 								this->m_hough_time_map[index_0][index_1] = timestamp;
-								if(this->m_hough_map[index_0][index_1] > this->m_hough_map[theta_index][rho_index])
+								if(this->m_hough_map[index_0][index_1]+1.0  > this->m_hough_map[theta_index][rho_index])
+								{
 									is_peak = false;
+									break;
+								}
 							}
 						}
 					}
@@ -403,7 +409,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					{
 						if(this->BAF(theta_index, rho_index, timestamp))
 						{
-							this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+							this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,line_id);
 						}
 					}
 				}
