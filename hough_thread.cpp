@@ -179,13 +179,12 @@ HoughThread::~HoughThread() {
 int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int timestamp)
 {
 	int nbr_event_generated = 0;
-	int rho_index = 0;
 #ifdef ONE_BY_ONE_HOUGH
 	if(!this->m_tracking)
 	{
 		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 		{
-			rho_index = this->m_pc_hough_coord[x][y][theta_index];
+			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				/*this->mutexLog.lock();
@@ -211,7 +210,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						}
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(!is_peak)
+							if(!is_peak || (j == 0 && i == 0))
 							{
 								continue;
 							}
@@ -250,7 +249,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 	{
 		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 		{
-			rho_index = this->m_pc_hough_coord[x][y][theta_index];
+			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < this->m_hough_map_y && rho_index >= 0)
 			{
 				if(this->m_pnpt->getFilterValue(theta_index,rho_index) <= 0)
@@ -301,7 +300,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						}
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(!is_peak)
+							if(!is_peak || (j == 0 && i == 0))
 							{
 								continue;
 							}
@@ -362,7 +361,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						}
 						for(int j = -this->m_zone_y; j <= this->m_zone_y; j++)
 						{
-							if(!is_peak)
+							if(!is_peak || (j == 0 && i == 0))
 							{
 								continue;
 							}
