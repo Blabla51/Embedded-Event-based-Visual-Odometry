@@ -298,9 +298,10 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
 			if(rho_index < (this->m_hough_map_y-1) && rho_index >= 0)
 			{
+				unsigned int dt = timestamp-this->m_hough_map_baf[x][y];
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				this->m_hough_time_map[theta_index][rho_index] = timestamp;
-				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && timestamp-this->m_hough_map_baf[theta_index][rho_index] > 500)
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && dt > 500)
 				{
 					dyn_threshold = this->m_hough_map[theta_index][rho_index]*0.95;
 					unsigned int mod_x = (unsigned int)this->m_hough_map_x;
@@ -522,7 +523,8 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						}
 						//5x5 filter done
 					}
-					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+					if(dt < 10000)
+						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 					this->m_hough_map_baf[theta_index][rho_index] = timestamp;
 					end_peak_compare_without_tracking:
 //					this->mutexLog.unlock();
