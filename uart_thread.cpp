@@ -33,6 +33,18 @@ UARTThread::UARTThread(unsigned int camera_x, unsigned int camera_y) {
 	RS232_cputs(this->m_fd_command, "!U0\n");
 	RS232_cputs(this->m_fd_command, "!L2\n");
 	RS232_cputs(this->m_fd_command, "!E4\n");
+	RS232_cputs(this->m_fd_command, "!B0=54\n");
+	RS232_cputs(this->m_fd_command, "!B1=1108364\n");
+	RS232_cputs(this->m_fd_command, "!B2=16777215\n");
+	RS232_cputs(this->m_fd_command, "!B3=8159221\n");
+	RS232_cputs(this->m_fd_command, "!B4=111\n");
+	RS232_cputs(this->m_fd_command, "!B5=159147\n");
+	RS232_cputs(this->m_fd_command, "!B6=0\n");
+	RS232_cputs(this->m_fd_command, "!B7=16777215\n");
+	RS232_cputs(this->m_fd_command, "!B8=569762\n");
+	RS232_cputs(this->m_fd_command, "!B9=7538\n");
+	RS232_cputs(this->m_fd_command, "!B10=51\n");
+	RS232_cputs(this->m_fd_command, "!B11=3\n");
 	//RS232_cputs(this->m_fd_command, "!U=3000000\n");
 	//RS232_CloseComport(this->m_fd_command);
 	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -150,7 +162,7 @@ void UARTThread::threadFunction() {
 			while(t - last_t > 10000)
 			{
 				last_t = last_t + 10000;
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			}
 			int tx = x >> 1;
 			int ty = y >> 1;
@@ -188,18 +200,6 @@ void UARTThread::threadFunction() {
 	bool event_received = false;
 	RS232_flushRX(this->m_fd_rec);
 	RS232_flushRX(this->m_fd_command);
-	RS232_cputs(this->m_fd_command, "!B0=54\n");
-	RS232_cputs(this->m_fd_command, "!B1=1108364\n");
-	RS232_cputs(this->m_fd_command, "!B2=16777215\n");
-	RS232_cputs(this->m_fd_command, "!B3=8159221\n");
-	RS232_cputs(this->m_fd_command, "!B4=111\n");
-	RS232_cputs(this->m_fd_command, "!B5=159147\n");
-	RS232_cputs(this->m_fd_command, "!B6=0\n");
-	RS232_cputs(this->m_fd_command, "!B7=16777215\n");
-	RS232_cputs(this->m_fd_command, "!B8=569762\n");
-	RS232_cputs(this->m_fd_command, "!B9=7538\n");
-	RS232_cputs(this->m_fd_command, "!B10=51\n");
-	RS232_cputs(this->m_fd_command, "!B11=3\n");
 	RS232_cputs(this->m_fd_command, "E+\n");
 	// First 1k events are removed
 	while(!this->m_stop && event_before_begin < 1000)
