@@ -463,7 +463,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					std::cout << "line_detected_at " << t << std::endl;
 					for(int i = 0; i < 4; i++)
 					{
-						std::cout << "line_detected_are" << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
+						std::cout << "line_detected_are " << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
 					}
 					this->mutexLog.unlock();
 					this->computeLineIntersection();
@@ -732,7 +732,7 @@ void PNPThread::updateFilteringArray()
 void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id)
 {
 	this->mutexLog.lock();
-	std::cout << "line " << line_id << " " << this->m_line_parameters[line_id][0] << " " << this->m_line_parameters[line_id][1] << " " << theta << " " << dist << " ";
+	std::cout << "line " << line_id << " " << this->m_line_parameters[line_id][0] << " " << this->m_line_parameters[line_id][1] << " " << theta << " " << dist << " " << rotated << " ";
 	if(rotated)
 	{
 		this->m_line_parameters[line_id][1] = -dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
