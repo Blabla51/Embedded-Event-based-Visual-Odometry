@@ -523,8 +523,8 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						}
 						//5x5 filter done
 					}
-					if(dt < 10000)
-						this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
+					//if(dt < 10000)
+					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 					this->m_hough_map_baf[theta_index][rho_index] = timestamp;
 					end_peak_compare_without_tracking:
 //					this->mutexLog.unlock();
