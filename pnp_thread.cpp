@@ -473,7 +473,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->computePosit();
 					this->updateFilteringArray();
 					this->m_web_string_stream << "{\"tracking\": true},";
-					this->m_ht->activateTracking();
+					//this->m_ht->activateTracking();
 				}
 			}
 		}
