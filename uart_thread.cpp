@@ -188,6 +188,18 @@ void UARTThread::threadFunction() {
 	bool event_received = false;
 	RS232_flushRX(this->m_fd_rec);
 	RS232_flushRX(this->m_fd_command);
+	RS232_cputs(this->m_fd_command, "!B0=54\n");
+	RS232_cputs(this->m_fd_command, "!B1=1108364\n");
+	RS232_cputs(this->m_fd_command, "!B2=16777215\n");
+	RS232_cputs(this->m_fd_command, "!B3=8159221\n");
+	RS232_cputs(this->m_fd_command, "!B4=111\n");
+	RS232_cputs(this->m_fd_command, "!B5=159147\n");
+	RS232_cputs(this->m_fd_command, "!B6=0\n");
+	RS232_cputs(this->m_fd_command, "!B7=16777215\n");
+	RS232_cputs(this->m_fd_command, "!B8=569762\n");
+	RS232_cputs(this->m_fd_command, "!B9=7538\n");
+	RS232_cputs(this->m_fd_command, "!B10=51\n");
+	RS232_cputs(this->m_fd_command, "!B11=3\n");
 	RS232_cputs(this->m_fd_command, "E+\n");
 	// First 1k events are removed
 	while(!this->m_stop && event_before_begin < 1000)
