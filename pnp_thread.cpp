@@ -261,17 +261,20 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 	{
 		if(line_id > 0)
 		{
-			bool rotated;
+			bool rotated = false;
+			bool cycle = false;
 			line_id--;
-			if(std::abs(theta-this->m_line_parameters[line_id][0]) < std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[line_id][0]))
-			{
-				rotated = false;
-			}
-			else
+			double theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
+			double theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
+			if(theta_min-theta_max > std::abs(std::fmod(theta_max+PI, 2*PI)-theta_min))
 			{
 				rotated = true;
 			}
-			this->updateLineParameters(theta,dist,rotated,line_id);
+			if(acos(cos(theta_max-theta_min)) < PI/4 && theta_max-theta_min > 3*PI/2)
+			{
+				cycle = true;
+			}
+			this->updateLineParameters(theta,dist,rotated,line_id,cycle);
 			this->computeLineIntersection();
 			this->computePosit();
 			this->updateFilteringArray();
@@ -342,7 +345,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		}
 		if(candidate_line >= 0)
 		{
-			this->updateLineParameters(theta,dist,best_rotated,candidate_line);
+			this->updateLineParameters(theta,dist,best_rotated,candidate_line,false);
 		}
 		else if(candidate_line == -1 && can_be_a_new_line == this->m_nbr_lines_identified)
 		{
@@ -729,10 +732,27 @@ void PNPThread::updateFilteringArray()
 	//printFilteringMap();
 }
 
-void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id)
+void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id, bool cycle)
 {
 	this->mutexLog.lock();
 	std::cout << "line " << line_id << " " << this->m_line_parameters[line_id][0] << " " << this->m_line_parameters[line_id][1] << " " << theta << " " << dist << " " << rotated << " ";
+	if(cycle)
+	{
+		if(theta > this->m_line_parameters[line_id][0])
+		{
+			theta -= 2*PI;
+		}
+		else
+		{
+			this->m_line_parameters[line_id][0] -= 2*PI;
+		}
+		this->m_line_parameters[line_id][0] = theta*this->m_confidence_coef+this->m_line_parameters[line_id][0]*(1.0-this->m_confidence_coef);
+		if(this->m_line_parameters[line_id][0] < 0)
+		{
+			this->m_line_parameters[line_id][0] += 2*PI;
+		}
+		this->m_line_parameters[line_id][1] = dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
+	}
 	if(rotated)
 	{
 		this->m_line_parameters[line_id][1] = -dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);

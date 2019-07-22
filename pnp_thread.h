@@ -61,7 +61,7 @@ public:
     void computeLineIntersection();
     void computePosit();
     void updateFilteringArray();
-    void updateLineParameters(double theta, double dist, bool rotated, int line_id);
+    void updateLineParameters(double theta, double dist, bool rotated, int line_id, bool cycle);
     int getFilterValue(int t, int d);
     void printFilteringMap();
     std::string generateWebServerData();
