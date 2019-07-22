@@ -381,7 +381,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							goto end_peak_compare_without_tracking;
 						}
 						// 3x3 filter done;
-						dyn_threshold *= 0.8;
+						dyn_threshold *= 0.6;
 						index_0 = (index_0-1)%mod_x;
 //						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
 						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
