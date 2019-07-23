@@ -793,7 +793,7 @@ void HoughThread::printHoughMap()
 	this->mutexLog.lock();
 	for(int i = 0; i < this->m_hough_map_y; i++)
 	{
-		std::cout << i << ": " ;
+		std::cout << "hough_map_line " << i << " " ;
 		for(int j = 0; j < this->m_hough_map_x; j++)
 		{
 			std::cout << this->m_hough_map[j][i] << " ";
