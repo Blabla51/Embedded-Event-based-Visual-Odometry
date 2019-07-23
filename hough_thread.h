@@ -15,6 +15,8 @@
 #include "common.h"
 #include "base_thread.h"
 
+#define HOUGH_CHECK_PEAK_FUNCTION this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);this->m_hough_time_map[index_0][index_1] = timestamp;if(this->m_hough_map[index_0][index_1] > dyn_threshold){goto end_peak_compare_without_tracking;};std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
+
 class PNPThread;
 
 class HoughThread : public BaseThread

@@ -289,14 +289,14 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 		}
 	}
 #else
-	int rho_limit = this->m_hough_map_y-2;
+	const int rho_limit = this->m_hough_map_y-3;
 	double dyn_threshold = 0;
 	if(!this->m_tracking)
 	{
 		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
 		{
 			int rho_index = this->m_pc_hough_coord[x][y][theta_index];
-			if(rho_index < (this->m_hough_map_y-1) && rho_index >= 0)
+			if(rho_index < rho_limit && rho_index >= 0)
 			{
 				unsigned int dt = timestamp-this->m_hough_map_baf[theta_index][rho_index];
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
@@ -312,165 +312,53 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						std::cout << "TI: " << theta_index << " RI: " << rho_index << std::endl;
 						index_1 = rho_index;
 						index_0 = (theta_index-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1++;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1--;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1--;
 						if(index_1 > (unsigned int)(this->m_hough_map_y))
 						{
 							index_1 = 0;
 							index_0 = ((index_0+(this->m_hough_map_x>>1)))%mod_x;
 						}
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
+
 						// 3x3 filter done;
-						dyn_threshold *= 0.85;
+
+						dyn_threshold = this->m_hough_map[theta_index][rho_index]*0.9;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+4)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1 = rho_index;
 						index_0 = (theta_index+2)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-4)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1++;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+4)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1++;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1 = rho_index-1;
 						if(index_1-- > (unsigned int)(this->m_hough_map_y))
 						{
@@ -482,46 +370,91 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							index_1 = 0;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+1)%mod_x;
-//						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
-						this->m_hough_map[index_0][index_1] = this->m_hough_map[index_0][index_1]*this->getPCExp(timestamp-this->m_hough_time_map[index_0][index_1]);
-						this->m_hough_time_map[index_0][index_1] = timestamp;
-						if(this->m_hough_map[index_0][index_1] > dyn_threshold)
-						{
-							goto end_peak_compare_without_tracking;
-						}
+						HOUGH_CHECK_PEAK_FUNCTION;
+
 						//5x5 filter done
+
+						dyn_threshold = this->m_hough_map[theta_index][rho_index]*0.65;
+						index_0 = (index_0-1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+6)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_1 = rho_index;
+						index_0 = (theta_index+3)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0-6)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_1++;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+6)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_1++;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0-6)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_1++;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_1 = rho_index-1;
+						if(index_1 > (unsigned int)(this->m_hough_map_y))
+						{
+							index_1 = 0;
+							index_0 = ((index_0+(mod_x>>1)))%mod_x;
+						}
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0-6)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_1 = rho_index-1;
+						if(index_1-- > (unsigned int)(this->m_hough_map_y))
+						{
+							index_1 = 2;
+							index_0 = ((index_0+(mod_x>>1)))%mod_x;
+						}
+						else if(index_1-- > (unsigned int)(this->m_hough_map_y))
+						{
+							index_1 = 1;
+							index_0 = ((index_0+(mod_x>>1)))%mod_x;
+						}
+						else if(index_1 > (unsigned int)(this->m_hough_map_y))
+						{
+							index_1 = 0;
+							index_0 = ((index_0+(mod_x>>1)))%mod_x;
+						}
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0+1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+
+						//7x7 filter done
+
 					}
 					//if(dt < 10000)
 					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
