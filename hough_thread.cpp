@@ -307,9 +307,9 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					unsigned int mod_x = (unsigned int)this->m_hough_map_x;
 					unsigned int index_1, index_0;
 					{
-//						this->mutexLog.lock();
-//						std::cout << "Time: " << timestamp << " BAF: " << this->m_hough_map_baf[theta_index][rho_index] << std::endl;
-//						std::cout << "TI: " << theta_index << " RI: " << rho_index << std::endl;
+						this->mutexLog.lock();
+						std::cout << "Time: " << timestamp << " BAF: " << this->m_hough_map_baf[theta_index][rho_index] << std::endl;
+						std::cout << "TI: " << theta_index << " RI: " << rho_index << std::endl;
 						index_1 = rho_index;
 						index_0 = (theta_index-1)%mod_x;
 //						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
@@ -527,7 +527,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,-1);
 					this->m_hough_map_baf[theta_index][rho_index] = timestamp;
 					end_peak_compare_without_tracking:
-//					this->mutexLog.unlock();
+					this->mutexLog.unlock();
 					continue;
 				}
 			}
@@ -554,9 +554,9 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					unsigned int mod_x = (unsigned int)this->m_hough_map_x;
 					unsigned int index_1, index_0;
 					{
-//						this->mutexLog.lock();
-//						std::cout << "Time: " << timestamp << " BAF: " << this->m_hough_map_baf[theta_index][rho_index] << std::endl;
-//						std::cout << "TI: " << theta_index << " RI: " << rho_index << std::endl;
+						this->mutexLog.lock();
+						std::cout << "Time: " << timestamp << " BAF: " << this->m_hough_map_baf[theta_index][rho_index] << std::endl;
+						std::cout << "TI: " << theta_index << " RI: " << rho_index << std::endl;
 						index_1 = rho_index;
 						index_0 = (theta_index-1)%mod_x;
 //						std::cout << "I0: " << index_0 << " I1: " << index_1 << std::endl;
@@ -773,7 +773,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 					this->m_pnpt->addEvent(this->m_pc_theta[theta_index],this->m_pc_rho[rho_index],timestamp,line_id);
 					this->m_hough_map_baf[theta_index][rho_index] = timestamp;
 					end_peak_compare_with_tracking:
-//					this->mutexLog.unlock();
+					this->mutexLog.unlock();
 					continue;
 				}
 			}
