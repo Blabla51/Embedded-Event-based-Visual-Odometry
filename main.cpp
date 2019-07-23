@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 	pnp_thread_object->stop();
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	std::cout << "Stopped objects " << std::endl;
-	hough_thread_object->printFilteringMap();
+	hough_thread_object->printHoughMap();
 	delete uart_thread_object;
 	delete hough_thread_object;
 	delete pnp_thread_object;
