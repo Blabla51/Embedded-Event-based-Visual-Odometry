@@ -311,6 +311,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->updateFilteringArray();
 				}
 			}
+			this->mutexLog.lock();
+			std::cout << "hough_event_removed " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+			this->mutexLog.unlock();
 			//this->mutexLog.lock();
 			//std::cout << "Warning: lines identified but still not line id:" << line_id << std::endl;
 			//this->mutexLog.unlock();
