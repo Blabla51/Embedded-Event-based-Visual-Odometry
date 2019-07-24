@@ -133,7 +133,7 @@ void UARTThread::threadFunction() {
 	unsigned int event_received_global = 0;
 	unsigned int event_sended_global = 0;
 #if MODE == MODE_OFFLINE
-	std::ifstream event_file("./generated_data_moving.csv");
+	std::ifstream event_file("./down_58.csv");
 	if(!event_file.is_open())
 	{
 		this->mutexLog.lock();

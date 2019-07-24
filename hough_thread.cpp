@@ -301,7 +301,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 				unsigned int dt = timestamp-this->m_hough_map_baf[theta_index][rho_index];
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				this->m_hough_time_map[theta_index][rho_index] = timestamp;
-				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && dt > 500 && (rho_index != 0 || theta_index < (this->m_hough_map_x>>1)))
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && dt > 300 && (rho_index != 0 || theta_index < (this->m_hough_map_x>>1)))
 				{
 					dyn_threshold = this->m_hough_map[theta_index][rho_index];
 					unsigned int mod_x = (unsigned int)this->m_hough_map_x;
