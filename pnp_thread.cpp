@@ -278,6 +278,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		}
 		else
 		{
+			bool updated = false;
 			for(int i = 0; i < this->m_nbr_lines_identified; i++)
 			{
 				double dt = acos(cos(theta-this->m_line_parameters[i][0]));
@@ -291,6 +292,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->mutexLog.lock();
 					std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
 					this->mutexLog.unlock();
+					updated = true;
 					break;
 					bool rotated = false;
 					bool cycle = false;
@@ -311,9 +313,12 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->updateFilteringArray();
 				}
 			}
-			this->mutexLog.lock();
-			std::cout << "hough_event_removed " << theta << " " << dist << " " << t << " " << line_id << std::endl;
-			this->mutexLog.unlock();
+			if(!updated)
+			{
+				this->mutexLog.lock();
+				std::cout << "hough_event_removed " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+				this->mutexLog.unlock();
+			}
 			//this->mutexLog.lock();
 			//std::cout << "Warning: lines identified but still not line id:" << line_id << std::endl;
 			//this->mutexLog.unlock();
