@@ -112,6 +112,10 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 				double rho = (double)((int)m_look_up_dist[i][j][0] - (int)(this->m_camera_x >> 1))*this->m_pc_cos[k]+(double)((int)this->m_look_up_dist[i][j][1] - (int)(this->m_camera_y >> 1))*this->m_pc_sin[k];
 				int rho_index = (int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y));
 				this->m_pc_hough_coord[i][j][k] = rho_index;
+				if(k > m_hough_map_x >> 1)
+				{
+					this->m_pc_hough_coord[i][j][k] = -1;
+				}
 			}
 		}
 	}
