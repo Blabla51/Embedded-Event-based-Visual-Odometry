@@ -730,6 +730,8 @@ void HoughThread::printHoughMap()
 		std::cout << "hough_map_line " << i << " " ;
 		for(int j = 0; j < this->m_hough_map_x; j++)
 		{
+			this->m_hough_map[j][i] = this->m_hough_map[j][i] * this->getPCExp(this->m_last_input_event_timestamp-this->m_hough_time_map[j][i]);
+			this->m_hough_time_map[j][i] = this->m_last_input_event_timestamp;
 			std::cout << this->m_hough_map[j][i] << " ";
 		}
 		std::cout << std::endl;
@@ -777,7 +779,7 @@ double HoughThread::getPCExp(unsigned int dt)
 void HoughThread::activateTracking()
 {
 	this->m_tracking = true;
-	this->m_threshold = 15.0;
+	//this->m_threshold = 15.0;
 	//this->printFilteringMap();
 }
 
