@@ -112,10 +112,6 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 				double rho = (double)((int)m_look_up_dist[i][j][0] - (int)(this->m_camera_x >> 1))*this->m_pc_cos[k]+(double)((int)this->m_look_up_dist[i][j][1] - (int)(this->m_camera_y >> 1))*this->m_pc_sin[k];
 				int rho_index = (int)round(rho/this->m_rho_max*(double)(this->m_hough_map_y));
 				this->m_pc_hough_coord[i][j][k] = rho_index;
-				if(k > (this->m_hough_map_x >> 1) && rho_index == 0)
-				{
-					this->m_pc_hough_coord[i][j][k] = -1;
-				}
 			}
 		}
 	}
@@ -305,7 +301,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 				unsigned int dt = timestamp-this->m_hough_map_baf[theta_index][rho_index];
 				this->m_hough_map[theta_index][rho_index] = this->m_hough_map[theta_index][rho_index]*this->getPCExp(timestamp-this->m_hough_time_map[theta_index][rho_index]) + 1.0;
 				this->m_hough_time_map[theta_index][rho_index] = timestamp;
-				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && dt > 500)
+				if(this->m_hough_map[theta_index][rho_index] >= this->m_threshold && dt > 500 && (rho_index != 0 || theta_index < (this->m_hough_map_x>>1)))
 				{
 					dyn_threshold = this->m_hough_map[theta_index][rho_index]*1.0;
 					unsigned int mod_x = (unsigned int)this->m_hough_map_x;
@@ -328,7 +324,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						index_1--;
 						if(index_1 > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 0;
+							index_1 = 1;
 							index_0 = ((index_0+(this->m_hough_map_x>>1)))%mod_x;
 						}
 						HOUGH_CHECK_PEAK_FUNCTION;
@@ -366,12 +362,12 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						index_1 = rho_index-1;
 						if(index_1-- > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 1;
+							index_1 = 2;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						else if(index_1 > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 0;
+							index_1 = 1;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						HOUGH_CHECK_PEAK_FUNCTION;
@@ -421,7 +417,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						index_1 = rho_index-1;
 						if(index_1 > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 0;
+							index_1 = 1;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						HOUGH_CHECK_PEAK_FUNCTION;
@@ -430,17 +426,17 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						index_1 = rho_index-1;
 						if(index_1-- > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 2;
+							index_1 = 3;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						else if(index_1-- > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 1;
+							index_1 = 2;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						else if(index_1 > (unsigned int)(this->m_hough_map_y))
 						{
-							index_1 = 0;
+							index_1 = 1;
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						HOUGH_CHECK_PEAK_FUNCTION;
