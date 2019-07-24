@@ -254,9 +254,6 @@ void PNPThread::threadFunction() {
 
 void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line_id)
 {
-	this->mutexLog.lock();
-	std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
-	this->mutexLog.unlock();
 	if(this->m_nbr_lines_identified == 4)
 	{
 		if(line_id > 0)
@@ -281,6 +278,39 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		}
 		else
 		{
+			for(int i = 0; i < this->m_nbr_lines_identified; i++)
+			{
+				double dt = acos(cos(theta-this->m_line_parameters[i][0]));
+				double dd = std::abs(dist-this->m_line_parameters[i][1]);
+				//this->mutexLog.lock();
+				//std::cout << "detected_line " << theta << " " << dist << " " << dt << " " << distance << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
+				//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
+				//this->mutexLog.unlock();
+				if(dt < PI/6 && dd < 10)/*&& sqrt(140.0*dt*dt+dd*dd) < 140)*/
+				{
+					this->mutexLog.lock();
+					std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+					this->mutexLog.unlock();
+					break;
+					bool rotated = false;
+					bool cycle = false;
+					line_id--;
+					double theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
+					double theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
+					if(theta_min-theta_max > std::abs(std::fmod(theta_max+PI, 2*PI)-theta_min))
+					{
+						rotated = true;
+					}
+					if(acos(cos(theta_max-theta_min)) < PI/4 && theta_max-theta_min > 3*PI/2)
+					{
+						cycle = true;
+					}
+					this->updateLineParameters(theta,dist,rotated,line_id,cycle);
+					this->computeLineIntersection();
+					this->computePosit();
+					this->updateFilteringArray();
+				}
+			}
 			//this->mutexLog.lock();
 			//std::cout << "Warning: lines identified but still not line id:" << line_id << std::endl;
 			//this->mutexLog.unlock();
@@ -294,6 +324,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 	}
 	else
 	{
+		this->mutexLog.lock();
+		std::cout << "hough_event " << theta << " " << dist << " " << t << " " << line_id << std::endl;
+		this->mutexLog.unlock();
 		int can_be_a_new_line = 0;
 		int candidate_line = -1;
 		double dt,dd, best_dt, best_dd, best_dist;
