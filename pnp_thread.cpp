@@ -293,7 +293,6 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					std::cout << "hough_event " << theta << " " << dist << " " << t << " " << i << std::endl;
 					this->mutexLog.unlock();
 					updated = true;
-					break;
 					bool rotated = false;
 					bool cycle = false;
 					line_id--;
@@ -311,6 +310,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->computeLineIntersection();
 					this->computePosit();
 					this->updateFilteringArray();
+					break;
 				}
 			}
 			if(!updated)
