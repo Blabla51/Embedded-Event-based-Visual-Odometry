@@ -283,6 +283,20 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			{
 				double dt = std::min(acos(cos(theta-this->m_line_parameters[i][0])),acos(cos(-theta+this->m_line_parameters[i][0])));
 				double dd = std::abs(dist-this->m_line_parameters[i][1]);
+				bool rotated = false;
+				bool cycle = false;
+				line_id = i;
+				double theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
+				double theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
+				if(theta_min-theta_max > std::abs(std::fmod(theta_max+PI, 2*PI)-theta_min))
+				{
+					rotated = true;
+					dd = std::abs(dist+this->m_line_parameters[i][1]);
+				}
+				if(acos(cos(theta_max-theta_min)) < PI/4 && theta_max-theta_min > 3*PI/2)
+				{
+					cycle = true;
+				}
 				this->mutexLog.lock();
 				std::cout << "detected_line " << theta << " " << dist << " " << dd << " " << dt << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
 				//std::cout << "Detected lineD: " << theta_min << ";" << theta_max << " " << std::abs(theta_max-theta_min) << ";" << std::abs(theta_min+PI-theta_max) << std::endl;
@@ -293,19 +307,6 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					std::cout << "hough_event " << theta << " " << dist << " " << t << " " << i << std::endl;
 					this->mutexLog.unlock();
 					updated = true;
-					bool rotated = false;
-					bool cycle = false;
-					line_id = i;
-					double theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
-					double theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
-					if(theta_min-theta_max > std::abs(std::fmod(theta_max+PI, 2*PI)-theta_min))
-					{
-						rotated = true;
-					}
-					if(acos(cos(theta_max-theta_min)) < PI/4 && theta_max-theta_min > 3*PI/2)
-					{
-						cycle = true;
-					}
 					this->updateLineParameters(theta,dist,rotated,line_id,cycle);
 					this->computeLineIntersection();
 					this->computePosit();
