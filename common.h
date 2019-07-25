@@ -32,6 +32,7 @@
 #define DEBUG DEBUG_NO
 #define OS OS_LINUX
 #define MODE MODE_ONLINE
+#define SIMULINK_RETURN 1
 
 class Event {
 public:

@@ -11,6 +11,14 @@
 #include <fcntl.h>
 #if OS == OS_LINUX
 #include <curl/curl.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/tcp.h>
+#include <netdb.h>
+#include <signal.h>
+#include <pthread.h>
+#include <time.h>
 #endif
 #include "uart_thread.h"
 #include "hough_thread.h"
