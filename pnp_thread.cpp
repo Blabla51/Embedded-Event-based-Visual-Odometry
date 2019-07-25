@@ -281,7 +281,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			bool updated = false;
 			for(int i = 0; i < this->m_nbr_lines_identified; i++)
 			{
-				double dt = acos(cos(theta-this->m_line_parameters[i][0]*2.0))/2.0;
+				double dt = acos(cos((theta-this->m_line_parameters[i][0])*2.0))/2.0;
 				double dd = std::abs(dist-this->m_line_parameters[i][1]);
 				bool rotated = false;
 				bool cycle = false;
