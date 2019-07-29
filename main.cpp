@@ -13,11 +13,11 @@
 #include <curl/curl.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/tcp.h>
-#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <signal.h>
-#include <pthread.h>
 #include <time.h>
 #endif
 #include "uart_thread.h"
@@ -58,7 +58,46 @@ int main(int argc, char *argv[])
 	bool stop = false;
 #if OS == OS_LINUX
 #if SIMULINK_RETURN == 1
-	struct addrinfo 				hints;
+
+	int sockfd;
+	char buffer[MAXLINE];
+	char *hello = "Hello from server";
+	struct sockaddr_in servaddr, cliaddr;
+
+	// Creating socket file descriptor
+	if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
+		perror("socket creation failed");
+		exit(EXIT_FAILURE);
+	}
+
+	memset(&servaddr, 0, sizeof(servaddr));
+	memset(&cliaddr, 0, sizeof(cliaddr));
+
+	// Filling server information
+	servaddr.sin_family    = AF_INET; // IPv4
+	servaddr.sin_addr.s_addr = INADDR_ANY;
+	servaddr.sin_port = htons(PORT);
+
+	// Bind the socket with the server address
+	if ( bind(sockfd, (const struct sockaddr *)&servaddr,
+			sizeof(servaddr)) < 0 )
+	{
+		perror("bind failed");
+		exit(EXIT_FAILURE);
+	}
+
+	int len, n;
+	n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
+				&len);
+	buffer[n] = '\0';
+	printf("Client : %s\n", buffer);
+	sendto(sockfd, (const char *)hello, strlen(hello),
+		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
+			len);
+	printf("Hello message sent.\n");
+
+	/*struct addrinfo 				hints;
 	struct addrinfo 				*result, *rp;
 	int 							sfd, s, i;
 	struct sockaddr_storage 		peer_addr;
@@ -69,7 +108,7 @@ int main(int argc, char *argv[])
 	struct timespec 				current_time;
 	struct UDP_data					udp_data;
 
-	/* Clear mes structure */
+	// Clear mes structure
 
 	mes.timestamp = 0;
 	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
@@ -79,7 +118,7 @@ int main(int argc, char *argv[])
 	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
 		udp_data.mes[i] = 0.1 + i;
 
-	/* Clear con structure */
+	// Clear con structure
 
 	con.magic = 0;
 	con.timestamp = 0;
@@ -87,13 +126,14 @@ int main(int argc, char *argv[])
 		con.con[i] = 0.0;
 
 	memset( &hints, 0, sizeof( struct addrinfo ) );
-	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-	hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
-	hints.ai_flags = AI_PASSIVE;    /* For wildcard IP address */
-	hints.ai_protocol = 0;					/* Any protocol */
+	hints.ai_family = AF_INET;    // Allow IPv4 or IPv6
+//	hints.ai_socktype = SOCK_DGRAM; // Datagram socket
+//	hints.ai_flags = AI_PASSIVE;    // For wildcard IP address
+	hints.ai_protocol = 0;					// Any protocol
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
 	hints.ai_next = NULL;
+	hints.sin_addr.s_addr = INADDR_ANY;
 
 	s = getaddrinfo( NULL, RPIT_SOCKET_PORT, &hints, &result );
 
@@ -104,12 +144,12 @@ int main(int argc, char *argv[])
 		exit( EXIT_FAILURE );
 	 }
 
-	/*
-		getaddrinfo() returns a list of address structures.
-		Try each address until we successfully bind(2).
-		If socket(2) (or bind(2)) fails, we (close the socket
-		and) try the next address.
-	*/
+	//
+	//getaddrinfo() returns a list of address structures.
+	//Try each address until we successfully bind(2).
+	//If socket(2) (or bind(2)) fails, we (close the socket
+	//and) try the next address.
+	//
 
 	for ( rp = result; rp != NULL; rp = rp->ai_next ) {
 
@@ -120,19 +160,19 @@ int main(int argc, char *argv[])
 			continue;
 
 		if ( bind( sfd, rp->ai_addr, rp->ai_addrlen ) == 0 )
-			break;									/* Success */
+			break;									// Success
 
 		close( sfd );
 	}
 
-	if ( rp == NULL ) {					/* No address succeeded */
+	if ( rp == NULL ) {					// No address succeeded
 		flockfile( stderr );
 		fprintf( stderr, "rpit_socket_server: could not bind. Aborting.\n" );
 		funlockfile( stderr );
 		exit( EXIT_FAILURE );
 	}
 
-	freeaddrinfo( result );
+	freeaddrinfo( result );*/
 #endif
 	CURL *curl;
 	CURLcode res;
