@@ -87,11 +87,12 @@ int main(int argc, char *argv[])
 	}
 
 	unsigned int len;
-	/*int n2 = recvfrom(sockfd, (char *)buffer, 4,
+	int n2 = recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
 	buffer[n2] = '\0';
-	printf("Client : %s\n", buffer);*/
+	printf("Client : %s\n", buffer);
+	cliaddr.sin_port = htons(31415);
 	sendto(sockfd, (const char *)hello, strlen(hello),
 		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
 			len);
