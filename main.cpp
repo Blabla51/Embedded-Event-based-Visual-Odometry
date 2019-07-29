@@ -60,6 +60,9 @@ int main(int argc, char *argv[])
 #if OS == OS_LINUX
 #if SIMULINK_RETURN == 1
 
+	struct UDP_data					udp_data;
+	for (int i = 0; i < RPIT_SOCKET_MES_N; i++ )
+		udp_data.mes[i] = 0.1 + i;
 	int sockfd;
 	char buffer[4];
 	char *hello = "Hello from server";
@@ -306,6 +309,8 @@ int main(int argc, char *argv[])
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
 			}*/
+			recvfrom(sockfd, (char*)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&cliaddr, &len );
+			sendto(sockfd, (char *)udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
 	#endif
 		//BaseThread::mutexLog.unlock();
 		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
