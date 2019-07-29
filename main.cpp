@@ -87,7 +87,19 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	unsigned int len;
+	struct sockaddr_in remote;
+	remote.sin_family = AF_INET;
+	remote.sin_port = htons(31415);
+	remote.sin_addr.s_addr = ::inet_addr("10.0.1.56");
+
+	socklen_t addrSize;
+	addrSize = sizeof(remote);
+
+	memset(remote.sin_zero, '\0', sizeof(remote.sin_zero));
+	std::cout << "messageLength: " << strlen(hello) << std::endl;
+	return ::sendto(sockfd, (const char *)hello, strlen(hello), 0, (struct sockaddr *)&remote, addrSize);
+
+	/*unsigned int len;
 	int n2 = recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
@@ -101,7 +113,7 @@ int main(int argc, char *argv[])
 	sendto(sockfd, (const char *)hello, strlen(hello),
 		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
 			1);
-	printf("Hello message sent.\n");
+	printf("Hello message sent.\n");*/
 
 	/*struct addrinfo 				hints;
 	struct addrinfo 				*result, *rp;
