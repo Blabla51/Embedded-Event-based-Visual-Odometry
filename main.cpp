@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
 					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
 				}
 			}
-			sendto(sockfd, (char *)udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
+			sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
 			std::cout << "Sended" << std::endl;
 	#endif
 		//BaseThread::mutexLog.unlock();
