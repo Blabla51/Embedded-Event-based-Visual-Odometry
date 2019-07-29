@@ -66,12 +66,14 @@ int main(int argc, char *argv[])
 	ssize_t 						nread;
 	struct RPIt_socket_mes_struct	local_mes;
 	struct RPIt_socket_con_struct	local_con;
+	struct timespec 				current_time;
 
 	/* Clear mes structure */
 
 	mes.timestamp = 0;
 	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
 		mes.mes[i] = 0.0 + i;
+
 
 	/* Clear con structure */
 
@@ -239,6 +241,12 @@ int main(int argc, char *argv[])
 			/**********************************************/
 
 			/* Critical section : copy of the measurements to a local variable */
+			clock_gettime( CLOCK_MONOTONIC, &current_time );
+
+			/* Critical section */
+
+			mes.timestamp = (unsigned long long)current_time.tv_sec * 1000000000
+												+ (unsigned long long)current_time.tv_nsec;
 
 			memcpy( &local_mes, &mes, sizeof( struct RPIt_socket_mes_struct ) );
 
@@ -253,7 +261,7 @@ int main(int argc, char *argv[])
 			}
 	#endif
 		//BaseThread::mutexLog.unlock();
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		//break;
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
