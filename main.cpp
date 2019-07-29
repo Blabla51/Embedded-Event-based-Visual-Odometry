@@ -218,11 +218,11 @@ int main(int argc, char *argv[])
 					con.con[i] = 0.0;
 			}
 
-			for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
+			for ( i = 0; i < 10; i++ )
 			{
-				if(con.con[i] != 0.0)
+				if(udp_data.mes[i] != 0.0)
 				{
-					std::cout << "CON" << i << " = " << con.con[i] << std::endl;
+					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
 				}
 			}
 
