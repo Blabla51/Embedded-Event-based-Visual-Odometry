@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
 	mes.timestamp = 0;
 	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
-		mes.mes[i] = 0.0 + i;
+		mes.mes[i] = 0.1 + i;
 
 
 	/* Clear con structure */
