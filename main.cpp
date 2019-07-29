@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 			nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
-			if(udp_data == 1.0)
+			if(udp_data.mes[0] == 1.0)
 			{
 				stop = true;
 			}
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
 					con.con[i] = 0.0;
 			}
 
-			if ( nread != sizeof( struct udp_data ) )	{
+			if ( nread != sizeof( struct UDP_data ) )	{
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: function recvfrom did not receive the expected packet size.\n" );
 				funlockfile( stderr );
@@ -240,9 +240,9 @@ int main(int argc, char *argv[])
 
 			// Send measurements to the socket
 
-			if ( sendto(	sfd, (char*)&udp_data, sizeof( struct udp_data ), 0,
+			if ( sendto(	sfd, (char*)&udp_data, sizeof( struct UDP_data ), 0,
 										(struct sockaddr *)&peer_addr,
-										peer_addr_len) != sizeof( struct udp_data ) )	{
+										peer_addr_len) != sizeof( struct UDP_data ) )	{
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
