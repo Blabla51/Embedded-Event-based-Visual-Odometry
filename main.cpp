@@ -239,8 +239,9 @@ int main(int argc, char *argv[])
 			//std::cout << local_mes.mes[5] << std::endl;
 
 			// Send measurements to the socket
+			double tmp = 0.5;
 
-			if ( sendto(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
+			if ( sendto(	sfd, (char*)&tmp, sizeof(tmp), 0,
 										(struct sockaddr *)&peer_addr,
 										peer_addr_len) != sizeof( struct UDP_data ) )	{
 				flockfile( stderr );
