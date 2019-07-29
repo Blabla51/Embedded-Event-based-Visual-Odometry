@@ -274,7 +274,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			this->updateLineParameters(theta,dist,rotated,line_id,cycle);
 			this->computeLineIntersection();
 			this->computePosit();
-			this->updateFilteringArray();
+			//this->updateFilteringArray();
 		}
 		else
 		{
@@ -505,17 +505,29 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->m_line_parameters[3][0] = tmp_params[line_3][0];
 					this->m_line_parameters[3][1] = tmp_params[line_3][1];
 					this->mutexLog.lock();
-					std::cout << "line_detected_at " << t << std::endl;
+					bool lines_are_normal = true;
 					for(int i = 0; i < 4; i++)
 					{
-						std::cout << "line_detected_are " << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
+						double mes = acos(cos(this->m_line_parameters[(i+1)%4][0]-this->m_line_parameters[(i+1)%4][0]));
+						if(mes > PI/2.0*1.2 || mes < PI/2.0*0.8)
+						{
+							lines_are_normal = false;
+						}
 					}
-					this->mutexLog.unlock();
-					this->computeLineIntersection();
-					this->computePosit();
-					this->updateFilteringArray();
-					this->m_web_string_stream << "{\"tracking\": true},";
-					//this->m_ht->activateTracking();
+					if(lines_are_normal)
+					{
+						std::cout << "line_detected_at " << t << std::endl;
+						for(int i = 0; i < 4; i++)
+						{
+							std::cout << "line_detected_are " << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
+						}
+						this->mutexLog.unlock();
+						this->computeLineIntersection();
+						this->computePosit();
+						//this->updateFilteringArray();
+						this->m_web_string_stream << "{\"tracking\": true},";
+						//this->m_ht->activateTracking();
+					}
 				}
 			}
 		}

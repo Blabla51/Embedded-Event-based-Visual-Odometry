@@ -34,6 +34,31 @@
 #define MODE MODE_ONLINE
 #define SIMULINK_RETURN 1
 
+// RPIT
+
+#define RPIT_SOCKET_CON_N					10			// Nb of double sent (control)
+#define RPIT_SOCKET_MES_N					10			// Nb of double returned (measurement)
+#define RPIT_SOCKET_PORT					"31415"	// Port of the server
+#define RPIT_SOCKET_MES_PERIOD		2000		// Sampling period of the measurement (us)
+#define RPIT_SOCKET_MAGIC					3141592	// Magic number
+#define RPIT_SOCKET_WATCHDOG_TRIG	1000000	// Delay in us before watchdog is triggered
+
+//END RPIT
+
+extern "C" {
+	struct RPIt_socket_mes_struct	{
+		unsigned int				magic;							// Magic number
+		unsigned long long 	timestamp;					// Absolute server time in ns
+		double							mes[RPIT_SOCKET_MES_N];	// Measurements
+	};
+
+	struct RPIt_socket_con_struct	{
+		unsigned int				magic;							// Magic number
+		unsigned long long 	timestamp;					// Absolute client time in ns
+		double							con[RPIT_SOCKET_CON_N];	// Control signals
+	};
+}
+
 class Event {
 public:
 	unsigned int x;
