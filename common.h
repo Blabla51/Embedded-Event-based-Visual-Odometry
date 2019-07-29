@@ -57,6 +57,9 @@ extern "C" {
 		unsigned long long 	timestamp;					// Absolute client time in ns
 		double							con[RPIT_SOCKET_CON_N];	// Control signals
 	};
+	struct UDP_data	{
+		double							mes[10];	// Measurements
+	};
 }
 
 class Event {

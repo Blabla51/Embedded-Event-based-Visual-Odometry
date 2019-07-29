@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 	struct RPIt_socket_mes_struct	local_mes;
 	struct RPIt_socket_con_struct	local_con;
 	struct timespec 				current_time;
+	struct UDP_data					udp_data;
 
 	/* Clear mes structure */
 
@@ -75,6 +76,8 @@ int main(int argc, char *argv[])
 		mes.mes[i] = 0.1 + i;
 	mes.magic = RPIT_SOCKET_MAGIC;
 
+	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
+		udp_data.mes[i] = 0.0;
 
 	/* Clear con structure */
 
@@ -182,12 +185,11 @@ int main(int argc, char *argv[])
 			}
 	#elif SIMULINK_RETURN == 1
 			peer_addr_len = sizeof( struct sockaddr_storage );
-			double* tmp[2];
-			nread = recvfrom(	sfd, (char*)&tmp, sizeof(tmp), 0,
+			nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
-			std::cout << tmp[0] << std::endl;
-			std::cout << tmp[1] << std::endl;
+			std::cout << udp_data[0] << std::endl;
+			std::cout << udp_data[1] << std::endl;
 			std::cout << "---" << std::endl;
 			//std::cout << nread << std::endl;
 
