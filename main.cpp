@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	// Filling server information
 	servaddr.sin_family    = AF_INET; // IPv4
 	servaddr.sin_addr.s_addr = INADDR_ANY;
-	servaddr.sin_port = htons(31415);
+	servaddr.sin_port = htons(31416);
 
 	// Bind the socket with the server address
 	if ( bind(sockfd, (const struct sockaddr *)&servaddr,
@@ -87,17 +87,17 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	/*unsigned int len;
+	unsigned int len;
 	int n2 = recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
 	buffer[n2] = '\0';
-	printf("Client : %s\n", buffer);*/
+	printf("Client : %s\n", buffer);
     struct hostent *hostinfo;
-	hostinfo = gethostbyname("10.0.1.56");
+	//hostinfo = gethostbyname("10.0.1.56");
 	cliaddr.sin_port = htons(31415);
-	cliaddr.sin_family = AF_INET;
-	cliaddr.sin_addr = *(IN_ADDR *) hostinfo->h_addr;
+	//cliaddr.sin_family = AF_INET;
+	//cliaddr.sin_addr = *(SIOCADDRT *) hostinfo->h_addr;
 	sendto(sockfd, (const char *)hello, strlen(hello),
 		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
 			1);
