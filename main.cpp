@@ -109,7 +109,9 @@ int main(int argc, char *argv[])
 	*/
 
 	for ( rp = result; rp != NULL; rp = rp->ai_next ) {
-		std::cout << "IP: " << rp->ai_family << std::endl;
+
+		std::cout << "IP: " << rp->ai_addr << std::endl;
+
 		sfd = socket( rp->ai_family, rp->ai_socktype, rp->ai_protocol );
 		if ( sfd == -1 )
 			continue;
