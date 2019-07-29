@@ -99,13 +99,13 @@ int main(int argc, char *argv[])
 	std::cout << "messageLength: " << strlen(hello) << std::endl;
 	sendto(sockfd, (const char *)hello, strlen(hello), 0, (struct sockaddr *)&remote, addrSize);
 
-	/*unsigned int len;
+	unsigned int len;
 	int n2 = recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
-	buffer[n2] = '\0';
+	//buffer[n2] = '\0';
 	printf("Client : %s\n", buffer);
-    struct hostent *hostinfo;
+    /*struct hostent *hostinfo;
 	//hostinfo = gethostbyname("10.0.1.56");
 	cliaddr.sin_port = htons(31415);
 	//cliaddr.sin_family = AF_INET;
