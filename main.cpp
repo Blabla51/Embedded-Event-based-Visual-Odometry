@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	mes.magic = RPIT_SOCKET_MAGIC;
 
 	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
-		udp_data.mes[i] = 0.0;
+		udp_data.mes[i] = 0.1 + i;
 
 	/* Clear con structure */
 
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 			}
 	#elif SIMULINK_RETURN == 1
 			peer_addr_len = sizeof( struct sockaddr_storage );
-			nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
+			/*nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
 			if(udp_data.mes[0] == 1.0)
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 				{
 					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
 				}
-			}
+			}*/
 
 			// Critical section : copy of the measurements to a local variable
 			//clock_gettime( CLOCK_MONOTONIC, &current_time );
