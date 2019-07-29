@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
 
 			memcpy( &local_mes, &mes, sizeof( struct RPIt_socket_mes_struct ) );
 
-			std::cout << local_mes.mes[0] << std::endl;
+			std::cout << local_mes.mes[5] << std::endl;
 
 			/* Send measurements to the socket */
 
