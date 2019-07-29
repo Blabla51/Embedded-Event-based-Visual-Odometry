@@ -179,6 +179,8 @@ int main(int argc, char *argv[])
 			nread = recvfrom(	sfd, (char*)&local_con, sizeof( struct RPIt_socket_con_struct ), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
+			std::cout << nread << std::endl;
+
 			/* Memcopy is faster than socket read: avoid holding the mutex too long */
 
 			memcpy( &con, &local_con, sizeof( struct RPIt_socket_con_struct ) );
