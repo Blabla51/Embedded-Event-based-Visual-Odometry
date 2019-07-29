@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 
 			// Send measurements to the socket
 
-			if ( sendto(	sfd, (char*)&udp_data, sizeof( struct UDP_data ), 0,
+			if ( sendto(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 										(struct sockaddr *)&peer_addr,
 										peer_addr_len) != sizeof( struct UDP_data ) )	{
 				flockfile( stderr );
