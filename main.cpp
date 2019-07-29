@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 
 			if ( sendto(	sfd, (char*)&tmp, sizeof(tmp), 0,
 										(struct sockaddr *)&peer_addr,
-										peer_addr_len) != sizeof( struct UDP_data ) )	{
+										peer_addr_len) != sizeof(tmp) )	{
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
