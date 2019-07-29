@@ -218,6 +218,14 @@ int main(int argc, char *argv[])
 					con.con[i] = 0.0;
 			}
 
+			for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
+			{
+				if(con.con[i] != 0.0)
+				{
+					std::cout << "CON" << i << " = " << con.con[i] << std::endl;
+				}
+			}
+
 			/*
 			 *
 			 *
