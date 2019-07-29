@@ -310,7 +310,15 @@ int main(int argc, char *argv[])
 				funlockfile( stderr );
 			}*/
 			recvfrom(sockfd, (char*)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&cliaddr, &len );
+			for (int i = 0; i < 10; i++ )
+			{
+				if(udp_data.mes[i] != 0.0)
+				{
+					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
+				}
+			}
 			sendto(sockfd, (char *)udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
+			std::cout << "Sended" << std::endl;
 	#endif
 		//BaseThread::mutexLog.unlock();
 		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
