@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 	#elif SIMULINK_RETURN == 1
 			peer_addr_len = sizeof( struct sockaddr_storage );
 			double tmp;
-			nread = recvfrom(	sfd, (char*)&tmp, tmp, 0,
+			nread = recvfrom(	sfd, (char*)&tmp, sizeof(tmp), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
 			std::cout << tmp << std::endl;
