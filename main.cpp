@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 #if SIMULINK_RETURN == 1
 
 	int sockfd;
-	char buffer[MAXLINE];
+	char buffer[4];
 	char *hello = "Hello from server";
 	struct sockaddr_in servaddr, cliaddr;
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	// Filling server information
 	servaddr.sin_family    = AF_INET; // IPv4
 	servaddr.sin_addr.s_addr = INADDR_ANY;
-	servaddr.sin_port = htons(PORT);
+	servaddr.sin_port = htons(31415);
 
 	// Bind the socket with the server address
 	if ( bind(sockfd, (const struct sockaddr *)&servaddr,
@@ -86,11 +86,11 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	int len, n;
-	n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+	int len;
+	int n2 = recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
-	buffer[n] = '\0';
+	buffer[n2] = '\0';
 	printf("Client : %s\n", buffer);
 	sendto(sockfd, (const char *)hello, strlen(hello),
 		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 				stop = true;
 			}
 	#elif SIMULINK_RETURN == 1
-			peer_addr_len = sizeof( struct sockaddr_storage );
+			//peer_addr_len = sizeof( struct sockaddr_storage );
 			/*nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 			//std::cout << local_mes.mes[5] << std::endl;
 
 			// Send measurements to the socket
-			double tmp = 0.5;
+			/*double tmp = 0.5;
 
 			if ( sendto(	sfd, (char*)&tmp, sizeof(tmp), 0,
 										(struct sockaddr *)&peer_addr,
@@ -287,7 +287,7 @@ int main(int argc, char *argv[])
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
-			}
+			}*/
 	#endif
 		//BaseThread::mutexLog.unlock();
 		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
