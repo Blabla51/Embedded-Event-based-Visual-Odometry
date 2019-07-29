@@ -179,12 +179,12 @@ int main(int argc, char *argv[])
 			}
 	#elif SIMULINK_RETURN == 1
 			peer_addr_len = sizeof( struct sockaddr_storage );
-			nread = recvfrom(	sfd, (char*)&local_con, sizeof( struct RPIt_socket_con_struct ), 0,
+			/*nread = recvfrom(	sfd, (char*)&local_con, sizeof( struct RPIt_socket_con_struct ), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
 			std::cout << nread << std::endl;
 
-			/* Memcopy is faster than socket read: avoid holding the mutex too long */
+			// Memcopy is faster than socket read: avoid holding the mutex too long
 
 			memcpy( &con, &local_con, sizeof( struct RPIt_socket_con_struct ) );
 
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
 				fprintf( stderr, "rpit_socket_server: function recvfrom exited with error.\n" );
 				funlockfile( stderr );
 
-				/* Clear control in case of error */
+				// Clear control in case of error
 
 				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
 					con.con[i] = 0.0;
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
 				fprintf( stderr, "rpit_socket_server: function recvfrom did not receive the expected packet size.\n" );
 				funlockfile( stderr );
 
-				/* Clear control in case of error */
+				// Clear control in case of error
 
 				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
 					con.con[i] = 0.0;
@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
 				fprintf( stderr, "rpit_socket_server: magic number problem. Expected %d but received %d.\n", RPIT_SOCKET_MAGIC, con.magic );
 				funlockfile( stderr );
 
-				/* Clear control in case of error */
+				// Clear control in case of error
 
 				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
 					con.con[i] = 0.0;
@@ -227,24 +227,12 @@ int main(int argc, char *argv[])
 				{
 					std::cout << "CON" << i << " = " << con.con[i] << std::endl;
 				}
-			}
+			}*/
 
-			/*
-			 *
-			 *
-			 *	Insert here the handling of control signals.
-			 *
-			 *
-			 *
-			 */
-
-
-			/**********************************************/
-
-			/* Critical section : copy of the measurements to a local variable */
+			// Critical section : copy of the measurements to a local variable
 			clock_gettime( CLOCK_MONOTONIC, &current_time );
 
-			/* Critical section */
+			// Critical section
 
 			mes.timestamp = (unsigned long long)current_time.tv_sec * 1000000000
 												+ (unsigned long long)current_time.tv_nsec;
@@ -253,7 +241,7 @@ int main(int argc, char *argv[])
 
 			std::cout << local_mes.mes[5] << std::endl;
 
-			/* Send measurements to the socket */
+			// Send measurements to the socket
 
 			if ( sendto(	sfd, (char*)&local_mes, sizeof( struct RPIt_socket_mes_struct ), 0,
 										(struct sockaddr *)&peer_addr,
