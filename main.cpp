@@ -188,8 +188,8 @@ int main(int argc, char *argv[])
 			nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
-			std::cout << udp_data[0] << std::endl;
-			std::cout << udp_data[1] << std::endl;
+			std::cout << udp_data.mes[0] << std::endl;
+			std::cout << udp_data.mes[1] << std::endl;
 			std::cout << "---" << std::endl;
 			//std::cout << nread << std::endl;
 
