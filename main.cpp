@@ -186,7 +186,9 @@ int main(int argc, char *argv[])
 			nread = recvfrom(	sfd, (char*)&tmp, sizeof(tmp), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
-			std::cout << tmp << std::endl;
+			std::cout << tmp[0] << std::endl;
+			std::cout << tmp[1] << std::endl;
+			std::cout << "---" << std::endl;
 			//std::cout << nread << std::endl;
 
 			// Memcopy is faster than socket read: avoid holding the mutex too long
