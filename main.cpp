@@ -188,14 +188,13 @@ int main(int argc, char *argv[])
 			nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
-			std::cout << udp_data.mes[0] << std::endl;
-			std::cout << udp_data.mes[1] << std::endl;
-			std::cout << "---" << std::endl;
+			if(udp_data == 1.0)
+			{
+				stop = true;
+			}
 			//std::cout << nread << std::endl;
 
 			// Memcopy is faster than socket read: avoid holding the mutex too long
-
-			/*memcpy( &con, &local_con, sizeof( struct RPIt_socket_con_struct ) );
 
 			if ( nread == -1 )	{
 				flockfile( stderr );
@@ -208,20 +207,9 @@ int main(int argc, char *argv[])
 					con.con[i] = 0.0;
 			}
 
-			if ( nread != sizeof( struct RPIt_socket_con_struct ) )	{
+			if ( nread != sizeof( struct udp_data ) )	{
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: function recvfrom did not receive the expected packet size.\n" );
-				funlockfile( stderr );
-
-				// Clear control in case of error
-
-				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
-					con.con[i] = 0.0;
-			}
-
-			if ( con.magic != RPIT_SOCKET_MAGIC )	{
-				flockfile( stderr );
-				fprintf( stderr, "rpit_socket_server: magic number problem. Expected %d but received %d.\n", RPIT_SOCKET_MAGIC, con.magic );
 				funlockfile( stderr );
 
 				// Clear control in case of error
@@ -236,29 +224,29 @@ int main(int argc, char *argv[])
 				{
 					std::cout << "CON" << i << " = " << con.con[i] << std::endl;
 				}
-			}*/
+			}
 
 			// Critical section : copy of the measurements to a local variable
-			/*clock_gettime( CLOCK_MONOTONIC, &current_time );
+			//clock_gettime( CLOCK_MONOTONIC, &current_time );
 
 			// Critical section
 
-			mes.timestamp = (unsigned long long)current_time.tv_sec * 1000000000
-												+ (unsigned long long)current_time.tv_nsec;
+			//mes.timestamp = (unsigned long long)current_time.tv_sec * 1000000000
+			//									+ (unsigned long long)current_time.tv_nsec;
 
-			memcpy( &local_mes, &mes, sizeof( struct RPIt_socket_mes_struct ) );
+			//memcpy( &local_mes, &mes, sizeof( struct RPIt_socket_mes_struct ) );
 
-			std::cout << local_mes.mes[5] << std::endl;
+			//std::cout << local_mes.mes[5] << std::endl;
 
 			// Send measurements to the socket
 
-			if ( sendto(	sfd, (char*)&local_mes, sizeof( struct RPIt_socket_mes_struct ), 0,
+			if ( sendto(	sfd, (char*)&udp_data, sizeof( struct udp_data ), 0,
 										(struct sockaddr *)&peer_addr,
-										peer_addr_len) != sizeof( struct RPIt_socket_mes_struct ) )	{
+										peer_addr_len) != sizeof( struct udp_data ) )	{
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
-			}*/
+			}
 	#endif
 		//BaseThread::mutexLog.unlock();
 		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
