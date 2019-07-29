@@ -179,14 +179,16 @@ int main(int argc, char *argv[])
 			}
 	#elif SIMULINK_RETURN == 1
 			peer_addr_len = sizeof( struct sockaddr_storage );
-			/*nread = recvfrom(	sfd, (char*)&local_con, sizeof( struct RPIt_socket_con_struct ), 0,
+			char tmp;
+			nread = recvfrom(	sfd, (char*)&tmp, sizeof(tmp), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
+			std::cout << tmp << std::endl;
 			std::cout << nread << std::endl;
 
 			// Memcopy is faster than socket read: avoid holding the mutex too long
 
-			memcpy( &con, &local_con, sizeof( struct RPIt_socket_con_struct ) );
+			/*memcpy( &con, &local_con, sizeof( struct RPIt_socket_con_struct ) );
 
 			if ( nread == -1 )	{
 				flockfile( stderr );
@@ -230,7 +232,7 @@ int main(int argc, char *argv[])
 			}*/
 
 			// Critical section : copy of the measurements to a local variable
-			clock_gettime( CLOCK_MONOTONIC, &current_time );
+			/*clock_gettime( CLOCK_MONOTONIC, &current_time );
 
 			// Critical section
 
@@ -249,7 +251,7 @@ int main(int argc, char *argv[])
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
-			}
+			}*/
 	#endif
 		//BaseThread::mutexLog.unlock();
 		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
