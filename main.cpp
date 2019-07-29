@@ -27,7 +27,7 @@
 #include "common.h"
 //using namespace std;
 
-#ifdef SIMULINK_RETURN == 1
+#if SIMULINK_RETURN == 1
 struct RPIt_socket_mes_struct	mes;
 struct RPIt_socket_con_struct	con;
 unsigned char					exit_req = 0;
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 			}
 	#endif
 		//BaseThread::mutexLog.unlock();
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		//break;
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
