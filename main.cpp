@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	// Filling server information
 	servaddr.sin_family    = AF_INET; // IPv4
 	servaddr.sin_addr.s_addr = INADDR_ANY;
-	servaddr.sin_port = htons(31416);
+	servaddr.sin_port = htons(31415);
 
 	// Bind the socket with the server address
 	if ( bind(sockfd, (const struct sockaddr *)&servaddr,
@@ -95,15 +95,15 @@ int main(int argc, char *argv[])
 	socklen_t addrSize;
 	addrSize = sizeof(remote);
 
-	unsigned int len;
-	int n2 = recvfrom(sockfd, (char *)buffer, 4,
-				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
-				&len);
-
 	memset(remote.sin_zero, '\0', sizeof(remote.sin_zero));
 	std::cout << "messageLength: " << strlen(hello) << std::endl;
 	sendto(sockfd, (const char *)hello, strlen(hello), 0, (struct sockaddr *)&remote, addrSize);
-	/*buffer[n2] = '\0';
+
+	/*unsigned int len;
+	int n2 = recvfrom(sockfd, (char *)buffer, 4,
+				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
+				&len);
+	buffer[n2] = '\0';
 	printf("Client : %s\n", buffer);
     struct hostent *hostinfo;
 	//hostinfo = gethostbyname("10.0.1.56");
