@@ -230,9 +230,7 @@ int main(int argc, char *argv[])
 
 			/* Critical section : copy of the measurements to a local variable */
 
-			pthread_mutex_lock( &mes_mutex );
 			memcpy( &local_mes, &mes, sizeof( struct RPIt_socket_mes_struct ) );
-			pthread_mutex_unlock( &mes_mutex );
 
 			/* Send measurements to the socket */
 
