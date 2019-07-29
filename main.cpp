@@ -182,11 +182,11 @@ int main(int argc, char *argv[])
 			}
 	#elif SIMULINK_RETURN == 1
 			peer_addr_len = sizeof( struct sockaddr_storage );
-			char tmp;
-			nread = recvfrom(	sfd, (char*)&tmp, sizeof(tmp), 0,
+			double tmp;
+			nread = recvfrom(	sfd, (char*)&tmp, tmp, 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
 
-			std::cout << (int)(tmp) << std::endl;
+			std::cout << tmp << std::endl;
 			//std::cout << nread << std::endl;
 
 			// Memcopy is faster than socket read: avoid holding the mutex too long
