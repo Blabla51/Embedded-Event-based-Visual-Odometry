@@ -17,6 +17,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <signal.h>
 #include <time.h>
 #endif
@@ -86,16 +87,20 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	unsigned int len;
+	/*unsigned int len;
 	int n2 = recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
 	buffer[n2] = '\0';
-	printf("Client : %s\n", buffer);
+	printf("Client : %s\n", buffer);*/
+    struct hostent *hostinfo;
+	hostinfo = gethostbyname("10.0.1.56");
 	cliaddr.sin_port = htons(31415);
+	cliaddr.sin_family = AF_INET;
+	cliaddr.sin_addr = *(IN_ADDR *) hostinfo->h_addr;
 	sendto(sockfd, (const char *)hello, strlen(hello),
 		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
-			len);
+			1);
 	printf("Hello message sent.\n");
 
 	/*struct addrinfo 				hints;
