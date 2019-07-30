@@ -608,9 +608,11 @@ void PNPThread::computePosit()
 		IJt[i] = new double[3];
 	}
 	double** IJ = new double*[3];
+	double** mat_rot = new double*[3];
 	for(int i = 0; i < 3; i++)
 	{
 		IJ[i] = new double[2];
+		mat_rot = new double[3];
 	}
 	multMat(this->m_object_matrix, xp, IJt, 3, 4, 2);
 //	std::cout << "5" << std::endl;
@@ -659,7 +661,44 @@ void PNPThread::computePosit()
 	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
 //	this->mutexLog.lock();
 //	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
-//	this->mutexLog.unlock();
+//	this->mutexLog.unlock();float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
+	mat_rot[0][0] = IJ[0][0];
+	mat_rot[1][0] = IJ[1][0];
+	mat_rot[2][0] = IJ[2][0];
+	mat_rot[0][1] = IJ[0][1];
+	mat_rot[1][1] = IJ[1][1];
+	mat_rot[2][1] = IJ[2][1];
+	mat_rot[0][2] = k[0][0];
+	mat_rot[1][2] = k[1][0];
+	mat_rot[2][2] = k[2][0];
+	double trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
+	if( trace > 0 ) {// I changed M_EPSILON to 0
+		double s = 0.5 / sqrt(trace+ 1.0);
+		this->m_posit_qw = 0.25 / s;
+		this->m_posit_qx = ( mat_rot[2][1] - mat_rot[1][2] ) * s;
+		this->m_posit_qy = ( mat_rot[0][2] - mat_rot[2][0] ) * s;
+		this->m_posit_qz = ( mat_rot[1][0] - mat_rot[0][1] ) * s;
+	} else {
+		if ( mat_rot[0][0] > mat_rot[1][1] && mat_rot[0][0] > mat_rot[2][2] ) {
+			double s = 2.0 * sqrt( 1.0 + mat_rot[0][0] - mat_rot[1][1] - mat_rot[2][2]);
+			this->m_posit_qw = (mat_rot[2][1] - mat_rot[1][2] ) / s;
+			this->m_posit_qx = 0.25 * s;
+			this->m_posit_qy = (mat_rot[0][1] + mat_rot[1][0] ) / s;
+			this->m_posit_qz = (mat_rot[0][2] + mat_rot[2][0] ) / s;
+		} else if (mat_rot[1][1] > mat_rot[2][2]) {
+			double s = 2.0 * sqrt( 1.0 + mat_rot[1][1] - mat_rot[0][0] - mat_rot[2][2]);
+			this->m_posit_qw = (mat_rot[0][2] - mat_rot[2][0] ) / s;
+			this->m_posit_qx = (mat_rot[0][1] + mat_rot[1][0] ) / s;
+			this->m_posit_qy = 0.25 * s;
+			this->m_posit_qz = (mat_rot[1][2] + mat_rot[2][1] ) / s;
+		} else {
+			double s = 2.0 * sqrt( 1.0 + mat_rot[2][2] - mat_rot[0][0] - mat_rot[1][1] );
+			this->m_posit_qw = (mat_rot[1][0] - mat_rot[0][1] ) / s;
+			this->m_posit_qx = (mat_rot[0][2] + mat_rot[2][0] ) / s;
+			this->m_posit_qy = (mat_rot[1][2] + mat_rot[2][1] ) / s;
+			this->m_posit_qz = 0.25 * s;
+		}
+	}
 	this->m_pose_mutex.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
