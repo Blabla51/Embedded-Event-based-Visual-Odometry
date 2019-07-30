@@ -10,6 +10,10 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_posit_z = 0.0;
 	this->m_posit_y = 0.0;
 	this->m_posit_x = 0.0;
+	this->m_posit_qz = 0.0;
+	this->m_posit_qy = 0.0;
+	this->m_posit_qx = 0.0;
+	this->m_posit_qw = 0.0;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream << "[";
 
@@ -625,11 +629,11 @@ void PNPThread::computePosit()
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
 
-	this->m_web_mutex.lock();
+	this->m_pose_mutex.lock();
 	this->m_posit_z = Z0;
 	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
 	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
-	this->m_web_mutex.unlock();
+	this->m_pose_mutex.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
@@ -901,7 +905,7 @@ void PNPThread::printFilteringMap()
 
 std::string PNPThread::generateWebServerData()
 {
-	this->m_web_mutex.lock();
+	this->m_pose_mutex.lock();
 	this->m_web_string_stream << "{\"intersection\": [";
 	for(int i = 0; i < 4; i++)
 	{
@@ -914,7 +918,24 @@ std::string PNPThread::generateWebServerData()
 	this->m_web_string_stream.str("");
 	//std::cout << "Data generated: " << tmp << std::endl;
 	this->m_web_string_stream << "[";
-	this->m_web_mutex.unlock();
+	this->m_pose_mutex.unlock();
 	return tmp;
 	//return "Test";
 }
+
+#if OS == OS_LINUX
+void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size)
+{
+	struct UDP_data udp_data;
+	this->m_pose_mutex.lock();
+	udp_data.mes[0] = this->m_posit_x;
+	udp_data.mes[1] = this->m_posit_y;
+	udp_data.mes[2] = this->m_posit_z;
+	udp_data.mes[3] = this->m_posit_qw;
+	udp_data.mes[4] = this->m_posit_qx;
+	udp_data.mes[5] = this->m_posit_qy;
+	udp_data.mes[6] = this->m_posit_qz;
+	this->m_pose_mutex.unlock();
+	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
+}
+#endif

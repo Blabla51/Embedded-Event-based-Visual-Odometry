@@ -14,6 +14,17 @@
 #include "base_thread.h"
 #include <future>
 #include <sstream>
+#if OS == OS_LINUX
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <signal.h>
+#include <time.h>
+#endif
 //#include "libusb.h"
 
 class HoughThread;
@@ -37,12 +48,16 @@ private:
 	double 		m_posit_z;
 	double 		m_posit_y;
 	double		m_posit_x;
+	double 		m_posit_qw;
+	double 		m_posit_qx;
+	double		m_posit_qy;
+	double 		m_posit_qz;
 	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
 	std::mutex 			m_filter_mutex;
-	std::mutex 			m_web_mutex;
+	std::mutex 			m_pose_mutex;
 	HoughThread*		m_ht;
 
 	void multMat(double** m1, double** m2, double** res, int ligne, int inter, int colonne);
@@ -64,7 +79,11 @@ public:
     void updateLineParameters(double theta, double dist, bool rotated, int line_id, bool cycle);
     int getFilterValue(int t, int d);
     void printFilteringMap();
+    void printFilteringMap();
     std::string generateWebServerData();
+#if OS == OS_LINUX
+    void sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size);
+#endif
 };
 
 #endif
