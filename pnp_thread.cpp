@@ -638,9 +638,9 @@ void PNPThread::computePosit()
 	this->m_posit_z = Z0;
 	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
 	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
-	this->mutexLog.lock();
-	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
-	this->mutexLog.unlock();
+//	this->mutexLog.lock();
+//	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
+//	this->mutexLog.unlock();
 	this->m_pose_mutex.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
