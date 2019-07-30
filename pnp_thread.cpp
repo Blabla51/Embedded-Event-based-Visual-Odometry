@@ -525,13 +525,17 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 						{
 							std::cout << "line_detected_are " << i << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
 						}
-						this->mutexLog.unlock();
 						this->computeLineIntersection();
 						this->computePosit();
 						//this->updateFilteringArray();
 						this->m_web_string_stream << "{\"tracking\": true},";
 						//this->m_ht->activateTracking();
 					}
+					else
+					{
+						std::cout << "warning reset_lines_because_not_normal" << t << std::endl;
+					}
+					this->mutexLog.unlock();
 				}
 			}
 		}
