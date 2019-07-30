@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
     UARTThread *uart_thread_object = new UARTThread();
 	HoughThread *hough_thread_object = new HoughThread(256,128);
-	PNPThread *pnp_thread_object = new PNPThread(151.0*1.285, hough_thread_object);
+	PNPThread *pnp_thread_object = new PNPThread(151.0, hough_thread_object);
 
     hough_thread_object->setPNPThread(pnp_thread_object);
     uart_thread_object->setHoughThread(hough_thread_object);
