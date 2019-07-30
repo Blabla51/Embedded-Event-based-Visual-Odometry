@@ -317,12 +317,16 @@ int main(int argc, char *argv[])
 					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
 				}
 			}
+			if(udp_data.mes[0] == 1.0)
+			{
+				stop = true;
+			}
 			//sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
 			pnp_thread_object->sendToMatLAB(sockfd, remote,addrSize);
-			std::cout << "Sended" << std::endl;
+			//std::cout << "Sended" << std::endl;
 	#endif
 		//BaseThread::mutexLog.unlock();
-		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		//break;
 	#elif OS == OS_WINDOWS
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
