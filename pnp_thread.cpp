@@ -852,7 +852,6 @@ void PNPThread::computeLineIntersection()
 	else
 	{
 		double t1,t2,d1,d2,x,y;
-		this->m_pose_mutex.lock();
 		for(int i = 0; i < 4; i++)
 		{
 			t1 = this->m_line_parameters[(i+0)%4][0];
@@ -870,21 +869,15 @@ void PNPThread::computeLineIntersection()
 		y = this->m_line_inters[1][1];
 		this->m_line_inters[1][1] = this->m_line_inters[3][1];
 		this->m_line_inters[3][1] = y;
-		this->m_pose_mutex.unlock();
-#if DEBUG == DEBUG_YES
+		this->m_pose_mutex.lock();
 		std::cout << "Detected intersections:" << std::endl;
-#endif
-		//this->m_web_mutex.lock();
-		//this->m_web_string_stream << "{\"intersection\": [";
-		//for(int i = 0; i < 4; i++)
-		//{
-#if DEBUG == DEBUG_YES
-			//std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
-#endif
+		for(int i = 0; i < 4; i++)
+		{
+			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
 			//this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
-		//}
+		}
 		//this->m_web_string_stream << "{}]},";
-		//this->m_web_mutex.unlock();
+		this->m_web_mutex.unlock();
 	}
 }
 
