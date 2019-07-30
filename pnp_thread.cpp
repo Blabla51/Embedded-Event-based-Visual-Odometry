@@ -518,6 +518,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 							lines_are_normal = false;
 						}
 					}
+					lines_are_normal = true;
 					if(lines_are_normal)
 					{
 						std::cout << "line_detected_at " << t << std::endl;
