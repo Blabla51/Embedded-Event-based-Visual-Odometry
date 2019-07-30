@@ -612,7 +612,7 @@ void PNPThread::computePosit()
 	for(int i = 0; i < 3; i++)
 	{
 		IJ[i] = new double[2];
-		mat_rot = new double[3];
+		mat_rot[i] = new double[3];
 	}
 	multMat(this->m_object_matrix, xp, IJt, 3, 4, 2);
 //	std::cout << "5" << std::endl;
