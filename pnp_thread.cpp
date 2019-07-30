@@ -573,13 +573,13 @@ void PNPThread::computePosit()
 	}
 	ones1_2[0][0] = 1.0;
 	ones1_2[1][0] = 1.0;
-	std::cout << "1" << std::endl;
-	dispMat(m_epsilon,4,1);
-	std::cout << "2" << std::endl;
-	dispMat(ones1_2,1,2);
+//	std::cout << "1" << std::endl;
+//	dispMat(m_epsilon,4,1);
+//	std::cout << "2" << std::endl;
+//	dispMat(ones1_2,1,2);
 	multMat(m_epsilon,ones1_2,correction,4,1,2);
-	std::cout << "3" << std::endl;
-	dispMat(correction,4,2);
+//	std::cout << "3" << std::endl;
+//	dispMat(correction,4,2);
 	// COMPUTE NEW POINTS X and XP
 	double** x = new double*[2];
 	double** xp = new double*[2];
@@ -599,8 +599,8 @@ void PNPThread::computePosit()
 			xp[j][i] = x[j][i]-x[j][0];
 		}
 	}
-	std::cout << "4" << std::endl;
-	dispMat(xp,4,2);
+//	std::cout << "4" << std::endl;
+//	dispMat(xp,4,2);
 	// COMPUTE IJ
 	double** IJt = new double*[2];
 	for(int i = 0; i < 2; i++)
@@ -613,11 +613,11 @@ void PNPThread::computePosit()
 		IJ[i] = new double[2];
 	}
 	multMat(this->m_object_matrix, xp, IJt, 3, 4, 2);
-	std::cout << "5" << std::endl;
-	dispMat(IJt,3,2);
+//	std::cout << "5" << std::endl;
+//	dispMat(IJt,3,2);
 	transMat(IJt,IJ,3,2);
-	std::cout << "6" << std::endl;
-	dispMat(IJ,2,3);
+//	std::cout << "6" << std::endl;
+//	dispMat(IJ,2,3);
 	double nI = 0.0;
 	double nJ = 0.0;
 	for(int i = 0; i < 3; i++)
@@ -632,11 +632,11 @@ void PNPThread::computePosit()
 		IJ[i][0] = IJ[i][0]/nI;
 		IJ[i][1] = IJ[i][1]/nJ;
 	}
-	this->mutexLog.lock();
-	std::cout << "Normes: " << nI << " " << nJ << std::endl;
-	this->mutexLog.unlock();
-	std::cout << "7" << std::endl;
-	dispMat(IJ,2,3);
+//	this->mutexLog.lock();
+//	std::cout << "Normes: " << nI << " " << nJ << std::endl;
+//	this->mutexLog.unlock();
+//	std::cout << "7" << std::endl;
+//	dispMat(IJ,2,3);
 	// COMPUTE K
 	double** k = new double*[3];
 	for(int i = 0; i<3; i++)
@@ -645,8 +645,8 @@ void PNPThread::computePosit()
 		k[i][0] = IJ[(i+1)%3][0]*IJ[(i+2)%3][1]-IJ[(i+1)%3][1]*IJ[(i+2)%3][0];
 		//std::cout << IJ[(i+1)%3][0] << "*" << IJ[(i+2)%3][1] << "-" << IJ[(i+1)%3][1] <<"*" << IJ[(i+2)%3][0] << std::endl;
 	}
-	std::cout << "8" << std::endl;
-	dispMat(k, 1, 3);
+//	std::cout << "8" << std::endl;
+//	dispMat(k, 1, 3);
 	double** kt = new double*[1];
 	kt[0] = new double[3];
 	transMat(k,kt,1,3);
@@ -657,24 +657,24 @@ void PNPThread::computePosit()
 	this->m_posit_z = Z0;
 	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
 	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
-	this->mutexLog.lock();
-	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
-	this->mutexLog.unlock();
+//	this->mutexLog.lock();
+//	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
+//	this->mutexLog.unlock();
 	this->m_pose_mutex.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
-	std::cout << "9" << std::endl;
-	dispMat(this->m_object_points,4,3);
+//	std::cout << "9" << std::endl;
+//	dispMat(this->m_object_points,4,3);
 	multMat(this->m_object_points,kt,tmp_eps,4,3,1);
-	std::cout << "10" << std::endl;
-	dispMat(tmp_eps,4,1);
+//	std::cout << "10" << std::endl;
+//	dispMat(tmp_eps,4,1);
 	for(int i = 0; i < 4; i++)
 	{
 		this->m_epsilon[0][i] = tmp_eps[0][i]/Z0;
 	}
-	std::cout << "11" << std::endl;
-	dispMat(this->m_epsilon,4,1);
+	//std::cout << "11" << std::endl;
+	//dispMat(this->m_epsilon,4,1);
 }
 
 void PNPThread::addEvent(double theta, double dist, unsigned int t, int line_id)
