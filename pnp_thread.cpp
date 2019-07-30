@@ -877,7 +877,7 @@ void PNPThread::computeLineIntersection()
 			//this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 		}
 		//this->m_web_string_stream << "{}]},";
-		this->m_web_mutex.unlock();
+		this->m_pose_mutex.unlock();
 	}
 }
 
