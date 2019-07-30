@@ -547,7 +547,17 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 
 void PNPThread::computePosit()
 {
-	double** image_points = this->m_line_inters;
+	//double** image_points = this->m_line_inters;
+	//double** image_points [2];
+	double** image_points = new double*[2];
+	for(int i = 0; i < 2; i++)
+	{
+		image_points[i] = new double[4];
+		for(int j = 0; j < 4; j++)
+		{
+			image_points[i][j] = this->m_line_inters[j][i];
+		}
+	}
 	// COMPUTE CORRECTION
 	double** correction;
 	correction = new double*[2];
