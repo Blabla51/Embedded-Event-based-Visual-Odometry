@@ -844,7 +844,7 @@ void PNPThread::computeLineIntersection()
 	else
 	{
 		double t1,t2,d1,d2,x,y;
-		this->m_web_mutex.lock();
+		this->m_pose_mutex.lock();
 		for(int i = 0; i < 4; i++)
 		{
 			t1 = this->m_line_parameters[(i+0)%4][0];
@@ -862,7 +862,7 @@ void PNPThread::computeLineIntersection()
 		y = this->m_line_inters[1][1];
 		this->m_line_inters[1][1] = this->m_line_inters[3][1];
 		this->m_line_inters[3][1] = y;
-		this->m_web_mutex.unlock();
+		this->m_pose_mutex.unlock();
 #if DEBUG == DEBUG_YES
 		std::cout << "Detected intersections:" << std::endl;
 #endif
