@@ -14,6 +14,9 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_posit_qy = 0.0;
 	this->m_posit_qx = 0.0;
 	this->m_posit_qw = 0.0;
+	this->m_posit_h = 0.0;
+	this->m_posit_a = 0.0;
+	this->m_posit_b = 0.0;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream << "[";
 
@@ -655,7 +658,6 @@ void PNPThread::computePosit()
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
 
-	this->m_pose_mutex.lock();
 	this->m_posit_z = Z0;
 	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
 	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
@@ -671,7 +673,7 @@ void PNPThread::computePosit()
 	mat_rot[0][2] = k[0][0];
 	mat_rot[1][2] = k[1][0];
 	mat_rot[2][2] = k[2][0];
-	double trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
+	/*double trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
 	if( trace > 0 ) {// I changed M_EPSILON to 0
 		double s = 0.5 / sqrt(trace+ 1.0);
 		this->m_posit_qw = 0.25 / s;
@@ -698,8 +700,22 @@ void PNPThread::computePosit()
 			this->m_posit_qy = (mat_rot[1][2] + mat_rot[2][1] ) / s;
 			this->m_posit_qz = 0.25 * s;
 		}
+	}*/
+	if (mat_rot[1][0] > 0.998) { // singularity at north pole
+		this->m_posit_h = atan2(mat_rot[0][2],mat_rot[2][2]);
+		this->m_posit_a = PI/2.0;
+		this->m_posit_b = 0;
+		return;
 	}
-	this->m_pose_mutex.unlock();
+	if (mat_rot[1][0] < -0.998) { // singularity at south pole
+		this->m_posit_h = atan2(mat_rot[0][2],mat_rot[2][2]);
+		this->m_posit_a = -PI/2;
+		this->m_posit_b = 0;
+		return;
+	}
+	this->m_posit_h = atan2(-mat_rot[2][0],mat_rot[0][0]);
+	this->m_posit_b = atan2(-mat_rot[1][2],mat_rot[1][1]);
+	this->m_posit_a = asin(mat_rot[1][0]);
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
@@ -930,7 +946,6 @@ void PNPThread::computeLineIntersection()
 		y = this->m_line_inters[1][1];
 		this->m_line_inters[1][1] = this->m_line_inters[3][1];
 		this->m_line_inters[3][1] = y;
-		this->m_pose_mutex.lock();
 		std::cout << "Detected intersections:" << std::endl;
 		for(int i = 0; i < 4; i++)
 		{
@@ -938,7 +953,6 @@ void PNPThread::computeLineIntersection()
 			//this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 		}
 		//this->m_web_string_stream << "{}]},";
-		this->m_pose_mutex.unlock();
 	}
 }
 
@@ -967,7 +981,6 @@ void PNPThread::printFilteringMap()
 
 std::string PNPThread::generateWebServerData()
 {
-	this->m_pose_mutex.lock();
 	this->m_web_string_stream << "{\"intersection\": [";
 	for(int i = 0; i < 4; i++)
 	{
@@ -980,7 +993,6 @@ std::string PNPThread::generateWebServerData()
 	this->m_web_string_stream.str("");
 	//std::cout << "Data generated: " << tmp << std::endl;
 	this->m_web_string_stream << "[";
-	this->m_pose_mutex.unlock();
 	return tmp;
 	//return "Test";
 }
@@ -989,15 +1001,12 @@ std::string PNPThread::generateWebServerData()
 void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size)
 {
 	struct UDP_data udp_data;
-	this->m_pose_mutex.lock();
 	udp_data.mes[0] = this->m_posit_x;
 	udp_data.mes[1] = this->m_posit_y;
 	udp_data.mes[2] = this->m_posit_z;
-	udp_data.mes[3] = this->m_posit_qw;
-	udp_data.mes[4] = this->m_posit_qx;
-	udp_data.mes[5] = this->m_posit_qy;
-	udp_data.mes[6] = this->m_posit_qz;
-	this->m_pose_mutex.unlock();
+	udp_data.mes[3] = this->m_posit_h;
+	udp_data.mes[4] = this->m_posit_a;
+	udp_data.mes[5] = this->m_posit_b;
 	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
 }
 #endif

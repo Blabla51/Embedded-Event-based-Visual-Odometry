@@ -45,19 +45,21 @@ private:
 	int			m_ht_rho_max;
 	int 		m_ht_map_x;
 	int 		m_ht_map_y;
-	double 		m_posit_z;
-	double 		m_posit_y;
-	double		m_posit_x;
-	double 		m_posit_qw;
-	double 		m_posit_qx;
-	double		m_posit_qy;
-	double 		m_posit_qz;
+	std::atomic<double> 	m_posit_z;
+	std::atomic<double> 	m_posit_y;
+	std::atomic<double>		m_posit_x;
+	std::atomic<double>		m_posit_qw;
+	std::atomic<double> 	m_posit_qx;
+	std::atomic<double>		m_posit_qy;
+	std::atomic<double> 	m_posit_qz;
+	std::atomic<double> 	m_posit_h;
+	std::atomic<double>		m_posit_a;
+	std::atomic<double> 	m_posit_b;
 	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_ev_add_mutex;
 	std::mutex 			m_filter_mutex;
-	std::mutex 			m_pose_mutex;
 	HoughThread*		m_ht;
 
 	void multMat(double** m1, double** m2, double** res, int ligne, int inter, int colonne);
