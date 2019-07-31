@@ -883,20 +883,20 @@ void PNPThread::updateLineParameters(double theta, double dist, bool rotated, in
 	{
 		if(theta > this->m_line_parameters[line_id][0])
 		{
-			theta -= 2*PI;
+			theta -= 2.0*PI;
 		}
 		else
 		{
-			this->m_line_parameters[line_id][0] -= 2*PI;
+			this->m_line_parameters[line_id][0] -= 2.0*PI;
 		}
 		this->m_line_parameters[line_id][0] = theta*this->m_confidence_coef+this->m_line_parameters[line_id][0]*(1.0-this->m_confidence_coef);
 		if(this->m_line_parameters[line_id][0] < 0)
 		{
-			this->m_line_parameters[line_id][0] += 2*PI;
+			this->m_line_parameters[line_id][0] += 2.0*PI;
 		}
 		this->m_line_parameters[line_id][1] = dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
 	}
-	if(rotated)
+	else if(rotated)
 	{
 		this->m_line_parameters[line_id][1] = -dist*this->m_confidence_coef+this->m_line_parameters[line_id][1]*(1.0-this->m_confidence_coef);
 		if(this->m_line_parameters[line_id][1] < 0)
