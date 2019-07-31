@@ -55,6 +55,9 @@ private:
 	std::atomic<double> 	m_posit_h;
 	std::atomic<double>		m_posit_a;
 	std::atomic<double> 	m_posit_b;
+	std::atomic<double> 	m_posit_yaw;
+	std::atomic<double> 	m_posit_pitch;
+	std::atomic<double> 	m_posit_roll;
 	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;

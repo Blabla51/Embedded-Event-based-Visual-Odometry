@@ -701,7 +701,7 @@ void PNPThread::computePosit()
 			this->m_posit_qz = 0.25 * s;
 		}
 	}*/
-	if (mat_rot[1][0] > 0.998) { // singularity at north pole
+	/*if (mat_rot[1][0] > 0.998) { // singularity at north pole
 		this->m_posit_h = atan2(mat_rot[0][2],mat_rot[2][2]);
 		this->m_posit_a = PI/2.0;
 		this->m_posit_b = 0;
@@ -715,7 +715,10 @@ void PNPThread::computePosit()
 	}
 	this->m_posit_h = atan2(-mat_rot[2][0],mat_rot[0][0]);
 	this->m_posit_b = atan2(-mat_rot[1][2],mat_rot[1][1]);
-	this->m_posit_a = asin(mat_rot[1][0]);
+	this->m_posit_a = asin(mat_rot[1][0]);*/
+	this->m_posit_yaw = atan2(mat_rot[1][0], mat_rot[0][0]);
+	this->m_posit_pitch = atan2(-mat_rot[2][0], sqrt(mat_rot[2][1]*mat_rot[2][1]+mat_rot[2][2]*mat_rot[2][2]));
+	this->m_posit_roll = atan2(mat_rot[2][1], mat_rot[2][2]);
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
@@ -1004,9 +1007,9 @@ void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_siz
 	udp_data.mes[0] = this->m_posit_x;
 	udp_data.mes[1] = this->m_posit_y;
 	udp_data.mes[2] = this->m_posit_z;
-	udp_data.mes[3] = this->m_posit_h;
-	udp_data.mes[4] = this->m_posit_a;
-	udp_data.mes[5] = this->m_posit_b;
+	udp_data.mes[3] = this->m_posit_yaw;
+	udp_data.mes[4] = this->m_posit_pitch;
+	udp_data.mes[5] = this->m_posit_roll;
 	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
 }
 #endif
