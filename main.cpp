@@ -28,12 +28,6 @@
 #include "common.h"
 //using namespace std;
 
-#if SIMULINK_RETURN == 1
-struct RPIt_socket_mes_struct	mes;
-struct RPIt_socket_con_struct	con;
-unsigned char					exit_req = 0;
-#endif
-
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
