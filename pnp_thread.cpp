@@ -670,9 +670,6 @@ void PNPThread::computePosit()
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
 
-	this->m_posit_z = Z0;
-	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
-	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
 //	this->mutexLog.lock();
 //	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
 //	this->mutexLog.unlock();float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
@@ -685,6 +682,19 @@ void PNPThread::computePosit()
 	mat_rot[0][2] = k[0][0];
 	mat_rot[1][2] = k[1][0];
 	mat_rot[2][2] = k[2][0];
+	this->m_pose_add_mutex.lock();
+	this->m_posit_z = Z0;
+	this->m_posit_y = image_points[0][0]*Z0/this->m_focal_length;
+	this->m_posit_x = image_points[1][0]*Z0/this->m_focal_length;
+	this->m_posit_m00 = mat_rot[0][0];
+	this->m_posit_m01 = mat_rot[0][1];
+	this->m_posit_m02 = mat_rot[0][2];
+	this->m_posit_m10 = mat_rot[1][0];
+	this->m_posit_m11 = mat_rot[1][1];
+	this->m_posit_m12 = mat_rot[1][2];
+	this->m_posit_m20 = mat_rot[2][0];
+	this->m_posit_m21 = mat_rot[2][1];
+	this->m_posit_m22 = mat_rot[2][2];
 	/*double trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
 	if( trace > 0 ) {// I changed M_EPSILON to 0
 		double s = 0.5 / sqrt(trace+ 1.0);
@@ -731,6 +741,7 @@ void PNPThread::computePosit()
 	this->m_posit_yaw = atan2(mat_rot[1][0], mat_rot[0][0]);
 	this->m_posit_pitch = atan2(-mat_rot[2][0], sqrt(mat_rot[2][1]*mat_rot[2][1]+mat_rot[2][2]*mat_rot[2][2]));
 	this->m_posit_roll = atan2(mat_rot[2][1], mat_rot[2][2]);
+	this->m_pose_add_mutex.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
@@ -1016,6 +1027,7 @@ std::string PNPThread::generateWebServerData()
 void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size)
 {
 	struct UDP_data udp_data;
+	this->m_pose_add_mutex.lock();
 	udp_data.mes[0] = this->m_posit_x;
 	udp_data.mes[1] = this->m_posit_y;
 	udp_data.mes[2] = this->m_posit_z;
@@ -1031,6 +1043,7 @@ void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_siz
 	udp_data.mes[12] = this->m_posit_m20;
 	udp_data.mes[13] = this->m_posit_m21;
 	udp_data.mes[14] = this->m_posit_m22;
+	this->m_pose_add_mutex.unlock();
 	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
 }
 #endif

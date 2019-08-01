@@ -70,6 +70,7 @@ private:
 	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
+	std::mutex 			m_pose_add_mutex;
 	std::mutex 			m_ev_add_mutex;
 	std::mutex 			m_filter_mutex;
 	HoughThread*		m_ht;
