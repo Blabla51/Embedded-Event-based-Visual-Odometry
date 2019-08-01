@@ -20,6 +20,15 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_posit_yaw = 0.0;
 	this->m_posit_pitch = 0.0;
 	this->m_posit_roll = 0.0;
+	this->m_posit_m00 = 0.0;
+	this->m_posit_m01 = 0.0;
+	this->m_posit_m02 = 0.0;
+	this->m_posit_m10 = 0.0;
+	this->m_posit_m11 = 0.0;
+	this->m_posit_m12 = 0.0;
+	this->m_posit_m20 = 0.0;
+	this->m_posit_m21 = 0.0;
+	this->m_posit_m22 = 0.0;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream << "[";
 
@@ -1013,6 +1022,15 @@ void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_siz
 	udp_data.mes[3] = this->m_posit_yaw;
 	udp_data.mes[4] = this->m_posit_pitch;
 	udp_data.mes[5] = this->m_posit_roll;
+	udp_data.mes[6] = this->m_posit_m00;
+	udp_data.mes[7] = this->m_posit_m01;
+	udp_data.mes[8] = this->m_posit_m02;
+	udp_data.mes[9] = this->m_posit_m10;
+	udp_data.mes[10] = this->m_posit_m11;
+	udp_data.mes[11] = this->m_posit_m12;
+	udp_data.mes[12] = this->m_posit_m20;
+	udp_data.mes[13] = this->m_posit_m21;
+	udp_data.mes[14] = this->m_posit_m22;
 	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
 }
 #endif

@@ -45,22 +45,9 @@
 
 //END RPIT
 
-extern "C" {
-	struct RPIt_socket_mes_struct	{
-		unsigned int				magic;							// Magic number
-		unsigned long long 	timestamp;					// Absolute server time in ns
-		double							mes[RPIT_SOCKET_MES_N];	// Measurements
-	};
-
-	struct RPIt_socket_con_struct	{
-		unsigned int				magic;							// Magic number
-		unsigned long long 	timestamp;					// Absolute client time in ns
-		double							con[RPIT_SOCKET_CON_N];	// Control signals
-	};
-	struct UDP_data	{
-		double							mes[10];	// Measurements
-	};
-}
+struct UDP_data	{
+	double							mes[20];
+};
 
 class Event {
 public:
