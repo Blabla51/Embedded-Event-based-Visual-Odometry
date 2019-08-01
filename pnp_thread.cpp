@@ -17,6 +17,9 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_posit_h = 0.0;
 	this->m_posit_a = 0.0;
 	this->m_posit_b = 0.0;
+	this->m_posit_yaw = 0.0;
+	this->m_posit_pitch = 0.0;
+	this->m_posit_roll = 0.0;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream << "[";
 
