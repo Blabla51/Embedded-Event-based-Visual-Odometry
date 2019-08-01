@@ -20,15 +20,15 @@ PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_b
 	this->m_posit_yaw = 0.0;
 	this->m_posit_pitch = 0.0;
 	this->m_posit_roll = 0.0;
-	this->m_posit_m00 = 0.0;
-	this->m_posit_m01 = 0.0;
-	this->m_posit_m02 = 0.0;
-	this->m_posit_m10 = 0.0;
-	this->m_posit_m11 = 0.0;
-	this->m_posit_m12 = 0.0;
-	this->m_posit_m20 = 0.0;
-	this->m_posit_m21 = 0.0;
-	this->m_posit_m22 = 0.0;
+	this->m_posit_m00 = 20.0;
+	this->m_posit_m01 = 40.0;
+	this->m_posit_m02 = 60.0;
+	this->m_posit_m10 = 80.0;
+	this->m_posit_m11 = 100.0;
+	this->m_posit_m12 = 120.0;
+	this->m_posit_m20 = 140.0;
+	this->m_posit_m21 = 160.0;
+	this->m_posit_m22 = 180.0;
 	this->m_current_filter_centers = new int*[4];
 	this->m_web_string_stream << "[";
 
