@@ -135,13 +135,13 @@ PNPThread::PNPThread(double fl, HoughThread* ht)
 
 	// CARRE
 	m_object_matrix[0][0] =  0.0;
-	m_object_matrix[1][0] = -2.0/3.0*10;
-	m_object_matrix[2][0] = -1.0/3.0*10;
-	m_object_matrix[3][0] =  1.0/3.0*10;
+	m_object_matrix[1][0] = -2.6350;
+	m_object_matrix[2][0] = -1.3175;
+	m_object_matrix[3][0] =  1.3175;
 	m_object_matrix[0][1] =  0.0;
-	m_object_matrix[1][1] =  1.0/3.0*10;
-	m_object_matrix[2][1] = -1.0/3.0*10;
-	m_object_matrix[3][1] = -2.0/3.0*10;
+	m_object_matrix[1][1] =  1.3175;
+	m_object_matrix[2][1] = -1.3175;
+	m_object_matrix[3][1] = -2.6350;
 	m_object_matrix[0][2] =  0.0;
 	m_object_matrix[1][2] =  0.0;
 	m_object_matrix[2][2] =  0.0;
