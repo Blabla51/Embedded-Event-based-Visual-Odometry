@@ -1,41 +1,40 @@
 #include "pnp_thread.h"
 #include "hough_thread.h"
 
-PNPThread::PNPThread(double fl, HoughThread* ht): m_web_string_stream(std::ios_base::in | std::ios_base::out | std::ios_base::ate)
+PNPThread::PNPThread(double fl, HoughThread* ht)
 {
-	this->m_ht = ht;
-	this->m_focal_length = fl;
-	this->m_nbr_lines_identified = 0;
-	this->m_confidence_coef = 0.12;
-	this->m_posit_z = 0.0;
-	this->m_posit_y = 0.0;
-	this->m_posit_x = 0.0;
-	this->m_posit_qz = 0.0;
-	this->m_posit_qy = 0.0;
-	this->m_posit_qx = 0.0;
-	this->m_posit_qw = 0.0;
-	this->m_posit_h = 0.0;
-	this->m_posit_a = 0.0;
-	this->m_posit_b = 0.0;
-	this->m_posit_yaw = 0.0;
-	this->m_posit_pitch = 0.0;
-	this->m_posit_roll = 0.0;
-	this->m_posit_m00 = 20.0;
-	this->m_posit_m01 = 40.0;
-	this->m_posit_m02 = 60.0;
-	this->m_posit_m10 = 80.0;
-	this->m_posit_m11 = 100.0;
-	this->m_posit_m12 = 120.0;
-	this->m_posit_m20 = 140.0;
-	this->m_posit_m21 = 160.0;
-	this->m_posit_m22 = 180.0;
-	this->m_current_filter_centers = new int*[4];
-	this->m_web_string_stream << "[";
+	this->m_ht = 					ht;
+	this->m_focal_length = 			fl;
+	this->m_nbr_lines_identified = 	0;
+	this->m_confidence_coef = 		0.12;
+	this->m_posit_z = 				0.0;
+	this->m_posit_y = 				0.0;
+	this->m_posit_x = 				0.0;
+	this->m_posit_qz = 				0.0;
+	this->m_posit_qy = 				0.0;
+	this->m_posit_qx = 				0.0;
+	this->m_posit_qw = 				0.0;
+	this->m_posit_h = 				0.0;
+	this->m_posit_a = 				0.0;
+	this->m_posit_b = 				0.0;
+	this->m_posit_yaw = 			0.0;
+	this->m_posit_pitch = 			0.0;
+	this->m_posit_roll =			0.0;
+	this->m_posit_m00 = 			0.0;
+	this->m_posit_m01 = 			0.0;
+	this->m_posit_m02 = 			0.0;
+	this->m_posit_m10 = 			0.0;
+	this->m_posit_m11 = 			0.0;
+	this->m_posit_m12 = 			0.0;
+	this->m_posit_m20 = 			0.0;
+	this->m_posit_m21 = 			0.0;
+	this->m_posit_m22 = 			0.0;
 
 	this->m_ht_rho_max = ht->getRhoMax();
 	this->m_ht_map_x = ht->getMapX();
 	this->m_ht_map_y = ht->getMapY();
 
+	this->m_current_filter_centers = new int*[4];
 	for(int i = 0; i < 4; i++)
 	{
 		this->m_current_filter_centers[i] = new int[2];
@@ -545,7 +544,6 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 						this->computeLineIntersection();
 						this->computePosit();
 						//this->updateFilteringArray();
-						this->m_web_string_stream << "{\"tracking\": true},";
 						//this->m_ht->activateTracking();
 					}
 					else
@@ -1003,24 +1001,6 @@ void PNPThread::printFilteringMap()
 		std::cout << std::endl;
 	}
 	this->mutexLog.unlock();
-}
-
-std::string PNPThread::generateWebServerData()
-{
-	this->m_web_string_stream << "{\"intersection\": [";
-	for(int i = 0; i < 4; i++)
-	{
-		this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
-	}
-	this->m_web_string_stream << "{}]},";
-	this->m_web_string_stream << "{\"coordinates\": {\"x\":" << this->m_posit_x << ",\"y\":" << this->m_posit_y << ",\"z\":" << this->m_posit_z << "}},";
-	this->m_web_string_stream << "{\"end\":1}]";
-	std::string tmp = this->m_web_string_stream.str();
-	this->m_web_string_stream.str("");
-	//std::cout << "Data generated: " << tmp << std::endl;
-	this->m_web_string_stream << "[";
-	return tmp;
-	//return "Test";
 }
 
 #if OS == OS_LINUX

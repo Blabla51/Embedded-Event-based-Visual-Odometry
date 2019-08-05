@@ -10,7 +10,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #if OS == OS_LINUX
-#include <curl/curl.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -27,12 +26,6 @@
 //#include "user_thread.h"
 #include "common.h"
 //using namespace std;
-
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
 
 int main(int argc, char *argv[])
 {
@@ -97,11 +90,11 @@ int main(int argc, char *argv[])
 	sendto(sockfd, (const char *)hello, strlen(hello), 0, (struct sockaddr *)&remote, addrSize);
 
 	unsigned int len;
-	int n2 = recvfrom(sockfd, (char *)buffer, 4,
+	recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
 	//buffer[n2] = '\0';
-	printf("Client : %s\n", buffer);
+	//printf("Client : %s\n", buffer);
     /*struct hostent *hostinfo;
 	//hostinfo = gethostbyname("10.0.1.56");
 	cliaddr.sin_port = htons(31415);
@@ -189,8 +182,6 @@ int main(int argc, char *argv[])
 
 	freeaddrinfo( result );*/
 #endif
-	CURL *curl;
-	CURLcode res;
 
 	//static const char *postthis = "moo mooo moo moo";
 	std::string readBuffer;
@@ -208,37 +199,7 @@ int main(int argc, char *argv[])
 	while(stop == false)
 	{
 	#if OS == OS_LINUX
-	#if SIMULINK_RETURN == 0
-		//	const int fd = fileno(stdin);
-		//	const int fcflags = fcntl(fd,F_GETFL);
-		//	if (fcflags<0) { /* handle error */}
-		//	if (fcntl(fd,F_SETFL,fcflags | O_NONBLOCK) <0) { /* handle error */}
-		//	std::cout << "Char:" << stdin->getchar() << std::endl;
-
-
-			curl = curl_easy_init();
-			std::string data = pnp_thread_object->generateWebServerData();
-			readBuffer.clear();
-			//static const char* post_data1 = data.c_str();
-			curl_easy_setopt(curl, CURLOPT_URL, "http://10.0.1.56/PFE/raspi_client.php");
-			//curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-			//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length);
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length());
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-			curl_easy_setopt(curl, CURLOPT_POST, 1);
-			res = curl_easy_perform(curl);
-			//std::cout << "Send: " << data << " " << res << std::endl;
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			//BaseThread::mutexLog.lock();
-			//std::cout << readBuffer << std::endl;
-
-			if(readBuffer == std::string("stop"))
-			{
-				stop = true;
-			}
-	#elif SIMULINK_RETURN == 1
+	#if SIMULINK_RETURN == 1
 			//peer_addr_len = sizeof( struct sockaddr_storage );
 			/*nread = recvfrom(	sfd, (char*)&udp_data, sizeof(udp_data), 0,
 												(struct sockaddr *)&peer_addr, &peer_addr_len );
@@ -327,9 +288,6 @@ int main(int argc, char *argv[])
 		break;
 	#endif
 	}
-#if OS == OS_LINUX
-	curl_easy_cleanup(curl);
-#endif
 	std::cout << "Stopped objects " << std::endl;
 	uart_thread_object->stop();
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));

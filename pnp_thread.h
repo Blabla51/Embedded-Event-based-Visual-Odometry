@@ -67,7 +67,6 @@ private:
 	std::atomic<double> 	m_posit_m20;
 	std::atomic<double> 	m_posit_m21;
 	std::atomic<double> 	m_posit_m22;
-	std::stringstream m_web_string_stream;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_pose_add_mutex;
@@ -94,7 +93,6 @@ public:
     void updateLineParameters(double theta, double dist, bool rotated, int line_id, bool cycle);
     int getFilterValue(int t, int d);
     void printFilteringMap();
-    std::string generateWebServerData();
 #if OS == OS_LINUX
     void sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size);
 #endif
