@@ -1011,9 +1011,9 @@ void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_siz
 	udp_data.mes[0] = this->m_posit_x;
 	udp_data.mes[1] = this->m_posit_y;
 	udp_data.mes[2] = this->m_posit_z;
-	udp_data.mes[3] = this->m_posit_yaw;
+	udp_data.mes[3] = this->m_posit_roll;
 	udp_data.mes[4] = this->m_posit_pitch;
-	udp_data.mes[5] = this->m_posit_roll;
+	udp_data.mes[5] = this->m_posit_yaw;
 	udp_data.mes[6] = this->m_posit_m00;
 	udp_data.mes[7] = this->m_posit_m01;
 	udp_data.mes[8] = this->m_posit_m02;
