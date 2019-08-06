@@ -16,7 +16,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
+#include <sys/socket.h>
 #include <signal.h>
 #include <time.h>
 #endif
@@ -93,38 +95,24 @@ int main(int argc, char *argv[])
 	recvfrom(sockfd, (char *)buffer, 4,
 				MSG_WAITALL, ( struct sockaddr *) &cliaddr,
 				&len);
-	//buffer[n2] = '\0';
-	//printf("Client : %s\n", buffer);
-    /*struct hostent *hostinfo;
-	//hostinfo = gethostbyname("10.0.1.56");
-	cliaddr.sin_port = htons(31415);
-	//cliaddr.sin_family = AF_INET;
-	//cliaddr.sin_addr = *(SIOCADDRT *) hostinfo->h_addr;
-	sendto(sockfd, (const char *)hello, strlen(hello),
-		MSG_CONFIRM, (const struct sockaddr *) &cliaddr,
-			1);
-	printf("Hello message sent.\n");*/
-
-	/*struct addrinfo 				hints;
+#endif
+#if RPIT_RETURN == 1
+	struct addrinfo 				hints;
 	struct addrinfo 				*result, *rp;
 	int 							sfd, s, i;
 	struct sockaddr_storage 		peer_addr;
 	socklen_t 						peer_addr_len;
 	ssize_t 						nread;
-	struct RPIt_socket_mes_struct	local_mes;
-	struct RPIt_socket_con_struct	local_con;
+	struct RPIt_socket_mes_struct	mes;
+	struct RPIt_socket_con_struct	con;
 	struct timespec 				current_time;
-	struct UDP_data					udp_data;
 
 	// Clear mes structure
 
 	mes.timestamp = 0;
 	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
-		mes.mes[i] = 0.1 + i;
+		mes.mes[i] = 0.0;
 	mes.magic = RPIT_SOCKET_MAGIC;
-
-	for ( i = 0; i < RPIT_SOCKET_MES_N; i++ )
-		udp_data.mes[i] = 0.1 + i;
 
 	// Clear con structure
 
@@ -135,8 +123,8 @@ int main(int argc, char *argv[])
 
 	memset( &hints, 0, sizeof( struct addrinfo ) );
 	hints.ai_family = AF_INET;    // Allow IPv4 or IPv6
-//	hints.ai_socktype = SOCK_DGRAM; // Datagram socket
-//	hints.ai_flags = AI_PASSIVE;    // For wildcard IP address
+	hints.ai_socktype = SOCK_DGRAM; // Datagram socket
+	hints.ai_flags = AI_PASSIVE;    // For wildcard IP address
 	hints.ai_protocol = 0;					// Any protocol
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
@@ -180,7 +168,7 @@ int main(int argc, char *argv[])
 		exit( EXIT_FAILURE );
 	}
 
-	freeaddrinfo( result );*/
+	freeaddrinfo( result );
 #endif
 
 	//static const char *postthis = "moo mooo moo moo";
@@ -279,6 +267,52 @@ int main(int argc, char *argv[])
 			//sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
 			pnp_thread_object->sendToMatLAB(sockfd, remote,addrSize);
 			//std::cout << "Sended" << std::endl;
+	#endif
+	#if RPIT_RETURN == 1
+			peer_addr_len = sizeof( struct sockaddr_storage );
+			nread = recvfrom(	sfd, (char*)&con, sizeof( struct RPIt_socket_con_struct ), 0,
+												(struct sockaddr *)&peer_addr, &peer_addr_len );
+
+			if ( nread == -1 )	{
+				flockfile( stderr );
+				fprintf( stderr, "rpit_socket_server: function recvfrom exited with error.\n" );
+				funlockfile( stderr );
+
+				/* Clear control in case of error */
+
+				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
+					con.con[i] = 0.0;
+			}
+
+			if ( nread != sizeof( struct RPIt_socket_con_struct ) )	{
+				flockfile( stderr );
+				fprintf( stderr, "rpit_socket_server: function recvfrom did not receive the expected packet size.\n" );
+				funlockfile( stderr );
+
+				/* Clear control in case of error */
+
+				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
+					con.con[i] = 0.0;
+			}
+
+			if ( con.magic != RPIT_SOCKET_MAGIC )	{
+				flockfile( stderr );
+				fprintf( stderr, "rpit_socket_server: magic number problem. Expected %d but received %d.\n", RPIT_SOCKET_MAGIC, con.magic );
+				funlockfile( stderr );
+
+				/* Clear control in case of error */
+
+				for ( i = 0; i < RPIT_SOCKET_CON_N; i++ )
+					con.con[i] = 0.0;
+			}
+
+			if ( sendto(	sfd, (char*)&mes, sizeof( struct RPIt_socket_mes_struct ), 0,
+										(struct sockaddr *)&peer_addr,
+										peer_addr_len) != sizeof( struct RPIt_socket_mes_struct ) )	{
+				flockfile( stderr );
+				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
+				funlockfile( stderr );
+			}
 	#endif
 		//BaseThread::mutexLog.unlock();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
