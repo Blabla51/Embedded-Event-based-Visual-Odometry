@@ -1026,4 +1026,27 @@ void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_siz
 	this->m_pose_add_mutex.unlock();
 	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
 }
+
+void PNPThread::sendToRPIT(int sfd, struct sockaddr_storage peer_addr, int peer_addr_len)
+{
+	struct RPIt_socket_mes_struct mes;
+	this->m_pose_add_mutex.lock();
+	mes.mes[0] = this->m_posit_x;
+	mes.mes[1] = this->m_posit_y;
+	mes.mes[2] = this->m_posit_z;
+	mes.mes[3] = this->m_posit_roll;
+	mes.mes[4] = this->m_posit_pitch;
+	mes.mes[5] = this->m_posit_yaw;
+	mes.magic = RPIT_SOCKET_MAGIC;
+	this->m_pose_add_mutex.unlock();
+
+	if ( sendto(	sfd, (char*)&mes, sizeof( struct RPIt_socket_mes_struct ), 0,
+								(struct sockaddr *)&peer_addr,
+								peer_addr_len) != sizeof( struct RPIt_socket_mes_struct ) )	{
+		flockfile( stderr );
+		fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
+		funlockfile( stderr );
+	}
+}
+#endif
 #endif

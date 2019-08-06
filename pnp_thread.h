@@ -95,6 +95,7 @@ public:
     void printFilteringMap();
 #if OS == OS_LINUX
     void sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size);
+    void sendToRPIT(int sfd, struct sockaddr_storage peer_addr, int peer_addr_len);
 #endif
 };
 
