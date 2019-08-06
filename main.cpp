@@ -306,13 +306,14 @@ int main(int argc, char *argv[])
 					con.con[i] = 0.0;
 			}
 
-			if ( sendto(	sfd, (char*)&mes, sizeof( struct RPIt_socket_mes_struct ), 0,
+			/*if ( sendto(	sfd, (char*)&mes, sizeof( struct RPIt_socket_mes_struct ), 0,
 										(struct sockaddr *)&peer_addr,
 										peer_addr_len) != sizeof( struct RPIt_socket_mes_struct ) )	{
 				flockfile( stderr );
 				fprintf( stderr, "rpit_socket_server: error sending measurements.\n" );
 				funlockfile( stderr );
-			}
+			}*/
+			pnp_thread_object->sendToRPIT(sfd, peer_addr,peer_addr_len);
 	#endif
 		//BaseThread::mutexLog.unlock();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
