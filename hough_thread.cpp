@@ -382,7 +382,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 
 						//5x5 filter done
 
-						dyn_threshold = this->m_hough_map[theta_index][rho_index]*0.7;
+						dyn_threshold = this->m_hough_map[theta_index][rho_index]*0.8;
 						index_0 = (index_0+1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-6)%mod_x;
