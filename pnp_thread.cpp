@@ -1004,6 +1004,7 @@ void PNPThread::printFilteringMap()
 }
 
 #if OS == OS_LINUX
+#if SIMULINK_RETURN == 1
 void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_size)
 {
 	struct UDP_data udp_data;
@@ -1026,7 +1027,8 @@ void PNPThread::sendToMatLAB(int sockfd, struct sockaddr_in remote, int addr_siz
 	this->m_pose_add_mutex.unlock();
 	sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addr_size);
 }
-
+#endif
+#if RPIT_RETURN == 1
 void PNPThread::sendToRPIT(int sfd, struct sockaddr_storage peer_addr, int peer_addr_len)
 {
 	struct RPIt_socket_mes_struct mes;

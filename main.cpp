@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
 	hints.ai_next = NULL;
-	hints.sin_addr.s_addr = INADDR_ANY;
+//	hints.sin_addr.s_addr = INADDR_ANY;
 
 	s = getaddrinfo( NULL, RPIT_SOCKET_PORT, &hints, &result );
 
