@@ -53,7 +53,7 @@ private:
 	bool BAF(int x, int y, unsigned int t);
 
 public:
-	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 5, double zone_y = 5, double threshold = 12.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
+	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 5, double zone_y = 5, double threshold = 9.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
     ~HoughThread();
 
     void stop();
