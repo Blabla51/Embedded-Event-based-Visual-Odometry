@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 #if SIMULINK_RETURN == 1
 
 	struct UDP_data					udp_data;
-	for (int i = 0; i < RPIT_SOCKET_MES_N; i++ )
+	for (int i = 0; i < 20; i++ )
 		udp_data.mes[i] = 0.1 + i;
 	int sockfd;
 	char buffer[4];
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	struct sockaddr_in remote;
 	remote.sin_family = AF_INET;
 	remote.sin_port = htons(31415);
-	remote.sin_addr.s_addr = ::inet_addr("10.0.1.56");
+	remote.sin_addr.s_addr = ::inet_addr("192.168.10.59");
 
 	socklen_t addrSize;
 	addrSize = sizeof(remote);

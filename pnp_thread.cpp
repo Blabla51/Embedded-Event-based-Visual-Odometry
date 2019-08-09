@@ -668,9 +668,9 @@ void PNPThread::computePosit()
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
 
-//	this->mutexLog.lock();
-//	std::cout << "x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
-//	this->mutexLog.unlock();float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
+	this->mutexLog.lock();
+	std::cout << "position_posit x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
+	this->mutexLog.unlock();//float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
 	mat_rot[0][0] = IJ[0][0];
 	mat_rot[0][1] = IJ[1][0];
 	mat_rot[0][2] = IJ[2][0];
@@ -740,6 +740,9 @@ void PNPThread::computePosit()
 	this->m_posit_pitch = atan2(-mat_rot[2][0], sqrt(mat_rot[2][1]*mat_rot[2][1]+mat_rot[2][2]*mat_rot[2][2]));
 	this->m_posit_roll = atan2(mat_rot[2][1], mat_rot[2][2]);
 	this->m_pose_add_mutex.unlock();
+	this->mutexLog.lock();
+	std::cout << "angle_posit y " << this->m_posit_yaw << " p " << this->m_posit_pitch << " r " << this->m_posit_roll << std::endl;
+	this->mutexLog.unlock();
 	//COMPUTE EPSILON
 	double** tmp_eps = new double*[1];
 	tmp_eps[0] = new double[4];
@@ -970,10 +973,10 @@ void PNPThread::computeLineIntersection()
 		y = this->m_line_inters[1][1];
 		this->m_line_inters[1][1] = this->m_line_inters[3][1];
 		this->m_line_inters[3][1] = y;
-		std::cout << "Detected intersections:" << std::endl;
+//		std::cout << "Detected intersections:" << std::endl;
 		for(int i = 0; i < 4; i++)
 		{
-			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
+//			std::cout << "Inter " << i << ": X=" << this->m_line_inters[i][0] << " Y=" << this->m_line_inters[i][1] << std::endl;
 			//this->m_web_string_stream << "{\"x\":" << this->m_line_inters[i][0] << ",\"y\":" << this->m_line_inters[i][1] << "},";
 		}
 		//this->m_web_string_stream << "{}]},";
