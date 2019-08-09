@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
 
 	dspic.start();  //Start the motors
 	dspic.setSpSpeed(0,0,0);
+	bool motor_stopped = true;
+	dspic.stop();  //Start the motors
 #endif
 	struct UDP_data					udp_data;
 	for (int i = 0; i < 20; i++ )
@@ -274,7 +276,21 @@ int main(int argc, char *argv[])
 				stop = true;
 			}
 #if DSPIC_COM == 1
-			dspic.setSpSpeed(udp_data.mes[1],udp_data.mes[2],udp_data.mes[3]);
+			if(udp_data.mes[1] == 0 && udp_data.mes[2] == 0 && udp_data.mes[3] == 0 && motor_stopped == false )
+			{
+				motor_stopped = true;
+				dspic.stop();  //Start the motors
+			}
+			else if(motor_stopped == true)
+			{
+				motor_stopped = false;
+				dspic.start();  //Start the motors
+				dspic.setSpSpeed(udp_data.mes[1],udp_data.mes[2],udp_data.mes[3]);
+			}
+			else
+			{
+				dspic.setSpSpeed(udp_data.mes[1],udp_data.mes[2],udp_data.mes[3]);
+			}
 #endif
 			//sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
 			pnp_thread_object->sendToMatLAB(sockfd, remote,addrSize);
