@@ -56,15 +56,7 @@ int main(int argc, char *argv[])
 	dspic.setVar8(CODE_VAR_MODE_ASSERV,1); // mode asserv vitesse
 
 	dspic.start();  //Start the motors
-
-	getchar();
-	dspic.setSpSpeed(50,0,0);
-	getchar();
-	dspic.setSpSpeed(-50,0,0);
-	getchar();
 	dspic.setSpSpeed(0,0,0);
-
-	dspic.stop();
 #endif
 	struct UDP_data					udp_data;
 	for (int i = 0; i < 20; i++ )
