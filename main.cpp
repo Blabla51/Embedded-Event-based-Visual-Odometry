@@ -279,9 +279,10 @@ int main(int argc, char *argv[])
 			if(udp_data.mes[1] == 0 && udp_data.mes[2] == 0 && udp_data.mes[3] == 0 && motor_stopped == false )
 			{
 				motor_stopped = true;
+				dspic.setSpSpeed(0,0,0);
 				dspic.stop();  //Start the motors
 			}
-			else if(motor_stopped == true)
+			else if(motor_stopped == true && !(udp_data.mes[1] == 0 && udp_data.mes[2] == 0 && udp_data.mes[3] == 0))
 			{
 				motor_stopped = false;
 				dspic.start();  //Start the motors
