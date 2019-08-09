@@ -32,8 +32,9 @@
 #define DEBUG DEBUG_NO
 #define OS OS_LINUX
 #define MODE MODE_ONLINE
-#define SIMULINK_RETURN 0
-#define RPIT_RETURN 1
+#define SIMULINK_RETURN 1
+#define RPIT_RETURN 0
+#define DSPIC_COM 1
 
 // RPIT
 

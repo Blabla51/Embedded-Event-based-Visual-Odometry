@@ -27,6 +27,7 @@
 #include "pnp_thread.h"
 //#include "user_thread.h"
 #include "common.h"
+#include "dspic.h"
 //using namespace std;
 
 int main(int argc, char *argv[])
@@ -48,7 +49,23 @@ int main(int argc, char *argv[])
 	bool stop = false;
 #if OS == OS_LINUX
 #if SIMULINK_RETURN == 1
+#if DSPIC_COM == 1
+	DsPIC dspic;
+	dspic.async_read(); //flush rx buffer
+	dspic.initVarDspic();  //Init PID,odometry,acceleration,speed
+	dspic.setVar8(CODE_VAR_MODE_ASSERV,1); // mode asserv vitesse
 
+	dspic.start();  //Start the motors
+
+	getchar();
+	dspic.setSpSpeed(50,0,0);
+	getchar();
+	dspic.setSpSpeed(-50,0,0);
+	getchar();
+	dspic.setSpSpeed(0,0,0);
+
+	dspic.stop();
+#endif
 	struct UDP_data					udp_data;
 	for (int i = 0; i < 20; i++ )
 		udp_data.mes[i] = 0.1 + i;
@@ -264,6 +281,9 @@ int main(int argc, char *argv[])
 			{
 				stop = true;
 			}
+#if DSPIC_COM == 1
+			dspic.setSpSpeed(udp_data.mes[1],udp_data.mes[2],udp_data.mes[3]);
+#endif
 			//sendto(sockfd, (char *)&udp_data, sizeof(udp_data), 0, (struct sockaddr *)&remote, addrSize);
 			pnp_thread_object->sendToMatLAB(sockfd, remote,addrSize);
 			//std::cout << "Sended" << std::endl;
@@ -323,6 +343,10 @@ int main(int argc, char *argv[])
 		break;
 	#endif
 	}
+#if DSPIC_COM == 1
+	dspic.setSpSpeed(0,0,0);
+	dspic.stop();
+#endif
 	std::cout << "Stopped objects " << std::endl;
 	uart_thread_object->stop();
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
