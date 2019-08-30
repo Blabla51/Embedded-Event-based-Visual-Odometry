@@ -562,27 +562,27 @@ void PNPThread::computePosit()
 {
 	//double** image_points = this->m_line_inters;
 	//double** image_points [2];
-	double x,y;
+	double xp,yp;
 
-	  x=41.2494;y=7.61208;
+	  xp=41.2494;yp=7.61208;
 
-	  this->m_line_inters[0][0] = x;
-	  this->m_line_inters[0][1] = y;
+	  this->m_line_inters[0][0] = xp;
+	  this->m_line_inters[0][1] = yp;
 
-	  x=-17.5875;y=11.2961;
+	  xp=-17.5875;yp=11.2961;
 
-	  this->m_line_inters[1][0] = x;
-	  this->m_line_inters[1][1] = y;
+	  this->m_line_inters[1][0] = xp;
+	  this->m_line_inters[1][1] = yp;
 
-	  x=-21.7158;y=-50.7019;
+	  xp=-21.7158;yp=-50.7019;
 
-	  this->m_line_inters[2][0] = x;
-	  this->m_line_inters[2][1] = y;
+	  this->m_line_inters[2][0] = xp;
+	  this->m_line_inters[2][1] = yp;
 
-	  x=38.2826;y=-52.3407;
+	  xp=38.2826;yp=-52.3407;
 
-	  this->m_line_inters[3][0] = x;
-	  this->m_line_inters[3][1] = y;
+	  this->m_line_inters[3][0] = xp;
+	  this->m_line_inters[3][1] = yp;
 
 	auto start = std::chrono::steady_clock::now();
 
