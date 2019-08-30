@@ -236,6 +236,7 @@ void PNPThread::threadFunction() {
 			//this->mutexLog.unlock();
 			this->m_main_loop_cv.wait(lck);
 		}
+		auto start = std::chrono::steady_clock::now();
 #if DEBUG == DEBUG_YES
 		this->mutexLog.lock();
 		std::cout << "Hough Event received" << std::endl;
@@ -264,8 +265,13 @@ void PNPThread::threadFunction() {
 			this->mutexLog.unlock();
 			break;
 		}
+		auto end = std::chrono::steady_clock::now();
+		this->mutexLog.lock();
+		std::cout << "Time PNP: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
+		this->mutexLog.unlock();
 	}while(!tmp_stop);
 	this->mutexLog.lock();
+	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
 	std::cout << "Stopped my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
 }
@@ -562,7 +568,7 @@ void PNPThread::computePosit()
 {
 	//double** image_points = this->m_line_inters;
 	//double** image_points [2];
-	double xp2,yp2;
+	/*double xp2,yp2;
 
 	  xp2=41.2494;yp2=7.61208;
 
@@ -584,7 +590,7 @@ void PNPThread::computePosit()
 	  this->m_line_inters[1][0] = xp2;
 	  this->m_line_inters[1][1] = yp2;
 
-	auto start = std::chrono::steady_clock::now();
+	auto start = std::chrono::steady_clock::now();*/
 
 	double** image_points = new double*[2];
 	for(int i = 0; i < 2; i++)
@@ -691,11 +697,11 @@ void PNPThread::computePosit()
 	transMat(k,kt,1,3);
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
-	auto end = std::chrono::steady_clock::now();
+	//auto end = std::chrono::steady_clock::now();
 
 	this->mutexLog.lock();
 	std::cout << "position_posit x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
-	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
+	//std::cout << "Time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
 	this->mutexLog.unlock();//float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
 	mat_rot[0][0] = IJ[0][0];
 	mat_rot[0][1] = IJ[1][0];

@@ -141,6 +141,7 @@ void HoughThread::threadFunction() {
 			this->mutexLog.unlock();*/
 			this->m_main_loop_cv.wait(lck);
 		}
+		auto start = std::chrono::steady_clock::now();
 		this->m_ev_add_mutex.lock();
 		Event e = this->m_ev_queue.front();
 		this->m_ev_queue.pop();
@@ -166,6 +167,10 @@ void HoughThread::threadFunction() {
 			this->mutexLog.unlock();
 			break;
 		}
+		auto end = std::chrono::steady_clock::now();
+		this->mutexLog.lock();
+		std::cout << "Time Hough: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
+		this->mutexLog.unlock();
 	}while(!tmp_stop);
 	end = std::chrono::steady_clock::now();
 	this->mutexLog.lock();

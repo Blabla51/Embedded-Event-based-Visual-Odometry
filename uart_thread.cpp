@@ -164,11 +164,31 @@ void UARTThread::threadFunction() {
 				last_t = last_t + 10000;
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			}
+			auto start = std::chrono::steady_clock::now();
+			unsigned int y0, x0, p0, c0, t0;
+			unsigned int event_buf[6];
+			event_buf[0] = y;
+			event_buf[1] = y+1;
+			event_buf[2] = y+2;
+			event_buf[3] = y+3;
+			event_buf[4] = y+4;
+			event_buf[5] = y+5;
+			y0 = event_buf[0] & 0x7f;
+			c0 = (event_buf[0] &0x80) >> 7;
+			x0 = event_buf[1] & 0x7f;
+			p0 = (event_buf[1] &0x80) >> 7;
+			t0 = 0;
+			t0 += 16777216*event_buf[2];
+			t0 += 65536*event_buf[3];
+			t0 += 256*event_buf[4];
+			t0 += 1*event_buf[5];
+			event_received_global++;
 			int tx = x >> 1;
 			int ty = y >> 1;
 
 			//std::cout << "Event: " << x << ";" << y << std::endl;
 			event_received_global++;
+			auto endbaf = std::chrono::steady_clock::now();
 			if(t-this->m_baf_time_array[tx][ty] < this->m_baf_time)
 			{
 				event_sended_global++;
@@ -188,6 +208,11 @@ void UARTThread::threadFunction() {
 				this->m_baf_time_array[tx  ][ty-1] = t;
 				this->m_baf_time_array[tx-1][ty-1] = t;
 			}
+			auto end = std::chrono::steady_clock::now();
+			this->mutexLog.lock();
+			std::cout << "Time BAF: " << std::chrono::duration_cast<std::chrono::nanoseconds>(endbaf-end).count() << std::endl;
+			std::cout << "Time UART: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
+			this->mutexLog.unlock();
 		}
 	}
 #else
