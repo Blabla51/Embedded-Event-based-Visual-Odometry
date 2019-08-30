@@ -1,7 +1,7 @@
 #include "pnp_thread.h"
 #include "hough_thread.h"
 
-PNPThread::PNPThread(double fl, HoughThread* ht)
+PNPThread::PNPThread(float fl, HoughThread* ht)
 {
 	this->m_ht = 					ht;
 	this->m_focal_length = 			fl;
@@ -41,10 +41,10 @@ PNPThread::PNPThread(double fl, HoughThread* ht)
 		this->m_current_filter_centers[i][0] = -1;
 		this->m_current_filter_centers[i][1] = -1;
 	}
-	this->m_line_parameters = new double*[4];
+	this->m_line_parameters = new float*[4];
 	for(int i = 0; i < 4; i++)
 	{
-		this->m_line_parameters[i] = new double[2];
+		this->m_line_parameters[i] = new float[2];
 		this->m_line_parameters[i][0] = 0.0;
 		this->m_line_parameters[i][1] = 0.0;
 	}
@@ -59,24 +59,24 @@ PNPThread::PNPThread(double fl, HoughThread* ht)
 		}
 	}
 
-	this->m_line_inters = new double*[4];
+	this->m_line_inters = new float*[4];
 	for(int i = 0; i < 4; i++)
 	{
-		this->m_line_inters[i] = new double[2];
+		this->m_line_inters[i] = new float[2];
 		this->m_line_inters[i][0] = 0.0;
 		this->m_line_inters[i][1] = 0.0;
 	}
 
-	this->m_epsilon = new double*[1];
-	this->m_epsilon[0] = new double[4];
+	this->m_epsilon = new float*[1];
+	this->m_epsilon[0] = new float[4];
 	for(int i = 0; i < 4; i++)
 	{
 		m_epsilon[0][i] = 0.0;
 	}
-	this->m_object_points = new double*[3];
+	this->m_object_points = new float*[3];
 	for(int i = 0; i < 3; i++)
 	{
-		this->m_object_points[i] = new double[4];
+		this->m_object_points[i] = new float[4];
 		for(int j = 0; j < 4; j++)
 		{
 			m_object_points[i][j] = 0.0;
@@ -108,10 +108,10 @@ PNPThread::PNPThread(double fl, HoughThread* ht)
 	m_object_points[0][3] =  0.0;
 	m_object_points[1][3] = -0.1;
 	m_object_points[2][3] =  0.0;
-	this->m_object_matrix = new double*[4];
+	this->m_object_matrix = new float*[4];
 	for(int i = 0; i < 4; i++)
 	{
-		this->m_object_matrix[i] = new double[3];
+		this->m_object_matrix[i] = new float[3];
 		for(int j = 0; j < 3; j++)
 		{
 			m_object_matrix[i][j] = 0.0;
@@ -188,10 +188,10 @@ void PNPThread::threadFunction() {
 	std::cout << "Doing my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
 	std::unique_lock<std::mutex> lck(this->m_main_loop_mutex);
-	/*double** image_points = new double*[2];
+	/*float** image_points = new float*[2];
 	for(int i = 0; i < 2; i++)
 	{
-		image_points[i] = new double[4];
+		image_points[i] = new float[4];
 	}
 	image_points[0][0] = 9.256562540937647;
 	image_points[1][0] = -19.454109269458844;
@@ -275,7 +275,7 @@ void PNPThread::threadFunction() {
 	this->mutexLog.unlock();
 }
 
-void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line_id)
+void PNPThread::computeEvent(float theta, float dist, unsigned int t, int line_id)
 {
 	if(this->m_nbr_lines_identified == 4)
 	{
@@ -284,8 +284,8 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			bool rotated = false;
 			bool cycle = false;
 			line_id--;
-			double theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
-			double theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
+			float theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
+			float theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
 			if(theta_min-theta_max > std::abs(std::fmod(theta_max+PI, 2*PI)-theta_min))
 			{
 				rotated = true;
@@ -304,13 +304,13 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			bool updated = false;
 			for(int i = 0; i < this->m_nbr_lines_identified; i++)
 			{
-				double dt = acos(cos((theta-this->m_line_parameters[i][0])*2.0))/2.0;
-				double dd = std::abs(dist-this->m_line_parameters[i][1]);
+				float dt = acos(cos((theta-this->m_line_parameters[i][0])*2.0))/2.0;
+				float dd = std::abs(dist-this->m_line_parameters[i][1]);
 				bool rotated = false;
 				bool cycle = false;
 				line_id = i;
-				double theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
-				double theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
+				float theta_min = std::min(theta,this->m_line_parameters[line_id][0]);
+				float theta_max = std::max(theta,this->m_line_parameters[line_id][0]);
 				if(dt < PI/4 && theta_max-theta_min > 3*PI/2)
 				{
 					cycle = true;
@@ -361,14 +361,14 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 		this->mutexLog.unlock();
 		int can_be_a_new_line = 0;
 		int candidate_line = -1;
-		double dt,dd, best_dt, best_dd, best_dist;
+		float dt,dd, best_dt, best_dd, best_dist;
 		bool rotated, best_rotated;
 		best_dist = 1e300;
 		for(int i = 0; i < this->m_nbr_lines_identified; i++)
 		{
 			//dt = std::min(std::abs(theta-this->m_line_parameters[i][0]), std::abs(std::fmod(theta+PI, 2*PI)-this->m_line_parameters[i][0]));
-			/*double theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
-			double theta_max = std::fmod(std::max(theta,this->m_line_parameters[i][0]), PI);
+			/*float theta_min = std::fmod(std::min(theta,this->m_line_parameters[i][0]), PI);
+			float theta_max = std::fmod(std::max(theta,this->m_line_parameters[i][0]), PI);
 			dt = std::min(std::abs(theta_max-theta_min), std::abs(theta_min+PI-theta_max));
 			if(dt == std::abs(theta_max-theta_min) && theta+this->m_line_parameters[i][0] > 2*PI && theta < PI/2)
 			{
@@ -380,13 +380,13 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				dd = 2*std::min(dist-this->m_line_parameters[i][1],dist) + std::max(dist-this->m_line_parameters[i][1],dd);
 				rotated = true;
 			}*/
-			double const d_max = 193.574;
-			double phi = asin((d_max-dist)/d_max);
-			double phi_line = asin((d_max-this->m_line_parameters[i][1])/d_max);
-			//double d_lambda = std::abs(std::fmod(theta,PI)-std::fmod(line_p1,PI));
-			double d_lambda = std::abs(theta-this->m_line_parameters[i][0]);
-			double d_rho = acos(sin(phi)*sin(phi_line)+cos(phi_line)*cos(phi)*cos(d_lambda));
-			double distance = d_max/2.0*d_rho;
+			float const d_max = 193.574;
+			float phi = asin((d_max-dist)/d_max);
+			float phi_line = asin((d_max-this->m_line_parameters[i][1])/d_max);
+			//float d_lambda = std::abs(std::fmod(theta,PI)-std::fmod(line_p1,PI));
+			float d_lambda = std::abs(theta-this->m_line_parameters[i][0]);
+			float d_rho = acos(sin(phi)*sin(phi_line)+cos(phi_line)*cos(phi)*cos(d_lambda));
+			float distance = d_max/2.0*d_rho;
 			dt = acos(cos(theta-this->m_line_parameters[i][0]));
 			//this->mutexLog.lock();
 			//std::cout << "detected_line " << theta << " " << dist << " " << dt << " " << distance << " " << this->m_line_parameters[i][0] << " " << this->m_line_parameters[i][1] << std::endl;
@@ -422,7 +422,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 			this->m_nbr_lines_identified++;
 			if(this->m_nbr_lines_identified == 4)
 			{
-				/*double xmax, ymin;
+				/*float xmax, ymin;
 				int line_0, line_1, line_2, line_3;
 				xmax = -99999;
 				ymin = 99999;
@@ -432,8 +432,8 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				line_3 = -1;
 				for(int i = 0; i < this->m_nbr_lines_identified; i++)
 				{
-					double theta = this->m_line_parameters[i][0];
-					double dist = this->m_line_parameters[i][1];
+					float theta = this->m_line_parameters[i][0];
+					float dist = this->m_line_parameters[i][1];
 					if(cos(theta)/sin(theta) < 0)
 					{
 						if(cos(theta)/sin(theta) < ymin)
@@ -467,7 +467,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 						}
 					}
 				}*/
-				double xmax, ymin;
+				float xmax, ymin;
 				int line_0, line_1, line_2, line_3;
 				xmax = -99999;
 				ymin = 99999;
@@ -477,8 +477,8 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				line_3 = -1;
 				for(int i = 0; i < this->m_nbr_lines_identified; i++)
 				{
-					double theta = this->m_line_parameters[i][0];
-					double dist = this->m_line_parameters[i][1];
+					float theta = this->m_line_parameters[i][0];
+					float dist = this->m_line_parameters[i][1];
 					//this->mutexLog.lock();
 					//std::cout << "Dist cycl: " << std::min(std::fmod(theta-1*PI/2+2*PI,2*PI), std::fmod(1*PI/2-theta+2*PI,2*PI)) << "   PI/2 " << theta << std::endl;
 					//std::cout << "Dist cycl: " << std::min(std::fmod(theta-2*PI/2+2*PI,2*PI), std::fmod(2*PI/2-theta+2*PI,2*PI)) << " 1*PI/2 " << theta << std::endl;
@@ -512,10 +512,10 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 				}
 				else
 				{
-					double** tmp_params = new double*[this->m_nbr_lines_identified];
+					float** tmp_params = new float*[this->m_nbr_lines_identified];
 					for(int i = 0; i < this->m_nbr_lines_identified; i++)
 					{
-						tmp_params[i] = new double[2];
+						tmp_params[i] = new float[2];
 						tmp_params[i][0] = this->m_line_parameters[i][0];
 						tmp_params[i][1] = this->m_line_parameters[i][1];
 					}
@@ -531,7 +531,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					bool lines_are_normal = true;
 					for(int i = 0; i < 4; i++)
 					{
-						double mes = acos(cos(this->m_line_parameters[(i+1)%4][0]-this->m_line_parameters[(i+1)%4][0]));
+						float mes = acos(cos(this->m_line_parameters[(i+1)%4][0]-this->m_line_parameters[(i+1)%4][0]));
 						if(mes > PI/2.0*1.2 || mes < PI/2.0*0.8)
 						{
 							lines_are_normal = false;
@@ -565,9 +565,9 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 
 void PNPThread::computePosit()
 {
-	//double** image_points = this->m_line_inters;
-	//double** image_points [2];
-	/*double xp2,yp2;
+	//float** image_points = this->m_line_inters;
+	//float** image_points [2];
+	/*float xp2,yp2;
 
 	  xp2=41.2494;yp2=7.61208;
 
@@ -591,27 +591,27 @@ void PNPThread::computePosit()
 
 	auto start = std::chrono::steady_clock::now();*/
 
-	double** image_points = new double*[2];
+	float** image_points = new float*[2];
 	for(int i = 0; i < 2; i++)
 	{
-		image_points[i] = new double[4];
+		image_points[i] = new float[4];
 		for(int j = 0; j < 4; j++)
 		{
 			image_points[i][j] = this->m_line_inters[j][i];
 		}
 	}
 	// COMPUTE CORRECTION
-	double** correction;
-	correction = new double*[2];
+	float** correction;
+	correction = new float*[2];
 	for(int i = 0; i < 2; i++)
 	{
-		correction[i] = new double[4];
+		correction[i] = new float[4];
 	}
-	double** ones1_2;
-	ones1_2 = new double*[2];
+	float** ones1_2;
+	ones1_2 = new float*[2];
 	for(int i = 0; i < 2; i++)
 	{
-		ones1_2[i] = new double[1];
+		ones1_2[i] = new float[1];
 	}
 	ones1_2[0][0] = 1.0;
 	ones1_2[1][0] = 1.0;
@@ -623,12 +623,12 @@ void PNPThread::computePosit()
 //	std::cout << "3" << std::endl;
 //	dispMat(correction,4,2);
 	// COMPUTE NEW POINTS X and XP
-	double** x = new double*[2];
-	double** xp = new double*[2];
+	float** x = new float*[2];
+	float** xp = new float*[2];
 	for(int i = 0; i < 2; i++)
 	{
-		x[i] = new double[4];
-		xp[i] = new double[4];
+		x[i] = new float[4];
+		xp[i] = new float[4];
 	}
 	for(int i = 0; i < 4; i++)
 	{
@@ -644,17 +644,17 @@ void PNPThread::computePosit()
 //	std::cout << "4" << std::endl;
 //	dispMat(xp,4,2);
 	// COMPUTE IJ
-	double** IJt = new double*[2];
+	float** IJt = new float*[2];
 	for(int i = 0; i < 2; i++)
 	{
-		IJt[i] = new double[3];
+		IJt[i] = new float[3];
 	}
-	double** IJ = new double*[3];
-	double** mat_rot = new double*[3];
+	float** IJ = new float*[3];
+	float** mat_rot = new float*[3];
 	for(int i = 0; i < 3; i++)
 	{
-		IJ[i] = new double[2];
-		mat_rot[i] = new double[3];
+		IJ[i] = new float[2];
+		mat_rot[i] = new float[3];
 	}
 	multMat(this->m_object_matrix, xp, IJt, 3, 4, 2);
 //	std::cout << "5" << std::endl;
@@ -662,8 +662,8 @@ void PNPThread::computePosit()
 	transMat(IJt,IJ,3,2);
 //	std::cout << "6" << std::endl;
 //	dispMat(IJ,2,3);
-	double nI = 0.0;
-	double nJ = 0.0;
+	float nI = 0.0;
+	float nJ = 0.0;
 	for(int i = 0; i < 3; i++)
 	{
 		nI += IJ[i][0]*IJ[i][0];
@@ -682,20 +682,20 @@ void PNPThread::computePosit()
 //	std::cout << "7" << std::endl;
 //	dispMat(IJ,2,3);
 	// COMPUTE K
-	double** k = new double*[3];
+	float** k = new float*[3];
 	for(int i = 0; i<3; i++)
 	{
-		k[i] = new double[1];
+		k[i] = new float[1];
 		k[i][0] = IJ[(i+1)%3][0]*IJ[(i+2)%3][1]-IJ[(i+1)%3][1]*IJ[(i+2)%3][0];
 		//std::cout << IJ[(i+1)%3][0] << "*" << IJ[(i+2)%3][1] << "-" << IJ[(i+1)%3][1] <<"*" << IJ[(i+2)%3][0] << std::endl;
 	}
 //	std::cout << "8" << std::endl;
 //	dispMat(k, 1, 3);
-	double** kt = new double*[1];
-	kt[0] = new double[3];
+	float** kt = new float*[1];
+	kt[0] = new float[3];
 	transMat(k,kt,1,3);
 	//COMPUTE TRANSLATIONS
-	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
+	float Z0 = 2.0*this->m_focal_length/(nI+nJ);
 	//auto end = std::chrono::steady_clock::now();
 
 	this->mutexLog.lock();
@@ -724,28 +724,28 @@ void PNPThread::computePosit()
 	this->m_posit_m20 = mat_rot[2][0];
 	this->m_posit_m21 = mat_rot[2][1];
 	this->m_posit_m22 = mat_rot[2][2];
-	/*double trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
+	/*float trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
 	if( trace > 0 ) {// I changed M_EPSILON to 0
-		double s = 0.5 / sqrt(trace+ 1.0);
+		float s = 0.5 / sqrt(trace+ 1.0);
 		this->m_posit_qw = 0.25 / s;
 		this->m_posit_qx = ( mat_rot[2][1] - mat_rot[1][2] ) * s;
 		this->m_posit_qy = ( mat_rot[0][2] - mat_rot[2][0] ) * s;
 		this->m_posit_qz = ( mat_rot[1][0] - mat_rot[0][1] ) * s;
 	} else {
 		if ( mat_rot[0][0] > mat_rot[1][1] && mat_rot[0][0] > mat_rot[2][2] ) {
-			double s = 2.0 * sqrt( 1.0 + mat_rot[0][0] - mat_rot[1][1] - mat_rot[2][2]);
+			float s = 2.0 * sqrt( 1.0 + mat_rot[0][0] - mat_rot[1][1] - mat_rot[2][2]);
 			this->m_posit_qw = (mat_rot[2][1] - mat_rot[1][2] ) / s;
 			this->m_posit_qx = 0.25 * s;
 			this->m_posit_qy = (mat_rot[0][1] + mat_rot[1][0] ) / s;
 			this->m_posit_qz = (mat_rot[0][2] + mat_rot[2][0] ) / s;
 		} else if (mat_rot[1][1] > mat_rot[2][2]) {
-			double s = 2.0 * sqrt( 1.0 + mat_rot[1][1] - mat_rot[0][0] - mat_rot[2][2]);
+			float s = 2.0 * sqrt( 1.0 + mat_rot[1][1] - mat_rot[0][0] - mat_rot[2][2]);
 			this->m_posit_qw = (mat_rot[0][2] - mat_rot[2][0] ) / s;
 			this->m_posit_qx = (mat_rot[0][1] + mat_rot[1][0] ) / s;
 			this->m_posit_qy = 0.25 * s;
 			this->m_posit_qz = (mat_rot[1][2] + mat_rot[2][1] ) / s;
 		} else {
-			double s = 2.0 * sqrt( 1.0 + mat_rot[2][2] - mat_rot[0][0] - mat_rot[1][1] );
+			float s = 2.0 * sqrt( 1.0 + mat_rot[2][2] - mat_rot[0][0] - mat_rot[1][1] );
 			this->m_posit_qw = (mat_rot[1][0] - mat_rot[0][1] ) / s;
 			this->m_posit_qx = (mat_rot[0][2] + mat_rot[2][0] ) / s;
 			this->m_posit_qy = (mat_rot[1][2] + mat_rot[2][1] ) / s;
@@ -775,8 +775,8 @@ void PNPThread::computePosit()
 	std::cout << "angle_posit y " << this->m_posit_yaw << " p " << this->m_posit_pitch << " r " << this->m_posit_roll << std::endl;
 	this->mutexLog.unlock();
 	//COMPUTE EPSILON
-	double** tmp_eps = new double*[1];
-	tmp_eps[0] = new double[4];
+	float** tmp_eps = new float*[1];
+	tmp_eps[0] = new float[4];
 //	std::cout << "9" << std::endl;
 //	dispMat(this->m_object_points,4,3);
 	multMat(this->m_object_points,kt,tmp_eps,4,3,1);
@@ -790,7 +790,7 @@ void PNPThread::computePosit()
 	//dispMat(this->m_epsilon,4,1);
 }
 
-void PNPThread::addEvent(double theta, double dist, unsigned int t, int line_id)
+void PNPThread::addEvent(float theta, float dist, unsigned int t, int line_id)
 {
 	this->m_ev_add_mutex.lock();
 	this->m_ev_queue.push(HoughEvent(theta,dist,t,line_id,1));
@@ -798,7 +798,7 @@ void PNPThread::addEvent(double theta, double dist, unsigned int t, int line_id)
 	this->m_main_loop_cv.notify_all();
 }
 
-void PNPThread::multMat(double** m1, double** m2, double** res, int ligne, int inter, int colonne)
+void PNPThread::multMat(float** m1, float** m2, float** res, int ligne, int inter, int colonne)
 {
 	for(int i = 0; i<ligne; i++)
 	{
@@ -823,7 +823,7 @@ void PNPThread::stop()
 	BaseThread::stop();
 }
 
-void PNPThread::dispMat(double** matrix, int ligne, int colonne)
+void PNPThread::dispMat(float** matrix, int ligne, int colonne)
 {
 	this->mutexLog.lock();
 	std::cout << "Matrix: " << std::endl;
@@ -839,7 +839,7 @@ void PNPThread::dispMat(double** matrix, int ligne, int colonne)
 	this->mutexLog.unlock();
 }
 
-void PNPThread::transMat(double** matrix, double** res, int ligne, int colonne)
+void PNPThread::transMat(float** matrix, float** res, int ligne, int colonne)
 {
 	for(int i = 0; i < ligne; i++)
 	{
@@ -862,7 +862,7 @@ void PNPThread::updateFilteringArray()
 		std::cout << "Computing indexes" << std::endl;
 		this->mutexLog.unlock();
 #endif
-		int rho_index = (int)round(this->m_line_parameters[i][1]/this->m_ht_rho_max*(double)(this->m_ht_map_y));
+		int rho_index = (int)round(this->m_line_parameters[i][1]/this->m_ht_rho_max*(float)(this->m_ht_map_y));
 		int theta_index = (int)round(this->m_line_parameters[i][0]*this->m_ht_map_x/2.0/PI);
 #if DEBUG == DEBUG_YES
 		this->mutexLog.lock();
@@ -933,7 +933,7 @@ void PNPThread::updateFilteringArray()
 	//printFilteringMap();
 }
 
-void PNPThread::updateLineParameters(double theta, double dist, bool rotated, int line_id, bool cycle)
+void PNPThread::updateLineParameters(float theta, float dist, bool rotated, int line_id, bool cycle)
 {
 	this->mutexLog.lock();
 	std::cout << "line " << line_id << " " << this->m_line_parameters[line_id][0] << " " << this->m_line_parameters[line_id][1] << " " << theta << " " << dist << " " << rotated << " ";
@@ -986,7 +986,7 @@ void PNPThread::computeLineIntersection()
 	}
 	else
 	{
-		double t1,t2,d1,d2,x,y;
+		float t1,t2,d1,d2,x,y;
 		for(int i = 0; i < 4; i++)
 		{
 			t1 = this->m_line_parameters[(i+0)%4][0];

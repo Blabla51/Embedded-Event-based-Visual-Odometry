@@ -33,41 +33,41 @@ class HoughThread;
 class PNPThread : public BaseThread
 {
 private:
-	double 		m_focal_length;
-	double** 	m_epsilon;
-	double** 	m_object_points;
-	double** 	m_object_matrix;
+	float 		m_focal_length;
+	float** 	m_epsilon;
+	float** 	m_object_points;
+	float** 	m_object_matrix;
 	int			m_nbr_lines_identified;
-	double**	m_line_parameters;
-	double**	m_line_inters;
+	float**	m_line_parameters;
+	float**	m_line_inters;
 	int**	m_filtering_array;
-	double 		m_confidence_coef;
+	float 		m_confidence_coef;
 	int** 		m_current_filter_centers;
 	int			m_ht_rho_max;
 	int 		m_ht_map_x;
 	int 		m_ht_map_y;
-	std::atomic<double> 	m_posit_z;
-	std::atomic<double> 	m_posit_y;
-	std::atomic<double>		m_posit_x;
-	std::atomic<double>		m_posit_qw;
-	std::atomic<double> 	m_posit_qx;
-	std::atomic<double>		m_posit_qy;
-	std::atomic<double> 	m_posit_qz;
-	std::atomic<double> 	m_posit_h;
-	std::atomic<double>		m_posit_a;
-	std::atomic<double> 	m_posit_b;
-	std::atomic<double> 	m_posit_yaw;
-	std::atomic<double> 	m_posit_pitch;
-	std::atomic<double> 	m_posit_roll;
-	std::atomic<double> 	m_posit_m00;
-	std::atomic<double> 	m_posit_m01;
-	std::atomic<double> 	m_posit_m02;
-	std::atomic<double> 	m_posit_m10;
-	std::atomic<double> 	m_posit_m11;
-	std::atomic<double> 	m_posit_m12;
-	std::atomic<double> 	m_posit_m20;
-	std::atomic<double> 	m_posit_m21;
-	std::atomic<double> 	m_posit_m22;
+	std::atomic<float> 	m_posit_z;
+	std::atomic<float> 	m_posit_y;
+	std::atomic<float>		m_posit_x;
+	std::atomic<float>		m_posit_qw;
+	std::atomic<float> 	m_posit_qx;
+	std::atomic<float>		m_posit_qy;
+	std::atomic<float> 	m_posit_qz;
+	std::atomic<float> 	m_posit_h;
+	std::atomic<float>		m_posit_a;
+	std::atomic<float> 	m_posit_b;
+	std::atomic<float> 	m_posit_yaw;
+	std::atomic<float> 	m_posit_pitch;
+	std::atomic<float> 	m_posit_roll;
+	std::atomic<float> 	m_posit_m00;
+	std::atomic<float> 	m_posit_m01;
+	std::atomic<float> 	m_posit_m02;
+	std::atomic<float> 	m_posit_m10;
+	std::atomic<float> 	m_posit_m11;
+	std::atomic<float> 	m_posit_m12;
+	std::atomic<float> 	m_posit_m20;
+	std::atomic<float> 	m_posit_m21;
+	std::atomic<float> 	m_posit_m22;
 
 	std::queue<HoughEvent>	m_ev_queue;
 	std::mutex 			m_pose_add_mutex;
@@ -75,23 +75,23 @@ private:
 	std::mutex 			m_filter_mutex;
 	HoughThread*		m_ht;
 
-	void multMat(double** m1, double** m2, double** res, int ligne, int inter, int colonne);
-	void transMat(double** matrix, double** res, int ligne, int colonne);
-	void dispMat(double** m1,int ligne, int colonne);
+	void multMat(float** m1, float** m2, float** res, int ligne, int inter, int colonne);
+	void transMat(float** matrix, float** res, int ligne, int colonne);
+	void dispMat(float** m1,int ligne, int colonne);
 
 public:
 	void threadFunction();
-	PNPThread(double focal_length,HoughThread* ht);
+	PNPThread(float focal_length,HoughThread* ht);
     ~PNPThread();
 
     void stop();
 
-    void addEvent(double theta, double dist, unsigned int t, int line_id);
-    void computeEvent(double theta, double dist, unsigned int t, int line_id);
+    void addEvent(float theta, float dist, unsigned int t, int line_id);
+    void computeEvent(float theta, float dist, unsigned int t, int line_id);
     void computeLineIntersection();
     void computePosit();
     void updateFilteringArray();
-    void updateLineParameters(double theta, double dist, bool rotated, int line_id, bool cycle);
+    void updateLineParameters(float theta, float dist, bool rotated, int line_id, bool cycle);
     int getFilterValue(int t, int d);
     void printFilteringMap();
 #if OS == OS_LINUX
