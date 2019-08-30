@@ -85,7 +85,7 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, float zone_x, float zo
 		this->m_pc_cos[i] = cos(this->m_pc_theta[i]);
 		this->m_pc_sin[i] = sin(this->m_pc_theta[i]);
 	}
-	this->m_decay = 500*1e-6; //200*1e-6
+	//this->m_decay = 500*1e-6; //200*1e-6
 	this->m_pc_exp = new float[this->m_pc_exp_range]; // Déterminer le nombre max de l'exp calculé
 	for(unsigned int i = 0; i < this->m_pc_exp_range; i++)
 	{
