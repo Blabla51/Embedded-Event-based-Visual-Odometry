@@ -4,12 +4,8 @@
 HoughThread::HoughThread(int hough_map_x,int hough_map_y, float zone_x, float zone_y, float threshold,int camera_x,int camera_y, int pc_exp_range) { // @suppress("Class members should be properly initialized")
 	//sharedPrint("Initialisation of Hough Thread");
 	this->m_thread = std::thread();
-	this->m_pc_exp_range = pc_exp_range;
 	this->m_last_input_event_timestamp = 0;
 
-	this->m_threshold = threshold;
-	this->m_zone_x = zone_x;
-	this->m_zone_y = zone_y;
 	this->m_tracking = false;
 	this->m_hough_map = new float*[this->m_hough_map_x];
 	for(int i = 0; i<this->m_hough_map_x; i++)

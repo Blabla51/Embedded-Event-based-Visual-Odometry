@@ -27,12 +27,12 @@ private:
 	const int 	m_camera_x = 128;
 	const int 	m_camera_y = 128;
 	int 		m_last_input_event_timestamp;
-	const unsigned int 	m_pc_exp_range;
-	const float 			m_threshold = 12;
+	const unsigned int 	m_pc_exp_range = 1000000;
+	const float 			m_threshold = 9.0;
 	const float			m_decay = 500e-6;
 	float 			m_rho_max;
-	const float 			m_zone_x;
-	const float 			m_zone_y;
+	const float 			m_zone_x = 5;
+	const float 			m_zone_y = 5;
 	float** 		m_hough_map;
 	unsigned int** 		m_hough_map_baf;
 	unsigned int** 		m_hough_time_map;
