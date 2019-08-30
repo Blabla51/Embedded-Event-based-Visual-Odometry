@@ -33,7 +33,7 @@ class HoughThread;
 class PNPThread : public BaseThread
 {
 private:
-	float 		m_focal_length;
+	const float 		m_focal_length = 151.0;
 	float** 	m_epsilon;
 	float** 	m_object_points;
 	float** 	m_object_matrix;
@@ -41,7 +41,7 @@ private:
 	float**	m_line_parameters;
 	float**	m_line_inters;
 	int**	m_filtering_array;
-	float 		m_confidence_coef;
+	const float 		m_confidence_coef = 0.12;
 	int** 		m_current_filter_centers;
 	int			m_ht_rho_max;
 	int 		m_ht_map_x;

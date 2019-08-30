@@ -4,9 +4,7 @@
 PNPThread::PNPThread(float fl, HoughThread* ht)
 {
 	this->m_ht = 					ht;
-	this->m_focal_length = 			fl;
 	this->m_nbr_lines_identified = 	0;
-	this->m_confidence_coef = 		0.12;
 	this->m_posit_z = 				0.0;
 	this->m_posit_y = 				0.0;
 	this->m_posit_x = 				0.0;
