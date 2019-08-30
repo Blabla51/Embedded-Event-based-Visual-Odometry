@@ -271,7 +271,6 @@ void PNPThread::threadFunction() {
 		this->mutexLog.unlock();
 	}while(!tmp_stop);
 	this->mutexLog.lock();
-	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
 	std::cout << "Stopped my things ! PNP" << std::endl;
 	this->mutexLog.unlock();
 }

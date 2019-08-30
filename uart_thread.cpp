@@ -183,6 +183,7 @@ void UARTThread::threadFunction() {
 			t0 += 256*event_buf[4];
 			t0 += 1*event_buf[5];
 			event_received_global++;
+			x = y0 + c0 + x0 + p0 + t0;
 			int tx = x >> 1;
 			int ty = y >> 1;
 
