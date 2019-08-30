@@ -333,7 +333,7 @@ void PNPThread::computeEvent(double theta, double dist, unsigned int t, int line
 					this->updateLineParameters(theta,dist,rotated,line_id,cycle);
 					this->computeLineIntersection();
 					this->computePosit();
-					this->updateFilteringArray();
+					//this->updateFilteringArray();
 					break;
 				}
 			}
