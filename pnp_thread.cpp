@@ -571,8 +571,8 @@ void PNPThread::computePosit()
 
 	  xp2=-17.5875;yp2=11.2961;
 
-	  this->m_line_inters[1][0] = xp2;
-	  this->m_line_inters[1][1] = yp2;
+	  this->m_line_inters[3][0] = xp2;
+	  this->m_line_inters[3][1] = yp2;
 
 	  xp2=-21.7158;yp2=-50.7019;
 
@@ -581,8 +581,8 @@ void PNPThread::computePosit()
 
 	  xp2=38.2826;yp2=-52.3407;
 
-	  this->m_line_inters[3][0] = xp2;
-	  this->m_line_inters[3][1] = yp2;
+	  this->m_line_inters[1][0] = xp2;
+	  this->m_line_inters[1][1] = yp2;
 
 	auto start = std::chrono::steady_clock::now();
 
