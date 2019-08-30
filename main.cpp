@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	dspic.start();  //Start the motors
 	dspic.setSpSpeed(0,0,0);
 	bool motor_stopped = true;
-	dspic.stop();  //Start the motors
+//	dspic.stop();  //Start the motors
 #endif
 	struct UDP_data					udp_data;
 	for (int i = 0; i < 20; i++ )
@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
 			{
 				if(udp_data.mes[i] != 0.0)
 				{
-					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
+//					std::cout << "CON" << i << " = " << udp_data.mes[i] << std::endl;
 				}
 			}
 			if(udp_data.mes[0] == 1.0)
@@ -280,12 +280,12 @@ int main(int argc, char *argv[])
 			{
 				motor_stopped = true;
 				dspic.setSpSpeed(0,0,0);
-				dspic.stop();  //Start the motors
+//				dspic.stop();  //Start the motors
 			}
 			else if(motor_stopped == true && !(udp_data.mes[1] == 0 && udp_data.mes[2] == 0 && udp_data.mes[3] == 0))
 			{
 				motor_stopped = false;
-				dspic.start();  //Start the motors
+//				dspic.start();  //Start the motors
 				dspic.setSpSpeed(udp_data.mes[1],udp_data.mes[2],udp_data.mes[3]);
 			}
 			else
