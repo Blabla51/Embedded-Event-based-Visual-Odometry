@@ -281,6 +281,7 @@ void PNPThread::computeEvent(float theta, float dist, unsigned int t, int line_i
 	{
 		if(line_id > 0)
 		{
+			auto start = std::chrono::steady_clock::now();
 			bool rotated = false;
 			bool cycle = false;
 			line_id--;
@@ -294,9 +295,20 @@ void PNPThread::computeEvent(float theta, float dist, unsigned int t, int line_i
 			{
 				cycle = true;
 			}
+			auto start_up = std::chrono::steady_clock::now();
 			this->updateLineParameters(theta,dist,rotated,line_id,cycle);
+			auto start_inter = std::chrono::steady_clock::now();
 			this->computeLineIntersection();
+			auto start_posit= std::chrono::steady_clock::now();
 			this->computePosit();
+
+			auto end = std::chrono::steady_clock::now();
+			this->mutexLog.lock();
+			std::cout << "Time PNP before: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-start_up).count() << std::endl;
+			std::cout << "Time PNP Update param: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start_up-start_inter).count() << std::endl;
+			std::cout << "Time PNP Line inter: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start_inter-start_posit).count() << std::endl;
+			std::cout << "Time PNP posit: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start_posit-end).count() << std::endl;
+			this->mutexLog.unlock();
 			//this->updateFilteringArray();
 		}
 		else
@@ -698,11 +710,11 @@ void PNPThread::computePosit()
 	float Z0 = 2.0*this->m_focal_length/(nI+nJ);
 	//auto end = std::chrono::steady_clock::now();
 
-	this->mutexLog.lock();
-	std::cout << "position_posit x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
+	//this->mutexLog.lock();
+	//std::cout << "position_posit x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
 	//std::cout << "Time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
-	this->mutexLog.unlock();//float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
-	mat_rot[0][0] = IJ[0][0];
+	//this->mutexLog.unlock();//float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
+	/*mat_rot[0][0] = IJ[0][0];
 	mat_rot[0][1] = IJ[1][0];
 	mat_rot[0][2] = IJ[2][0];
 	mat_rot[1][0] = IJ[0][1];
@@ -723,7 +735,7 @@ void PNPThread::computePosit()
 	this->m_posit_m12 = mat_rot[1][2];
 	this->m_posit_m20 = mat_rot[2][0];
 	this->m_posit_m21 = mat_rot[2][1];
-	this->m_posit_m22 = mat_rot[2][2];
+	this->m_posit_m22 = mat_rot[2][2];*/
 	/*float trace = mat_rot[0][0] + mat_rot[1][1] + mat_rot[2][0];
 	if( trace > 0 ) {// I changed M_EPSILON to 0
 		float s = 0.5 / sqrt(trace+ 1.0);
@@ -767,13 +779,13 @@ void PNPThread::computePosit()
 	this->m_posit_h = atan2(-mat_rot[2][0],mat_rot[0][0]);
 	this->m_posit_b = atan2(-mat_rot[1][2],mat_rot[1][1]);
 	this->m_posit_a = asin(mat_rot[1][0]);*/
-	this->m_posit_yaw = atan2(mat_rot[1][0], mat_rot[0][0]);
+	/*this->m_posit_yaw = atan2(mat_rot[1][0], mat_rot[0][0]);
 	this->m_posit_pitch = atan2(-mat_rot[2][0], sqrt(mat_rot[2][1]*mat_rot[2][1]+mat_rot[2][2]*mat_rot[2][2]));
 	this->m_posit_roll = atan2(mat_rot[2][1], mat_rot[2][2]);
 	this->m_pose_add_mutex.unlock();
 	this->mutexLog.lock();
 	std::cout << "angle_posit y " << this->m_posit_yaw << " p " << this->m_posit_pitch << " r " << this->m_posit_roll << std::endl;
-	this->mutexLog.unlock();
+	this->mutexLog.unlock();*/
 	//COMPUTE EPSILON
 	float** tmp_eps = new float*[1];
 	tmp_eps[0] = new float[4];
