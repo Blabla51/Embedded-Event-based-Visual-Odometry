@@ -562,6 +562,30 @@ void PNPThread::computePosit()
 {
 	//double** image_points = this->m_line_inters;
 	//double** image_points [2];
+	double x,y;
+
+	  x=41.2494;y=7.61208;
+
+	  this->m_line_inters[0][0] = x;
+	  this->m_line_inters[0][1] = y;
+
+	  x=-17.5875;y=11.2961;
+
+	  this->m_line_inters[1][0] = x;
+	  this->m_line_inters[1][1] = y;
+
+	  x=-21.7158;y=-50.7019;
+
+	  this->m_line_inters[2][0] = x;
+	  this->m_line_inters[2][1] = y;
+
+	  x=38.2826;y=-52.3407;
+
+	  this->m_line_inters[3][0] = x;
+	  this->m_line_inters[3][1] = y;
+
+	auto start = std::chrono::steady_clock::now();
+
 	double** image_points = new double*[2];
 	for(int i = 0; i < 2; i++)
 	{
@@ -667,9 +691,11 @@ void PNPThread::computePosit()
 	transMat(k,kt,1,3);
 	//COMPUTE TRANSLATIONS
 	double Z0 = 2.0*this->m_focal_length/(nI+nJ);
+	auto end = std::chrono::steady_clock::now();
 
 	this->mutexLog.lock();
 	std::cout << "position_posit x " << this->m_posit_x << " y " << this->m_posit_y << " z " << this->m_posit_z << std::endl;
+	std::cout << "Time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-end).count() << std::endl;
 	this->mutexLog.unlock();//float trace = a[0][0] + a[1][1] + a[2][2]; // I removed + 1.0f; see discussion with Ethan
 	mat_rot[0][0] = IJ[0][0];
 	mat_rot[0][1] = IJ[1][0];

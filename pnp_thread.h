@@ -14,6 +14,7 @@
 #include "base_thread.h"
 #include <future>
 #include <sstream>
+#include <chrono>
 #if OS == OS_LINUX
 #include <sys/types.h>
 #include <unistd.h>
