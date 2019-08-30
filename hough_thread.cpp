@@ -346,7 +346,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						index_0 = (index_0+4)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1 = rho_index;
-						index_0 = (theta_index+2)%mod_x;
+						//index_0 = (theta_index+2)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0-4)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
@@ -393,11 +393,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						index_0 = (index_0-6)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1 = rho_index;
-						index_0 = (theta_index+3)%mod_x;
-						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0-6)%mod_x;
-						HOUGH_CHECK_PEAK_FUNCTION;
-						index_1++;
+						//index_0 = (theta_index+3)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_0 = (index_0+6)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
@@ -407,17 +403,21 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1++;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0+6)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_1++;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0-1)%mod_x;
+						HOUGH_CHECK_PEAK_FUNCTION;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1 = rho_index-1;
 						if(index_1 > (unsigned int)(this->m_hough_map_y))
@@ -426,7 +426,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0-6)%mod_x;
+						index_0 = (index_0+6)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 						index_1 = rho_index-1;
 						if(index_1-- > (unsigned int)(this->m_hough_map_y))
@@ -445,17 +445,17 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 							index_0 = ((index_0+(mod_x>>1)))%mod_x;
 						}
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
-						index_0 = (index_0+1)%mod_x;
+						index_0 = (index_0-1)%mod_x;
 						HOUGH_CHECK_PEAK_FUNCTION;
 
 						//7x7 filter done
