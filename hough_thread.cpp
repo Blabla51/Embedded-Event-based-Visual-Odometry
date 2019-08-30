@@ -1,7 +1,7 @@
 #include "hough_thread.h"
 #include "pnp_thread.h"
 
-HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double zone_y, double threshold,int camera_x,int camera_y, int pc_exp_range) { // @suppress("Class members should be properly initialized")
+HoughThread::HoughThread(int hough_map_x,int hough_map_y, float zone_x, float zone_y, float threshold,int camera_x,int camera_y, int pc_exp_range) { // @suppress("Class members should be properly initialized")
 	//sharedPrint("Initialisation of Hough Thread");
 	this->m_thread = std::thread();
 
@@ -16,10 +16,10 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 	this->m_zone_x = zone_x;
 	this->m_zone_y = zone_y;
 	this->m_tracking = false;
-	this->m_hough_map = new double*[this->m_hough_map_x];
+	this->m_hough_map = new float*[this->m_hough_map_x];
 	for(int i = 0; i<this->m_hough_map_x; i++)
 	{
-		this->m_hough_map[i] = new double[this->m_hough_map_y];
+		this->m_hough_map[i] = new float[this->m_hough_map_y];
 		for(int j = 0; j < this->m_hough_map_y; j++)
 		{
 			this->m_hough_map[i][j] = 0.0;
@@ -43,7 +43,7 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 			this->m_hough_time_map[i][j] = 0;
 		}
 	}
-	this->m_look_up_dist = new double**[	this->m_camera_x];
+	this->m_look_up_dist = new float**[	this->m_camera_x];
 	std::ifstream look_up_file("./look_up.txt");
 	if(!look_up_file.is_open())
 	{
@@ -53,10 +53,10 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 	}
 	for(int i = 0; i<	this->m_camera_x; i++)
 	{
-		this->m_look_up_dist[i] = new double*[	this->m_camera_y];
+		this->m_look_up_dist[i] = new float*[	this->m_camera_y];
 		for(int j = 0; j<	this->m_camera_y; j++)
 		{
-			this->m_look_up_dist[i][j] = new double[2];
+			this->m_look_up_dist[i][j] = new float[2];
 			if(look_up_file.is_open())
 			{
 				std::string tmp_input_line;
@@ -64,16 +64,16 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 					std::getline(look_up_file, tmp_input_line);
 				} while(tmp_input_line.at(0) == '#');
 				std::string::size_type sz;
-				double lu_x = std::stod(tmp_input_line, &sz);
-				double lu_y = std::stod(tmp_input_line.substr(sz));
+				float lu_x = (float)std::stod(tmp_input_line, &sz);
+				float lu_y = (float)std::stod(tmp_input_line.substr(sz));
 				this->m_look_up_dist[i][j][0] = lu_x;
 				this->m_look_up_dist[i][j][1] = lu_y;
 
 			}
 			else
 			{
-				this->m_look_up_dist[i][j][0] = (double)(i);
-				this->m_look_up_dist[i][j][1] = (double)(j);
+				this->m_look_up_dist[i][j][0] = (float)(i);
+				this->m_look_up_dist[i][j][1] = (float)(j);
 			}
 			if(this->m_rho_max-1 < sqrt(this->m_look_up_dist[i][j][0]*this->m_look_up_dist[i][j][0] + this->m_look_up_dist[i][j][1]*this->m_look_up_dist[i][j][1]))
 			{
@@ -85,20 +85,20 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 	this->mutexLog.lock();
 	std::cout << "Rho max: " << this->m_rho_max << std::endl;
 	this->mutexLog.unlock();
-	this->m_pc_theta = new double[this->m_hough_map_x];
-	this->m_pc_cos = new double[this->m_hough_map_x];
-	this->m_pc_sin = new double[this->m_hough_map_x];
+	this->m_pc_theta = new float[this->m_hough_map_x];
+	this->m_pc_cos = new float[this->m_hough_map_x];
+	this->m_pc_sin = new float[this->m_hough_map_x];
 	for(int i = 0; i < this->m_hough_map_x; i++)
 	{
-		this->m_pc_theta[i] = (double)(i)*2*PI/((double)this->m_hough_map_x);
+		this->m_pc_theta[i] = (float)(i)*2*PI/((float)this->m_hough_map_x);
 		this->m_pc_cos[i] = cos(this->m_pc_theta[i]);
 		this->m_pc_sin[i] = sin(this->m_pc_theta[i]);
 	}
 	this->m_decay = 500*1e-6; //200*1e-6
-	this->m_pc_exp = new double[this->m_pc_exp_range]; // Déterminer le nombre max de l'exp calculé
+	this->m_pc_exp = new float[this->m_pc_exp_range]; // Déterminer le nombre max de l'exp calculé
 	for(unsigned int i = 0; i < this->m_pc_exp_range; i++)
 	{
-		m_pc_exp[i] = exp(-this->m_decay*(double)(i));
+		m_pc_exp[i] = exp(-this->m_decay*(float)(i));
 	}
 	this->m_pc_hough_coord = new int**[this->m_camera_x];
 	for(int i = 0; i < this->m_camera_x; i++)
@@ -115,10 +115,10 @@ HoughThread::HoughThread(int hough_map_x,int hough_map_y, double zone_x, double 
 			}
 		}
 	}
-	this->m_pc_rho = new double[this->m_hough_map_y];
+	this->m_pc_rho = new float[this->m_hough_map_y];
 	for(int i = 0; i < this->m_hough_map_y; i++)
 	{
-		this->m_pc_rho[i] = (double)(i)/(double)(this->m_hough_map_y)*m_rho_max;
+		this->m_pc_rho[i] = (float)(i)/(float)(this->m_hough_map_y)*m_rho_max;
 	}
 }
 
@@ -295,7 +295,7 @@ int HoughThread::computeEvent(unsigned int x, unsigned int y, unsigned int times
 	}
 #else
 	const int rho_limit = this->m_hough_map_y-3;
-	double dyn_threshold = 0;
+	float dyn_threshold = 0;
 	if(!this->m_tracking)
 	{
 		for(int theta_index = 0; theta_index < this->m_hough_map_x; theta_index++)
@@ -772,7 +772,7 @@ void HoughThread::stop()
 	BaseThread::stop();
 }
 
-double HoughThread::getPCExp(unsigned int dt)
+float HoughThread::getPCExp(unsigned int dt)
 {
 	if(dt >= this->m_pc_exp_range)
 		return 0;
@@ -817,7 +817,7 @@ int HoughThread::getZoneY()
 	return this->m_zone_y;
 }
 
-double HoughThread::getRhoMax()
+float HoughThread::getRhoMax()
 {
 	while(this->m_rho_max < 0.001);
 	return this->m_rho_max;

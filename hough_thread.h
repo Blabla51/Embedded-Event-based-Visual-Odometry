@@ -28,20 +28,20 @@ private:
 	int 	m_camera_y;
 	int 	m_last_input_event_timestamp;
 	unsigned int 	m_pc_exp_range;
-	double 			m_threshold;
-	double			m_decay;
-	double 			m_rho_max;
-	double 			m_zone_x;
-	double 			m_zone_y;
-	double** 		m_hough_map;
+	float 			m_threshold;
+	float			m_decay;
+	float 			m_rho_max;
+	float 			m_zone_x;
+	float 			m_zone_y;
+	float** 		m_hough_map;
 	unsigned int** 		m_hough_map_baf;
 	unsigned int** 		m_hough_time_map;
-	double*** 		m_look_up_dist;
-	double* 		m_pc_theta;
-	double* 		m_pc_cos;
-	double* 		m_pc_sin;
-	double* 		m_pc_exp;
-	double*			m_pc_rho;
+	float*** 		m_look_up_dist;
+	float* 		m_pc_theta;
+	float* 		m_pc_cos;
+	float* 		m_pc_sin;
+	float* 		m_pc_exp;
+	float*			m_pc_rho;
 	int*** 			m_pc_hough_coord;
 	std::atomic<bool>	m_tracking;
 	std::queue<Event>	m_ev_queue;
@@ -49,11 +49,11 @@ private:
 	PNPThread*		m_pnpt;
 
 
-	double getPCExp(unsigned int dt);
+	float getPCExp(unsigned int dt);
 	bool BAF(int x, int y, unsigned int t);
 
 public:
-	HoughThread(int hough_map_x, int hough_map_y, double zone_x = 5, double zone_y = 5, double threshold = 9.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
+	HoughThread(int hough_map_x, int hough_map_y, float zone_x = 5, float zone_y = 5, float threshold = 9.0, int camera_x = 128, int camera_y = 128, int pc_exp_range = 1000000);
     ~HoughThread();
 
     void stop();
@@ -72,7 +72,7 @@ public:
     int getMapY();
     int getZoneX();
     int getZoneY();
-    double getRhoMax();
+    float getRhoMax();
 };
 
 #endif
