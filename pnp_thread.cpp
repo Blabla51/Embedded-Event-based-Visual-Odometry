@@ -313,6 +313,7 @@ void PNPThread::computeEvent(float theta, float dist, unsigned int t, int line_i
 		}
 		else
 		{
+			auto start = std::chrono::steady_clock::now();
 			bool updated = false;
 			for(int i = 0; i < this->m_nbr_lines_identified; i++)
 			{
@@ -342,9 +343,19 @@ void PNPThread::computeEvent(float theta, float dist, unsigned int t, int line_i
 					std::cout << "hough_event " << theta << " " << dist << " " << t << " " << i << std::endl;
 					this->mutexLog.unlock();
 					updated = true;
+					auto start_up = std::chrono::steady_clock::now();
 					this->updateLineParameters(theta,dist,rotated,line_id,cycle);
+					auto start_inter = std::chrono::steady_clock::now();
 					this->computeLineIntersection();
+					auto start_posit= std::chrono::steady_clock::now();
 					this->computePosit();
+					auto end = std::chrono::steady_clock::now();
+					this->mutexLog.lock();
+					std::cout << "Time PNP before: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start-start_up).count() << std::endl;
+					std::cout << "Time PNP Update param: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start_up-start_inter).count() << std::endl;
+					std::cout << "Time PNP Line inter: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start_inter-start_posit).count() << std::endl;
+					std::cout << "Time PNP posit: " << std::chrono::duration_cast<std::chrono::nanoseconds>(start_posit-end).count() << std::endl;
+					this->mutexLog.unlock();
 					//this->updateFilteringArray();
 					break;
 				}
